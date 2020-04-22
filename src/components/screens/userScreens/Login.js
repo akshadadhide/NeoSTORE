@@ -1,0 +1,135 @@
+import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import {ScrollView, View, Text, Button, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
+import { styles } from '../../styles/Styles';
+import {Input, Item} from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {StyleConstants} from '../../styles/Constants';
+import validation from '../../../utils/Validation';
+import { userActions } from "../../../redux/actions/userActions";
+import { connect } from 'react-redux';
+
+
+
+class Login extends Component {
+    constructor(){
+        super();
+        this.state = {
+            email:'akshadad.neosofttech@gmail.com',
+            pass:'Aksh@123',
+            errorMsg:'',
+
+            passIcon: 'eye',
+            passwordHide: true,
+            
+        }
+        this.handleLogin = this.handleLogin.bind(this);
+    }
+
+    setPasswordVisiblility = () => {
+        if(this.state.passIcon === 'eye'){
+            this.setState({passIcon: 'eye-slash', })
+        }
+        else{ 
+            this.setState({passIcon: 'eye', })
+        }
+        this.setState({passwordHide: !this.state.passwordHide });
+    }
+
+    async handleLogin(){
+
+        const logData = {
+            email: this.state.email,
+            pass: this.state.pass,
+        };
+       
+        if(logData){
+            await this.props.login(logData, 'login');
+            const { isLogin, userData } = this.props;
+            console.log("userD", userData);
+            
+            if(isLogin == true && userData.status_code === 200){
+                // alert(userData.message);
+                this.props.navigation.navigate('DrawerNav');
+            }
+            // else{
+            //     this.setState({errorMsg:userData.message})
+            // }
+            
+        }
+
+    }
+
+
+    render() {
+        const {email, pass} = this.state;
+        const {passIcon, passwordHide} =  this.state;
+
+        return (
+            <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
+            <ScrollView contentContainerStyle={{flexGrow:1}}>
+                <View style={styles.container}>
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                        <Text style={styles.brandName}>NeoSTORE</Text>
+
+                        <Text style={styles.inputBoxText}>{this.state.errorMsg}</Text>
+
+                        <Item regular style={styles.textboxStyle}>
+                            <Icon name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
+                            <Input value={email} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={ () => validation('email', this.state.email.trim())} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                        </Item>
+
+                        <Item regular style={styles.textboxStyle}>
+                            <Icon name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
+                            <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => this.setState({pass}) } onBlur={() => validation('password', this.state.pass.trim())} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
+                        </Item>
+
+
+                        <TouchableHighlight style={styles.button} onPress={this.handleLogin}>
+                            <Text style={styles.buttonText}> LOGIN </Text>
+                        </TouchableHighlight>
+
+                        <TouchableOpacity onPress={()  => this.props.navigation.navigate('ForgotPassword')}>
+                            <Text style={styles.linkText}> Forgot Password? </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end',padding: 20,}}>
+                    
+                        <View style={{ flex: 4, alignItems: 'space-between', }}>
+                            <Text style={[styles.linkText,{fontSize: StyleConstants.FONT_18}]}> DON'T HAVE AN ACCOUNT?</Text>
+                        </View>
+
+                        <View style={{flex: 1, alignItems: 'space-between',  }}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')} style={{backgroundColor:StyleConstants.COLOR_BB0100, padding:StyleConstants.PADDING}}>
+                                <Icon name="plus" size={35} color={StyleConstants.COLOR_FFFFFF}/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+            </ImageBackground>
+        );
+    }
+}
+
+Login.propTypes = {
+  email: PropTypes.string,
+  password: PropTypes.string,
+ 
+}
+
+function mapState(state) {
+    const { isLogin, userData} = state.authReducer;
+    return { isLogin, userData };
+}
+const actionCreators = {
+    login: userActions.login,
+};
+
+
+
+const connectedLoginPage = connect(mapState, actionCreators)(Login);
+
+export {connectedLoginPage as Login}
