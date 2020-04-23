@@ -1,3 +1,4 @@
+import  'react-native-gesture-handler';
 import React, { Component } from 'react';
 import Routes from './Routes';
 import ErrorBoundary from './src/components/Common/ErrorBoundary';

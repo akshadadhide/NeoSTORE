@@ -1,5 +1,6 @@
 import React from 'react';
-import AsyncStorage from '@react-native-community/async-storage'
+// import AsyncStorage from '@react-native-community/async-storage'
+import {AsyncStorage} from 'react-native';
 import {Text, Image, View, TouchableHighlight, TouchableOpacity, Alert} from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem, } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/FontAwesome5';

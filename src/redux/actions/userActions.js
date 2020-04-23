@@ -1,5 +1,6 @@
 import { ActionTypes } from '../actions/ActionTypes';
-import AsyncStorage from '@react-native-community/async-storage';
+// import AsyncStorage from '@react-native-community/async-storage';
+import {AsyncStorage} from 'react-native';
 import { apiCall } from '../../API/apiCall';
 
 export const userActions = {
