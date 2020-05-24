@@ -27,6 +27,8 @@ class ProductDetail extends Component{
         },
         modalVisible: false,
         base64Data:'',
+        showSubImage:false,
+        mainImageName:'',
     }
   }
   
@@ -124,7 +126,7 @@ class ProductDetail extends Component{
     // console.log("Product details render ", productDetails, "isload", isLoading);
     // console.log("details===>",productDetails);
   
-    let productD, subImages;
+    let productD, subImages, mainImage;
     
     if(productDetails){
       productD = productDetails[0];
@@ -132,8 +134,10 @@ class ProductDetail extends Component{
       // console.log(productD.product_name);
       subImages = productDetails[0].subImages_id.product_subImages.map((value) => {return value} );
       subImages = subImages.map((value) => {return BASE_URL.concat(value)});
-      
+      mainImage = this.state.showSubImage ? this.state.mainImageName : BASE_URL+productD.product_image;
     }
+    console.log("MainImg: ", mainImage);
+    
 
     return (
       (productD === undefined) ? 
@@ -193,15 +197,18 @@ class ProductDetail extends Component{
                             {/* share icon*/}
 
                         </View>
-                        <Image source={{uri: BASE_URL+productD.product_image}} style={styles.productDetailImage}/>
+                        <Image source={{uri: mainImage}} style={styles.productDetailImage}/>
                         <ScrollView horizontal={true}>
                             <FlatList
                                 data = {subImages}
                                 numColumns={3}
                                 renderItem = { ({item}) => (
-                                  <View style={{flexDirection:"row", justifyContent:'space-evenly', padding:10,}}>
+                                  <TouchableHighlight 
+                                    style={{flexDirection:"row", justifyContent:'space-evenly', padding:10,}}
+                                    onPress={ () => this.setState({showSubImage: !this.state.showSubImage, mainImageName:item}) }
+                                  >
                                       <Image source={{uri: item}} style={styles.productDetailSubImage} />
-                                  </View>
+                                  </TouchableHighlight>
                                 )}
                             />
                         </ScrollView>
@@ -232,8 +239,11 @@ class ProductDetail extends Component{
                   (alert('Please Login first')) } >
                 <Text style={styles.TabNavButtonText}> BUY NOW </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,} ]} onPress={() => {
-                this.setModalVisible(true);
+              <TouchableOpacity 
+                  style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,} ]} 
+                    onPress={() => {
+                      (userData.status_code === 200) ? this.setModalVisible(true) : (alert('Please Login first'))
+                
               }}>
                 <Text style={styles.TabNavButtonText}> RATE </Text>
               </TouchableOpacity>
