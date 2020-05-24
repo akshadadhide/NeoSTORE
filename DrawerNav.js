@@ -7,6 +7,7 @@ import {userActions} from './src/redux/actions/userActions';
 import CustomDrawerContent from './customDrawerContent';
 import UserProfile from './src/components/screens/userScreens/UserProfile';
 
+
 const Drawer = createDrawerNavigator();
 
 
@@ -20,8 +21,8 @@ class DrawerNav extends Component{
         
         return (
             
-            <Drawer.Navigator drawerContent={props => CustomDrawerContent(props)}  drawerType="slide"  drawerStyle={{backgroundColor: StyleConstants.COLOR_000000, width: 300,}} itemStyle= {{color: StyleConstants.COLOR_FFFFFF, }}>
-                <Drawer.Screen name="Home" component={Home} options={{headerShown: false}}/>  
+            <Drawer.Navigator initialRouteName={Home} drawerContent={props => CustomDrawerContent(props)}  drawerType="slide"  drawerStyle={{backgroundColor: StyleConstants.COLOR_000000, width: 300,}} itemStyle= {{color: StyleConstants.COLOR_FFFFFF, }}>
+                <Drawer.Screen name="Home" component={Home} options={{headerShown: false}} />  
                 {/* <Drawer.Screen name="UserProfile" component={UserProfile} options={{headerShown: false}} /> */}
             </Drawer.Navigator>
         );

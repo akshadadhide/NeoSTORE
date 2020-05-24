@@ -21,7 +21,7 @@ class Home extends Component {
        const {images} = this.props;
        const {isLoading} = this.props;
        const {categoryId} = this.props;
-    //    console.log("in render images",images, "isloading state:   ", isLoading);
+       console.log("in render images",images, "isloading state:   ", isLoading);
     //    console.log("category ids in home", categoryId);
        
         return (
@@ -30,7 +30,18 @@ class Home extends Component {
                 
                 {(isLoading === false) ?
                     (<View>
-                        <SliderBox images={images} sliderBoxHeight= {StyleConstants.CAROUSEL_IMG_HEIGHT} inactiveDotColor={StyleConstants.COLOR_E91C1A} dotStyle={styles.carouselDotStyle} autoplay={true} />
+                        <SliderBox 
+                            images={images} 
+                            sliderBoxHeight= {StyleConstants.CAROUSEL_IMG_HEIGHT} 
+                            inactiveDotColor={StyleConstants.COLOR_E91C1A} 
+                            dotStyle={styles.carouselDotStyle} 
+                            autoplay={true} 
+                            onCurrentImagePressed={ (index) => {
+                                    const prodNameArr = ['Sofa','Bed','Chair','Table','Almirah']
+                                    console.log("Index: ", index);
+                                    this.props.navigation.navigate('ProductList',{category:prodNameArr[index], category_id:categoryId[index]});
+                            }}
+                        />
                         <View style={{flex:1, marginBottom: 20, }}>
                             <View style={styles.homeProductsContainer}>
                             <ProductCard categoryName='Sofa' category_id={categoryId[0]} iconName='couch' alignIcon={{ alignSelf: 'flex-end',}} {...this.props} />

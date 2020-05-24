@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import SplashScreen from './src/components/screens/SplashScreen';
 import {Login} from './src/components/screens/userScreens/Login';
 import { StyleConstants } from './src/components/styles/Constants';
 import Register from './src/components/screens/userScreens/Register';
@@ -22,7 +21,6 @@ import AddressList from './src/components/screens/userScreens/AddressList';
 import OrderList from './src/components/screens/orderScreens/OrderList';
 import OrderDetails from './src/components/screens/orderScreens/OrderDetails';
 
-
 const Stack = createStackNavigator();
 
 class Routes extends Component {
@@ -35,7 +33,6 @@ class Routes extends Component {
                     <Stack.Screen name="DrawerNav" component={DrawerNav} options={{headerShown: false}}/>
                     <Stack.Screen name="Register" component={Register} options={{title: 'Register',  headerTintColor: StyleConstants.COLOR_FFFFFF,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>
                     <Stack.Screen name="Login" component={Login} options={{headerShown: false}} options={{title: 'Login',  headerTintColor: StyleConstants.COLOR_FFFFFF,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>   
-                    {/* <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>    */}
                     
                     <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{title: 'Forgot Password',  headerTintColor: StyleConstants.COLOR_FFFFFF,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>  
                     <Stack.Screen name="SetPassword" component={SetPassword} options={{headerShown: false}}/>  
