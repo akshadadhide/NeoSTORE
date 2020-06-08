@@ -25,8 +25,9 @@ class EditProfile extends Component {
                 first_name: userProfile.first_name,
                 last_name: userProfile.last_name,
                 email: userProfile.email,
-                phone_no: userProfile.phone_no,
                 dob: userProfile.dob,
+                phone_no: userProfile.phone_no,
+                gender:userProfile.gender,
             },
 
             calendarDisplay:'none',
@@ -41,6 +42,8 @@ class EditProfile extends Component {
     goBack = () => this.props.navigation.goBack();
 
     submitHandler = () => {
+        console.log("userData after edit: ", this.state.user);
+        
         this.props.editProfile(this.state.user, 'profile');
 
         const {editProfileRes} = this.props;
@@ -56,7 +59,7 @@ class EditProfile extends Component {
 
     render() {
         const {userProfile} =  this.props;
-        console.log("In userProfile: ", userProfile);
+        console.log("In editProfile userProfile: ", userProfile);
         const {user} = this.state;
 
         const today = new Date();
@@ -64,7 +67,7 @@ class EditProfile extends Component {
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
             <ScrollView>
-                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Edit Profile" rightIconName="search" />
+                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Edit Profile" />
                 <View style={styles.container}>
 
                     {(userProfile === undefined) ? (<ActivityIndicator color={StyleConstants.COLOR_FFFFFF} size="large" />):
@@ -162,20 +165,19 @@ class EditProfile extends Component {
                             </Item>
 
                             <Item regular style={styles.textboxStyle}>
-                                <Icon active name='calendar-day' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE} onPress={() => {(this.state.calendarDisplay === 'none')?(this.setState({calendarDisplay:'flex'})):(this.setState({calendarDisplay:'none'})) } } />
+                                {/* <Icon active name='calendar-day' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE} onPress={() => {(this.state.calendarDisplay === 'none')?(this.setState({calendarDisplay:'flex'})):(this.setState({calendarDisplay:'none'})) } } />
                                 <Input
                                     value={user.dob} 
                                     style={styles.inputBoxText} 
                                     // placeholder={userProfile.dob} 
                                     // placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}  
-                                />
-                            </Item>
-                            {/* <View style={[styles.calender, { display:this.state.calendarDisplay, }]}> */}
+                                /> */}
+                            
                                 <DatePicker 
-                                    style={{width:150}}
+                                    style={styles.inputBoxText}
                                     date={this.state.user.dob}
                                     mode="date"
-                                    placeholder="select date"
+                                    // placeholder="select date"
                                     format="YYYY-MM-DD"
                                     minDate="1970-1-1"
                                     maxDate={today}
@@ -183,15 +185,20 @@ class EditProfile extends Component {
                                     cancelBtnText="Cancel"
                                     customStyles={{
                                         dateIcon: {
+                                            position: 'absolute',
                                             left: 0,
                                             top: 4,
-                                            marginLeft: 0,
-                                        },
-                                        dateInput:{
-                                            marginLeft: 35,
-                                        }
+                                            marginLeft: 0
+                                          },
+                                          dateInput: {
+                                            marginLeft: 36,
+                                            borderWidth: 0,
+                                            color: StyleConstants.COLOR_FFFFFF,
+                                            fontSize: StyleConstants.FONT_18,
+                                            fontWeight:StyleConstants.FONT_MEDIUM,
+                                          }
                                     }}
-                                    onDateChange={ dob => {this.setState(state =>{
+                                    onDateChange={ dob => this.setState(state =>{
                                                                 return {
                                                                     ...state,
                                                                     user: {
@@ -200,27 +207,11 @@ class EditProfile extends Component {
                                                                     }
                                                                 };
                                                         })
-                                                    }
+                                                    
                                     }
 
                                 />
-                                {/* <CalendarPicker maxDate={today} 
-                                                onDateChange={text =>
-                                                    {console.log("date", text);
-                                                    
-                                                this.setState(state => {
-                                                return {
-                                                    ...state,
-                                                    user: {
-                                                    ...state.user,
-                                                    dob: text
-                                                    }
-                                                };
-                                                })}
-                                            }
-
-                                /> */}
-                            {/* </View> */}
+                            </Item>
 
                             <TouchableHighlight style={styles.button} onPress={() => this.submitHandler()} >
                                 <Text style={styles.buttonText}> SUBMIT </Text>

@@ -30,7 +30,7 @@ class UserProfile extends Component {
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
             <ScrollView>
     
-                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle="My Account" rightIconName="search" />
+                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle="My Account" />
                 <View style={styles.container}>
 
                     {(userProfile === undefined) ? (<ActivityIndicator color={StyleConstants.COLOR_FFFFFF} size="large" />):

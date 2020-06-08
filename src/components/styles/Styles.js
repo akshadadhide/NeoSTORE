@@ -77,8 +77,9 @@ export const styles = StyleSheet.create({
 
     //Error
     errorText:{
-        fontSize: StyleConstants.FONT_16,
-        color: StyleConstants.COLOR_FFFFFF,
+        fontSize: StyleConstants.FONT_18,
+        color: StyleConstants.COLOR_FFBA00,
+        paddingBottom: StyleConstants.PADDING_10
         
     },
     //Error

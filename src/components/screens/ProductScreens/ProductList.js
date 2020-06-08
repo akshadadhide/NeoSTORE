@@ -82,9 +82,8 @@ class ProductList extends Component {
                 (<ScrollView style={{marginBottom: StyleConstants.MARGIN_15}}>
                     <FlatList
                     data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
-                    key={item => item.product_id}
                     renderItem={ ({item}) => (
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
+                        <TouchableOpacity key={item.product_id} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
                             <View style={styles.productListView}> 
                                 <View style={{marginRight:10,}}>
                                 <Image

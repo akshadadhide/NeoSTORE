@@ -16,8 +16,9 @@ class Login extends Component {
         super();
         this.state = {
             email:'akshadad.neosofttech@gmail.com',
-            pass:'Aksh@123',
+            pass:'Test@123',
             errorMsg:'',
+            errors:{},
 
             passIcon: 'eye',
             passwordHide: true,
@@ -37,11 +38,13 @@ class Login extends Component {
     }
 
     async handleLogin(){
-
+        
         const logData = {
             email: this.state.email,
             pass: this.state.pass,
         };
+
+        const {errors} = this.state;
        
         if(logData){
             await this.props.login(logData, 'login');
@@ -52,11 +55,13 @@ class Login extends Component {
                 // alert(userData.message);
                 this.props.navigation.navigate('DrawerNav');
             }
-            // else{
-            //     this.setState({errorMsg:userData.message})
-            // }
+            else{
+                // this.setState({errorMsg:userData.message})
+                errors.submitError = userData.message !== undefined ? userData.message : 'Something went wrong!!'
+            }
             
         }
+        this.setState({errors});
 
     }
 
@@ -72,7 +77,7 @@ class Login extends Component {
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                         <Text style={styles.brandName}>NeoSTORE</Text>
 
-                        <Text style={styles.inputBoxText}>{this.state.errorMsg}</Text>
+                        <Text style={styles.errorText}>{(this.state.errors.submitError !== undefined) && this.state.errors.submitError}</Text>
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>

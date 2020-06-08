@@ -1,7 +1,6 @@
 import React from 'react';
 // import AsyncStorage from '@react-native-community/async-storage'
-import {AsyncStorage} from 'react-native';
-import {Text, Image, View, TouchableHighlight, TouchableOpacity, Alert} from 'react-native';
+import {Text, Image,AsyncStorage, View, TouchableHighlight, TouchableOpacity, Alert} from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem, } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {StyleConstants} from './src/components/styles/Constants';
@@ -16,11 +15,12 @@ const getUserToken = async() =>{
     return userToken;
 }
 
-const CustomDrawerContent= (props) => {
+ CustomDrawerContent = (props) => {
     // console.log("In custom dnav: ", props);
 
     // const userData = useSelector(state => state.authReducer);
     // console.log("state", userData);
+
     let userToken = getUserToken();
     console.log("user Token sidebar", userToken);
     // console.log("user Token sidebar", userToken._55);
@@ -28,9 +28,11 @@ const CustomDrawerContent= (props) => {
     
     const userData = store.getState().authReducer.userData;
     console.log("user D", userData);
+    const isLogin = store.getState().authReducer.isLogin;
+    console.log("isLogin in sidebar: ", isLogin);
     const customerDetails = userData.customer_details;
     console.log("cust details" , customerDetails);
-    const b =((userData.status_code === 200) && (typeof userToken !== 'object'));
+    const b =((userData.status_code === 200) && (isLogin));
     console.log("b:", b);
     
     
@@ -135,7 +137,7 @@ const CustomDrawerContent= (props) => {
             onPress={() => props.navigation.navigate('StoreLocator')}  />
 
             {(b) ?
-            (<View>
+            (<View style={{paddingBottom: StyleConstants.PADDING}}>
             <DrawerItem 
             icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
             label={() => <Text style={styles.sidebarLink}> My Orders </Text>} 
