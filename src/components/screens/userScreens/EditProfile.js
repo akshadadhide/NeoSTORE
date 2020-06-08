@@ -21,7 +21,7 @@ class EditProfile extends Component {
 
         this.state={
             user:{
-                profile_img: '',
+                profile_img: userProfile.profile_img,
                 first_name: userProfile.first_name,
                 last_name: userProfile.last_name,
                 email: userProfile.email,
@@ -165,16 +165,7 @@ class EditProfile extends Component {
                             </Item>
 
                             <Item regular style={styles.textboxStyle}>
-                                {/* <Icon active name='calendar-day' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE} onPress={() => {(this.state.calendarDisplay === 'none')?(this.setState({calendarDisplay:'flex'})):(this.setState({calendarDisplay:'none'})) } } />
-                                <Input
-                                    value={user.dob} 
-                                    style={styles.inputBoxText} 
-                                    // placeholder={userProfile.dob} 
-                                    // placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}  
-                                /> */}
-                            
                                 <DatePicker 
-                                    style={styles.inputBoxText}
                                     date={this.state.user.dob}
                                     mode="date"
                                     // placeholder="select date"
@@ -193,6 +184,9 @@ class EditProfile extends Component {
                                           dateInput: {
                                             marginLeft: 36,
                                             borderWidth: 0,
+                                            
+                                          },
+                                          dateText:{
                                             color: StyleConstants.COLOR_FFFFFF,
                                             fontSize: StyleConstants.FONT_18,
                                             fontWeight:StyleConstants.FONT_MEDIUM,
