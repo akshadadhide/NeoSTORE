@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, TouchableOpacity,ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight, TextInput} from 'react-native';
+import {View, TouchableOpacity,ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight,Image, TextInput} from 'react-native';
 import {Input, Item} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -10,6 +10,7 @@ import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import DatePicker from 'react-native-datepicker';
 import validation from '../../../utils/Validation';
 import {GET_USER_PROFILE_URLTYPE} from '../../../API/apiConstants';
+import ImagePicker from 'react-native-image-picker';
 
 
 
@@ -40,6 +41,39 @@ class EditProfile extends Component {
     }
 
     goBack = () => this.props.navigation.goBack();
+
+    uploadProfilePhoto = () =>{
+        const {user} = this.state;
+        console.log("In upload profile photo");
+        const options = {
+            title: 'Select image',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        ImagePicker.showImagePicker(options, (response)=>{
+            console.log("Res of ImagePicker: ", response);
+            if(response.didCancel){
+                console.log("User cancelled image picker");
+            }
+            else if(response.error){
+                console.log("ImagePicker error: ", response.error);
+            }
+            else{
+                const source = { uri: 'data:image/jpeg;base64,' + response.data };
+                this.setState({user:{...user, profile_img:source}});
+                console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);
+
+            }
+            
+        });
+
+        console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);
+        
+        
+    }
 
     submitHandler = () => {
         console.log("userData after edit: ", this.state.user);
@@ -72,10 +106,18 @@ class EditProfile extends Component {
 
                     {(userProfile === undefined) ? (<ActivityIndicator color={StyleConstants.COLOR_FFFFFF} size="large" />):
                     ((userProfile.profile_img !== null)?
-                        (<Image source={{uri: BASE_URL+userProfile.profile_img}} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING, }]}/>)
-                        :(  <TouchableOpacity style={[styles.sidebarUserLogo, {marginBottom: StyleConstants.PADDING,}]}>
-                                <Icon name="user-alt" color={StyleConstants.COLOR_000000} size={80} />
+                        (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
+                            <Image source={{uri: BASE_URL+userProfile.profile_img}} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,width:150, height:150 }]}/>
+                         </TouchableOpacity>
+                        )
+                        :( (this.state.user.profile_img !== null)? 
+                            (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
+                                <Image source={user.profile_img} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,width:150, height:150 }]}/>
                             </TouchableOpacity>
+                            ): 
+                            (<TouchableOpacity style={[styles.sidebarUserLogo, {marginBottom: StyleConstants.PADDING,}]} onPress={ () => this.uploadProfilePhoto()}>
+                                <Icon name="user-alt" color={StyleConstants.COLOR_000000} size={80} />
+                            </TouchableOpacity>)
                         )
                     )
                     }
