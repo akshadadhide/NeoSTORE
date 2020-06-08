@@ -40,6 +40,7 @@ class AddressList extends Component {
     handleSaveAddress = () =>{
         console.log("Sel customer add: ", this.state.custmorAddress);
         this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
+        this.props.navigation.navigate('OrderSummary');
         
     }
 
@@ -55,7 +56,7 @@ class AddressList extends Component {
      
     return (
         <View style={{flex:1}}>
-            <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Address List" handleRightIconClick={this.addAddress} rightIconName="plus"/>
+            <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Address List" handleAddAddr={this.addAddress} rightIconName="plus"/>
 
             <ScrollView style={{padding: StyleConstants.PADDING}}>
                 <Text style={[styles.productDetailCategory, {marginBottom: StyleConstants.MARGIN_15,}]}> Shipping Address </Text>

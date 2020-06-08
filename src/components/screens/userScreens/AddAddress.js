@@ -44,6 +44,9 @@ class AddAddress extends Component {
         await this.props.addAddress(address,'address');
         const {addAddrResponse} = this.props;
 
+        console.log("kdsjf ",addAddrResponse);
+        
+
         if(addAddrResponse.status_code === 200){
             this.props.navigation.navigate('AddressList');
         }

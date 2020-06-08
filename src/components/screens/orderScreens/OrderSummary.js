@@ -9,19 +9,29 @@ import {WINDOW_WIDTH} from '../../styles/Styles';
 import {orderActions} from '../../../redux/actions/orderAction';
 import {PLACE_ORDER_URLTYPE} from '../../../API/apiConstants';
 import {connect} from 'react-redux';
+import { apiCall } from '../../../API/apiCall';
 
 class OrderSummary extends Component {
     constructor(){
         super();
         this.state ={
-            productCount:'1',
+            productCount:1,
+            custAddress:''
         }
+    }
+    componentDidMount(){
+        apiCall(null,'GET','getCustAddress')
+        .then((result)=> {console.log("In compDidM, Addr:",result.customer_address), this.setState({custAddress:result.customer_address})}
+        )
+        .catch(error => console.log("In compDidM, Addr error:",error))
     }
 
     goBack = () => this.props.navigation.goBack();
 
     handleAddress = (address) =>{
         let addrArr = Object.values(address);
+        console.log("In handleAddr of OrderSummary, addArr: ", addrArr);
+        
         let customerAddress;
         for(let i=0; i<addrArr.length; i++){
             if(addrArr[i].isDeliveryAddress ===  true){
@@ -39,9 +49,14 @@ class OrderSummary extends Component {
     const type = PLACE_ORDER_URLTYPE;
     const data = {
         product_id: product_id,
-        quantity: 1,
+        quantity: this.state.productCount,
     }
-    const address =  this.handleAddress(userData.customer_address);
+    console.log("data-----", data);
+    
+    const address =  this.handleAddress(this.state.custAddress);
+    console.log("In render deliver add: ", address);
+    
+    
     
 
     return (
@@ -67,11 +82,13 @@ class OrderSummary extends Component {
                         <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000, width:WINDOW_WIDTH/2, }]}> {product_material} </Text>
                         <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000}]}> Rs. {product_cost} </Text>
                     </View>
-                    {/* <Picker selectedValue={this.state.productCount} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue, itemIndex) => this.setState({productCount:itemValue})}>
-                        <Picker.Item lable='1' value='1' />
-                        <Picker.Item lable='2' value='2' />
-                        <Picker.Item lable='3' value='3' />
-                    </Picker>  */}
+                    <Picker selectedValue={this.state.productCount} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue, itemIndex) => this.setState({productCount:itemValue})}>
+                        <Picker.Item label='1' value={1} />
+                        <Picker.Item label='2' value={2} />
+                        <Picker.Item label='3' value={3} />
+                        <Picker.Item label='4' value={4} />
+                        <Picker.Item label='5' value={5} />
+                    </Picker> 
                 </View>
 
                 <View style={styles.orderSummaryView}>
