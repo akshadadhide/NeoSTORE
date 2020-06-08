@@ -1,5 +1,4 @@
 import React from 'react';
-// import AsyncStorage from '@react-native-community/async-storage'
 import {Text, Image,AsyncStorage, View, TouchableHighlight, TouchableOpacity, Alert} from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem, } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -7,11 +6,17 @@ import {StyleConstants} from './src/components/styles/Constants';
 import  { styles } from './src/components/styles/Styles';
 import {BASE_URL} from './src/API/apiConstants';
 import {store} from './src/redux/store';
+import { apiCall } from './src/API/apiCall';
+
+let userToken, cartData;
 
 const getUserToken = async() =>{
-    let userToken;
+    // let userToken, cartData;
     userToken = await AsyncStorage.getItem('userToken');
     console.log("getUserToken: ", userToken);
+
+    cartData = await AsyncStorage.getItem('cartData');
+    console.log("get cart data from local storage: ", [JSON.parse(cartData),{flag:'logout'}]);
     return userToken;
 }
 
@@ -21,7 +26,8 @@ const getUserToken = async() =>{
     // const userData = useSelector(state => state.authReducer);
     // console.log("state", userData);
 
-    let userToken = getUserToken();
+    // let userToken = getUserToken();
+    getUserToken();
     console.log("user Token sidebar", userToken);
     // console.log("user Token sidebar", userToken._55);
     
@@ -32,7 +38,7 @@ const getUserToken = async() =>{
     console.log("isLogin in sidebar: ", isLogin);
     const customerDetails = userData.customer_details;
     console.log("cust details" , customerDetails);
-    const b =((userData.status_code === 200) && (isLogin));
+    const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
     console.log("b:", b);
     
     
@@ -152,19 +158,17 @@ const getUserToken = async() =>{
                         'Do you want to logout?',
                         [
                           {text: 'Cancel', onPress: () => {return null}},
-                          {text: 'Confirm', onPress: () => {
-                            AsyncStorage.removeItem('userToken');
+                          {text: 'Confirm', onPress: async() => {
+                              await apiCall([JSON.parse(cartData),{flag:'logout'}],'POST','addProductToCartCheckout')
+                              .then((response)=> console.log("logout addProductToCartCheckout response",response))
+                              .catch((error) => console.log("Error in addProductToCartCheckout on logout",error)
+                              )
+                            await AsyncStorage.removeItem('userToken');
                             props.navigation.navigate('DrawerNav');
                           }},
                         ],
                         { cancelable: false }
                       )  
-                    // {
-                    // AsyncStorage.removeItem('userToken'); 
-                    // AsyncStorage.clear();
-                    // alert("Successfully logged out");
-                    // props.navigation.navigate('DrawerNav'); 
-                    // }
                 }  
             />
             </View>):null}

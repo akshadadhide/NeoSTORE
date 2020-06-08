@@ -34,7 +34,8 @@ class AddressList extends Component {
 
     goBack = () => this.props.navigation.goBack();
 
-    addAddress = () => this.props.navigation.navigate('AddAddress');
+    addAddress = () => { console.log("In addAdress");
+     this.props.navigation.navigate('AddAddress');}
 
     handleSaveAddress = () =>{
         console.log("Sel customer add: ", this.state.custmorAddress);

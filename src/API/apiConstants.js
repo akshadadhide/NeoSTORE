@@ -10,7 +10,7 @@ export const RATE_TO_PRODUCT_URLTYPE = 'updateProductRatingByCustomer';
 
 export const ADD_DATA_TO_CART = 'addDataToCart'
 
-export const GET_CART_DATA_URLTYPE = 'getCustCartData';
+export const GET_CART_DATA_URLTYPE = 'getCartData';
 
 export const PLACE_ORDER_URLTYPE = 'addProductToCartCheckout';
 

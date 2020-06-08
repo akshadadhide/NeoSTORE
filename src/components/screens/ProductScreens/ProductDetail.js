@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { View, Text, ActivityIndicator, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
+import { View, Text, ActivityIndicator, AsyncStorage, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
 import { styles } from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {WINDOW_HEIGHT} from '../../styles/Styles';
@@ -40,30 +40,34 @@ class ProductDetail extends Component{
 
   goBack = () => this.props.navigation.goBack();
 
-  handleAddToCart = () =>{
+  handleAddToCart(){
     let productInfo;
     const {productDetails} = this.props;
 
     (productDetails)&&(productInfo = {
       product_id: productDetails[0].product_id,
       quantity: 1,
-    })
+    },
+    AsyncStorage.setItem('cartData', JSON.stringify(productInfo))
+    )
 
-    this.props.addToCart(ADD_DATA_TO_CART, productInfo); 
-    const {cartResult} = this.props;
-    console.log("ckdlkl dkjhk", cartResult);
+    // this.props.addToCart(ADD_DATA_TO_CART, productInfo); 
+    // const {cartResult} = this.props;
+    // console.log("ckdlkl dkjhk", cartResult);
 
-    if(cartResult !== undefined){
-      console.log("ckdlkl", cartResult);
+    // (cartResult !== undefined) && this.props.navigation.navigate('CartProducts')
+
+    // if(cartResult !== undefined){
+    //   console.log("ckdlkl", cartResult);
       
-      Alert.alert(cartResult.message);
-      this.props.navigation.navigate('ProductDetail');
-    }
-    else{
-      Alert.alert("something went wrong");
-      this.props.navigation.navigate('ProductDetail');
+    //   Alert.alert(cartResult.message);
+    //   this.props.navigation.navigate('ProductDetail',{productId: productDetails[0].product_id});
+    // }
+    // else{
+    //   Alert.alert("something went wrong");
+    //   this.props.navigation.navigate('ProductDetail',{productId: productDetails[0].product_id});
 
-    }
+    // }
   }
 
   onStarRatingPress(rating) {
@@ -225,7 +229,7 @@ class ProductDetail extends Component{
             {/* add cart button */}
             <TouchableHighlight 
               style={styles.addToCartButton} 
-              onPress={ () => this.handleAddToCart() }
+              onPress={this.handleAddToCart.bind(this) }
             >
               <Icon name="shopping-cart" color={StyleConstants.COLOR_FFFFFF} size={30} />
             </TouchableHighlight>

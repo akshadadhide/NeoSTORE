@@ -54,7 +54,7 @@ export const apiCall = async(data, methodType, urlType) => {
 
     if(methodType === "POST"){
         return new Promise( (resolve, reject) => {
-            console.log("In post");
+            console.log("In post", data);
             
             fetch(BASE_URL+urlType, {
                 method: methodType,

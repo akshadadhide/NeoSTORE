@@ -1,6 +1,7 @@
 import {ActionTypes} from '../actions/ActionTypes';
 import {BASE_URL} from '../../API/apiConstants';
 import {apiCall} from '../../API/apiCall';
+import {AsyncStorage} from 'react-native';
 
 export const cartAction ={
     addToCart,
@@ -20,6 +21,7 @@ function addToCart(type, productInfo){
             .then((result) =>{
                 console.log("addTOCart action result:", result);
                 dispatch(addToCartSuccess(result));
+            
             })
             .catch((error) => {
                 console.log(error);
