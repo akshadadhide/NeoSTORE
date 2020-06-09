@@ -34,6 +34,16 @@ class ProductList extends Component {
         console.log("Prductlist array: ", this.state.productListArray);
     }
 
+    //to update the state with current redux state
+    componentDidUpdate(prevProps) {
+        // Typical usage (don't forget to compare props):
+        if (this.props.productList !== prevProps.productList) {
+            this.setState({productListArray: this.props.productList});
+        }
+    }
+
+    
+
     goBack = () => this.props.navigation.goBack();
 
     searchHandler = (searchText) =>{
@@ -72,7 +82,7 @@ class ProductList extends Component {
     const {category} = this.props.route.params;
     const {productList,isLoading} = this.props;
     const {productListArray} = this.state;
-    console.log(productListArray , "productList---:",productList);  
+    console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
     
         return (
             <View>
