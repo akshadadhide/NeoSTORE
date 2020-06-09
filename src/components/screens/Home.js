@@ -17,6 +17,10 @@ class Home extends Component {
 
     handleToggleDrawer = () => this.props.navigation.toggleDrawer();
 
+    searchHandler = (searchText) =>{
+        this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
+    }
+
     render() {
        const {images} = this.props;
        const {isLoading} = this.props;
@@ -26,7 +30,7 @@ class Home extends Component {
        
         return (
             <ScrollView style={{flex: 1,}}>
-                <CustomHeader iconName="bars"  handleLeftIconClick={this.handleToggleDrawer} headerTitle='NeoSTORE' rightIconName="search" {...this.props} />
+                <CustomHeader iconName="bars"  handleLeftIconClick={this.handleToggleDrawer} headerTitle='NeoSTORE' rightIconName="search" handleRightIconClick={this.searchHandler} {...this.props} />
                 
                 {(isLoading === false) ?
                     (<View>

@@ -7,7 +7,8 @@ const initialState = {
     categoryId:[],
     productList: [],
     productDetails:[],
-    productRatingRes:{}
+    productRatingRes:{},
+    allProducts:[],
 };
 
 export function productCategoryReducer(state = initialState, action){
@@ -49,6 +50,11 @@ export function productCategoryReducer(state = initialState, action){
             return {...state, productRatingRes: action.payload}
 
         /*product star rating */
+
+        /*get all products */
+        case ActionTypes.GET_ALL_PRODUCTS_SUCCESS:
+            return {...state, isLoading:false, allProducts:[...action.payload]}
+        /*get all products */
 
         default:
             return {};

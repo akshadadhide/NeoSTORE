@@ -80,6 +80,9 @@ export const ActionTypes = {
     CHANGE_PASSWORD_SUCCESS: 'CHANGE_PASSWORD_SUCCESS',
     /*change password*/
 
+    /*get all products */
+    GET_ALL_PRODUCTS_SUCCESS: 'GET_ALL_PRODUCTS_SUCCESS',
+    /*get all products */
 
 
 

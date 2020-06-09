@@ -4,6 +4,7 @@ import {apiCall} from '../../API/apiCall';
 
 export const productActions = {
     updateProductRating,
+    getAllProducts,
 }
 
 export  function getCarouselImages(){
@@ -111,6 +112,27 @@ export function getProductDetails(type){
         return {
             type: ActionTypes.GET_PRODUCT_DETAILS_FAILURE,
             payload: error
+        }
+    }
+}
+
+export function getAllProducts(type){
+    return dispatch => {
+        apiCall(null, 'GET', type)
+        .then((result) => {
+            let allProducts =  [...result.product_details];
+            // console.log("In action, allProducts: ",allProducts);
+            dispatch(getProductListSuccess(allProducts));
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    function getProductListSuccess(allProducts){
+        return {
+            type: ActionTypes.GET_ALL_PRODUCTS_SUCCESS,
+            payload: allProducts
         }
     }
 }
