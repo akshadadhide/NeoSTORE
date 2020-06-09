@@ -6,6 +6,7 @@ import { StyleConstants } from '../../styles/Constants';
 import AddressValidation from '../../../utils/AddrValidation';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import {connect} from 'react-redux';
+import { PINCODE_REGEX, customErrors } from '../../../utils/Validation';
 
 class AddAddress extends Component {
 
@@ -19,6 +20,8 @@ class AddAddress extends Component {
             country:'',
             
             errorMsg:'',
+
+            errors:{}
             
         }
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -26,10 +29,63 @@ class AddAddress extends Component {
 
     goBack = () => this.props.navigation.goBack();
 
-    handleValidation = (fieldName, value) =>{
-        const errorMsg = AddressValidation(fieldName, value);
-        this.setState({errorMsg: errorMsg});
-        console.log("error msg", errorMsg);
+    handleValidation = () =>{
+        // const errorMsg = AddressValidation(fieldName, value);
+        // this.setState({errorMsg: errorMsg});
+        // console.log("error msg", errorMsg);
+
+        const {address,pincode,city,state,country} = this.state;
+        const {errors} =  this.state;
+        let errorFlag = false;
+
+        if(address.trim() === ''){
+            errorFlag = true;
+            const {valueMissing} = customErrors.address;
+            errors.address = valueMissing;
+        }
+        else{
+            delete errors.address;
+        }
+    
+        if(pincode.length === 0 || (!PINCODE_REGEX.test(pincode)) ){
+            errorFlag = true;
+            const {valueMissing,wrongPattern} = customErrors.pincode;
+            errors.pincode = pincode === '' ? valueMissing : wrongPattern;
+        }
+        else{
+            delete errors.pincode;
+        }
+    
+        if(city.trim() === ''){
+            errorFlag = true;
+            const {valueMissing} = customErrors.city;
+            errors.city =  valueMissing;
+        }
+        else{
+            delete errors.city;
+        }
+    
+        if(state.trim() === ''){
+            errorFlag = true;
+            const {valueMissing} = customErrors.state;
+            errors.state =  valueMissing;
+        }
+        else{
+            delete errors.state;
+        }
+    
+        if(country.trim() === ''){
+            errorFlag = true;
+            const {valueMissing} = customErrors.country;
+            errors.country = valueMissing;
+        }
+        else{
+            delete errors.country;
+        }
+
+        this.setState({errors});
+        console.log("Errors: ", errors, "ErrorFlag: ", errorFlag);
+        
         
     }
 
@@ -41,17 +97,24 @@ class AddAddress extends Component {
             state: this.state.state,
             country: this.state.country,
         }
-        await this.props.addAddress(address,'address');
-        const {addAddrResponse} = this.props;
+        const errorFlag = this.handleValidation();
 
-        console.log("kdsjf ",addAddrResponse);
-        
+        if(errorFlag === false){
+            await this.props.addAddress(address,'address');
+            const {addAddrResponse} = this.props;
 
-        if(addAddrResponse.status_code === 200){
-            this.props.navigation.navigate('AddressList');
+            console.log("kdsjf ",addAddrResponse);
+            
+
+            if(addAddrResponse.status_code === 200){
+                this.props.navigation.navigate('AddressList');
+            }
+            else{
+                Alert.alert('Something went wrong');
+            }
         }
         else{
-            Alert.alert('Something went wrong');
+            Alert.alert("Please check all information is properly filled");
         }
 
         
@@ -60,6 +123,7 @@ class AddAddress extends Component {
     render() {
         const {address, pincode, city, state, country } = this.state;
         console.log(address, pincode, city);
+        const {errors} = this.state;
         
 
         return (
@@ -69,74 +133,71 @@ class AddAddress extends Component {
                 <ScrollView style={{flex:1,  backgroundColor:StyleConstants.COLOR_EDEDED}}>
 
                     <View style={{padding: StyleConstants.PADDING,}}>
-                        <View style={{flexDirection:'row'}}>
+                        <View>
                             <Text style={styles.productDetailCategory}> Address </Text>
-                            <Text> {this.state.errorMsg}</Text>
+                            <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.address}</Text>
                         </View>
                         <TextInput 
                             value={address}
-                            style={[styles.addressInput, {height: 150}]}
+                            style={[styles.addressInput, {height: 150, marginTop:5}]}
                             onChangeText = {address => {this.setState({address})}}
-                            onBlur ={() => this.handleValidation('address', this.state.address.trim())}
+                            onBlur ={this.handleValidation}
                         />
 
-                        {/* <Text style={styles.productDetailCategory}> Landmark </Text>
-                        <TextInput 
-                            style={styles.addressInput}
-                        /> */}
 
                         <View style={styles.rowSpaceBetween}>
                             <View>
-                                <View style={{flexDirection:'row'}}>
+                                <View>
                                     <Text style={styles.productDetailCategory}> City </Text>
-                                    <Text> {this.state.errorMsg}</Text>
+                                    <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.city}</Text>
                                 </View> 
                                 <TextInput 
                                     value={city}
                                     onChangeText = {city => {this.setState({city})}}
-                                    onBlur ={() => this.handleValidation('city', this.state.city.trim())}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5}]}        
+                                    onBlur ={this.handleValidation}
+                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
 
                             <View>
-                                <View style={{flexDirection:'row'}}>
+                                <View>
                                     <Text style={styles.productDetailCategory}> State </Text>
-                                    <Text> {this.state.errorMsg}</Text>
+                                    <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.state}</Text>
                                 </View>
                                 <TextInput 
                                     value={state}
                                     onChangeText = {state => {this.setState({state})}}
-                                    onBlur ={() => this.handleValidation('state', this.state.state.trim())}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5}]}        
+                                    onBlur ={this.handleValidation}
+                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
                         </View>
 
                         <View style={styles.rowSpaceBetween}>
                             <View>
-                            <View style={{flexDirection:'row'}}>
+                            <View>
                                 <Text style={styles.productDetailCategory}> ZIP CODE </Text>
-                                <Text> {this.state.errorMsg}</Text>
+                                <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.pincode}</Text>
                             </View>
                                 <TextInput
                                     value={pincode}
                                     onChangeText = {pincode => {this.setState({pincode})}}
-                                    onBlur ={() => this.handleValidation('pincode', this.state.pincode.trim())}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5}]}        
+                                    keyboardType='number-pad'
+                                    onBlur ={this.handleValidation}
+                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
 
                             <View>
-                            <View style={{flexDirection:'row'}}>
+                            <View>
                                 <Text style={styles.productDetailCategory}> COUNTRY  </Text>
-                                <Text> {this.state.errorMsg}</Text>
+                                <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.country}</Text>
                             </View>
                                 <TextInput 
                                     value={country}
                                     onChangeText = {country => {this.setState({country})}}
-                                    onBlur ={() => this.handleValidation('country', this.state.country.trim())}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5}]}        
+                                    onBlur ={this.handleValidation}
+                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
                         </View>

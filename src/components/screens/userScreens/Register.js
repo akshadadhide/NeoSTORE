@@ -6,7 +6,7 @@ import {Input, Item, Radio, CheckBox} from 'native-base';
 import { styles } from '../../styles/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StyleConstants} from '../../styles/Constants';
-import validation from '../../../utils/Validation';
+import {validation} from '../../../utils/Validation';
 // import {validatePassword} from '../../../utils/Validation';
 import {Services} from '../../../API/Services';
 import { userActions } from "../../../redux/actions/userActions";

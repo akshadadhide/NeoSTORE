@@ -8,7 +8,7 @@ import {styles} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import DatePicker from 'react-native-datepicker';
-import validation from '../../../utils/Validation';
+import {validation} from '../../../utils/Validation';
 import {GET_USER_PROFILE_URLTYPE} from '../../../API/apiConstants';
 import ImagePicker from 'react-native-image-picker';
 

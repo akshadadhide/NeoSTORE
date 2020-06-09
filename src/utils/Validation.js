@@ -1,6 +1,27 @@
 import {Alert} from 'react-native';
 
-export default function validation(fieldName, value){
+export const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
+
+export const customErrors = {
+    address: {
+        valueMissing: 'Please enter address',
+    },
+    pincode: {
+        valueMissing: 'Please enter pincode',
+        wrongPattern: 'Invalid zipcode'
+    },
+    city:{
+        valueMissing: 'Please enter city',
+    },
+    state:{
+        valueMissing: 'Please enter state',
+    },
+    country:{
+        valueMissing: 'Please enter country',
+    },
+}
+
+export function validation(fieldName, value){
     const nameRegex = /^[A-Za-z]+$/;
     const phoneRegex = /^[1-9]\d{9}$/;
     const emailRegex = /^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
