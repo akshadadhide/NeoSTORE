@@ -122,6 +122,10 @@ class ProductDetail extends Component{
       });
   }
 
+  searchHandler = (searchText) =>{
+    this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
+  }
+
 
   render() {
     const userData = store.getState().authReducer.userData;
@@ -175,7 +179,7 @@ class ProductDetail extends Component{
             </Modal>
           {/* modal ends */}
 
-            <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={productD.product_name} rightIconName="search"/>
+            <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={productD.product_name} rightIconName="search" handleRightIconClick={this.searchHandler} />
             {/* Product detail section */}
             <ScrollView style={{flex:1,}}>
                 <View style={styles.productDetailView1}>
