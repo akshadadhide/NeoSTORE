@@ -128,7 +128,7 @@ class AddAddress extends Component {
 
         return (
             <View style={{flex:1}}>
-                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Add Address" rightIconName="search"/>
+                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Add Address"/>
 
                 <ScrollView style={{flex:1,  backgroundColor:StyleConstants.COLOR_EDEDED}}>
 
