@@ -36,7 +36,6 @@ class ProductList extends Component {
 
     //to update the state with current redux state
     componentDidUpdate(prevProps) {
-        // Typical usage (don't forget to compare props):
         if (this.props.productList !== prevProps.productList) {
             this.setState({productListArray: this.props.productList});
         }
