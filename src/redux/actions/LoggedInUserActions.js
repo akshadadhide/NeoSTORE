@@ -13,28 +13,27 @@ export const loggedInUserActions ={
 
 
 function getUserProfile(type){
-    console.log("In getUserProf");
+    // console.log("In getUserProf");
     
     return dispatch => {
-        console.log("In getUserProf dis");
+        // console.log("In getUserProf dis");
 
             apiCall(null, 'GET', type)
                 .then((result) => {
-                    console.log("inaction before", result);
+                    // console.log("inaction before", result);
                     const customer_proile = result.customer_proile;
                     dispatch(getUserProfileSuccess(customer_proile));
-                    console.log("inaction after", customer_proile);
+                    // console.log("inaction after", customer_proile);
                 })
                 .catch((error) => {
                     console.log('Error: ', error);
-                    
                     dispatch(getUserProfileFailure(error));
                 })
 
     }
 
     function getUserProfileSuccess(data){
-        console.log("In getUserProfileSuccess");
+        // console.log("In getUserProfileSuccess");
         return {
             type: ActionTypes.GET_USER_PROFILE_SUCCESS,
             payload: data
@@ -55,7 +54,7 @@ function editProfile(data,type){
 
         console.log("In edit prof action");
 
-        apiCall(data, 'PUT', type)
+        apiCall(data,'PUT',type)
             .then((result) => {
                 console.log("In dispatch");
                 dispatch(editProfileSuccess(result));

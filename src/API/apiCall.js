@@ -2,7 +2,6 @@ import {BASE_URL} from './apiConstants';
 import {store} from '../redux/store';
 // import AsyncStorage from '@react-native-community/async-storage';
 import {AsyncStorage} from 'react-native';
-import axios from 'axios';
 
 // const userToken = store.getState().authReducer.userData.token;
 
@@ -52,9 +51,9 @@ export const apiCall = async(data, methodType, urlType) => {
     }
 
 
-    if(methodType === "POST"){
+    if(methodType === "POST" || methodType === "PUT"){
         return new Promise( (resolve, reject) => {
-            console.log("In post", data);
+            console.log("In post or put: ", methodType, "data: ", JSON.stringify(data));
             
             fetch(BASE_URL+urlType, {
                 method: methodType,
@@ -73,17 +72,4 @@ export const apiCall = async(data, methodType, urlType) => {
         });
     }
 
-    if(methodType === 'PUT'){
-        return new Promise((resolve, reject) => {
-            axios.put(BASE_URL+urlType, JSON.stringify(data), {headers: secureRequest})
-            // .then((response) => response.json())   
-            .then((response) => {
-                console.log("res" , response.data);
-                resolve(response.data);
-            })
-            .catch((error) => {
-                reject(error);
-            });
-        });
-    }
 }

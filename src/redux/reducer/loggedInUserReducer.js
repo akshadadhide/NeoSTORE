@@ -17,7 +17,7 @@ export function loggedInUserReducer(state =  initialState, action){
     switch(action.type){
         /*Get user Profile*/
         case ActionTypes.GET_USER_PROFILE_SUCCESS:
-            console.log("In User Prof reducer", action.payload);
+            // console.log("In User Prof reducer", action.payload);
             return {...state, userProfile: action.payload}
 
         case ActionTypes.GET_USER_PROFILE_FAILURE:

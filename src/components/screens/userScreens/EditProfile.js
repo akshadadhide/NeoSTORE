@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, TouchableOpacity,ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight,Image, TextInput} from 'react-native';
+import {View, TouchableOpacity, Alert, ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight,Image, TextInput} from 'react-native';
 import {Input, Item} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -28,7 +28,7 @@ class EditProfile extends Component {
                 email: userProfile.email,
                 dob: userProfile.dob,
                 phone_no: userProfile.phone_no,
-                gender:userProfile.gender,
+                gender:'female',
             },
 
             calendarDisplay:'none',
@@ -78,25 +78,31 @@ class EditProfile extends Component {
     submitHandler = () => {
         console.log("userData after edit: ", this.state.user);
         
-        this.props.editProfile(this.state.user, 'profile');
+        this.props.editProfile(this.state.user,'profile');
 
         const {editProfileRes} = this.props;
-
-        if(editProfileRes.status_code === 200){
-            this.props.navigation.navigate('UserProfile');
+        console.log("In subHandler of EditProf, res:",editProfileRes);
+        
+        if(editProfileRes !== undefined){
+            if(editProfileRes.status_code === 200){
+                this.props.navigation.navigate('UserProfile');
+            }
+            else{
+                alert(this.props.editProfileRes.message);
+            }
         }
-        else{
-            alert(this.props.editProfileRes.message);
-        }
+    
     }
 
 
     render() {
         const {userProfile} =  this.props;
-        console.log("In editProfile userProfile: ", userProfile);
+        // console.log("In editProfile userProfile: ", userProfile);
         const {user} = this.state;
 
         const today = new Date();
+        // console.log("today: ", today);
+        
 
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
@@ -211,8 +217,8 @@ class EditProfile extends Component {
                                     date={this.state.user.dob}
                                     mode="date"
                                     // placeholder="select date"
-                                    format="YYYY-MM-DD"
-                                    minDate="1970-1-1"
+                                    format="DD/MM/YYYY"
+                                    minDate="1/1/1970"
                                     maxDate={today}
                                     confirmBtnText="Confirm"
                                     cancelBtnText="Cancel"
