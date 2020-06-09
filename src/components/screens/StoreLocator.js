@@ -76,6 +76,10 @@ class StoreLocator extends Component {
 
     goBack = () => this.props.navigation.goBack();
 
+    searchHandler = (searchText) =>{
+        this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
+    }
+
     render() {
         const {markers, isStoreShown, region} = this.state;
         console.log("markers", markers);
@@ -83,7 +87,7 @@ class StoreLocator extends Component {
         
         return (
             <View>
-                <CustomHeader iconName='arrow-left' handleLeftIconClick={this.goBack} headerTitle='Store Locator' rightIconName='search' />
+                <CustomHeader iconName='arrow-left' handleLeftIconClick={this.goBack} headerTitle='Store Locator' rightIconName='search' handleRightIconClick={this.searchHandler} />
 
                 <Header style={{backgroundColor:'#006699'}}>
                     <Left>
