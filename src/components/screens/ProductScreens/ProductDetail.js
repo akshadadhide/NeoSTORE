@@ -206,7 +206,7 @@ class ProductDetail extends Component{
 
                         </View>
                         <Image source={{uri: mainImage}} style={styles.productDetailImage}/>
-                        <ScrollView horizontal={true}>
+                        {/* <ScrollView horizontal={true}> */}
                             <FlatList
                                 data = {subImages}
                                 numColumns={3}
@@ -219,7 +219,7 @@ class ProductDetail extends Component{
                                   </TouchableHighlight>
                                 )}
                             />
-                        </ScrollView>
+                        {/* </ScrollView> */}
                     </View>
 
                     <View style={styles.productDetailView22}>

@@ -1,5 +1,6 @@
 import  'react-native-gesture-handler';
 import React, { Component } from 'react';
+import {YellowBox} from 'react-native';
 import Routes from './Routes';
 import ErrorBoundary from './src/components/Common/ErrorBoundary';
 import { Provider } from 'react-redux';
@@ -8,6 +9,7 @@ import { Provider } from 'react-redux';
 import {PersistGate} from 'redux-persist/es/integration/react';
 import {store, persistor} from './src/redux/store';
 
+console.disableYellowBox = true;
 
 export default class App extends Component {
 
