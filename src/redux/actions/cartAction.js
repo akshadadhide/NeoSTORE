@@ -1,7 +1,8 @@
 import {ActionTypes} from '../actions/ActionTypes';
 import {BASE_URL} from '../../API/apiConstants';
 import {apiCall} from '../../API/apiCall';
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 export const cartAction ={
     addToCart,

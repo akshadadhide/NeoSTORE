@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { View, Text, ActivityIndicator, AsyncStorage, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { styles } from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {WINDOW_HEIGHT} from '../../styles/Styles';

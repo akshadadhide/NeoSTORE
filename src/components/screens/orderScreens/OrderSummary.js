@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {View, Text, Image, Picker, ScrollView, Button, TouchableOpacity, TouchableHighlight} from 'react-native';
+import {View, Text, Image, Picker, ScrollView, TouchableOpacity, TouchableHighlight} from 'react-native';
+// import {Picker} from '@react-native-community/picker';
 import {BASE_URL} from '../../../API/apiConstants';
 import {store} from '../../../redux/store';
 import Header from '../../Common/Header';
@@ -82,7 +83,7 @@ class OrderSummary extends Component {
                         <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000, width:WINDOW_WIDTH/2, }]}> {product_material} </Text>
                         <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000}]}> Rs. {product_cost} </Text>
                     </View>
-                    <Picker selectedValue={this.state.productCount} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue, itemIndex) => this.setState({productCount:itemValue})}>
+                    <Picker selectedValue={this.state.productCount} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.setState({productCount:itemValue})}>
                         <Picker.Item label='1' value={1} />
                         <Picker.Item label='2' value={2} />
                         <Picker.Item label='3' value={3} />

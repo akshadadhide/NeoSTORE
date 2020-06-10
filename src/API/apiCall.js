@@ -1,7 +1,6 @@
 import {BASE_URL} from './apiConstants';
 import {store} from '../redux/store';
-// import AsyncStorage from '@react-native-community/async-storage';
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // const userToken = store.getState().authReducer.userData.token;
 
