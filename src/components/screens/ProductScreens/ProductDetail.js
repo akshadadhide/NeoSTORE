@@ -30,6 +30,7 @@ class ProductDetail extends Component{
         base64Data:'',
         showSubImage:false,
         mainImageName:'',
+        cartProductsArr:[],
     }
   }
   
@@ -41,16 +42,55 @@ class ProductDetail extends Component{
 
   goBack = () => this.props.navigation.goBack();
 
-  handleAddToCart(){
+  async handleAddToCart(){
     let productInfo;
     const {productDetails} = this.props;
+    const {cartProductsArr} = this.state;
+    console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
+    
+    // if(productDetails.product_id === cartProductsArr)
 
-    (productDetails)&&(productInfo = {
-      product_id: productDetails[0].product_id,
-      quantity: 1,
-    },
-    AsyncStorage.setItem('cartData', JSON.stringify(productInfo))
-    )
+
+    try {
+      const myArray = await AsyncStorage.getItem('cartProducts');
+      console.log("myArray: ",JSON.parse(myArray));
+      let newProduct, flag=false;
+
+      if(myArray !== null){ 
+        
+        newProduct =  JSON.parse(myArray);
+
+        newProduct.map( val =>{
+            if(val.product_id === productDetails[0].product_id){
+                flag = true;
+            }
+        });
+
+        if(flag === false){
+          newProduct.push(productDetails[0]);
+          console.log("Modified myArray newProduct: ",newProduct);
+          Alert.alert("Added to cart");
+        }
+        else{
+          Alert.alert('Already in cart');
+        }
+        await AsyncStorage.setItem('cartProducts', JSON.stringify(newProduct));
+      }
+      else{
+        await AsyncStorage.setItem('cartProducts', JSON.stringify(productDetails));
+      }
+      
+    } catch (error) {
+      console.log("Error saving data in asyncstorage cart: ",error);
+    }
+
+
+    // (productDetails)&&(productInfo = {
+    //   product_id: productDetails[0].product_id,
+    //   quantity: 1,
+    // },
+    // AsyncStorage.setItem('cartData', JSON.stringify(productInfo))
+    // )
 
     // this.props.addToCart(ADD_DATA_TO_CART, productInfo); 
     // const {cartResult} = this.props;

@@ -5,6 +5,7 @@ import Routes from './Routes';
 import ErrorBoundary from './src/components/Common/ErrorBoundary';
 import { Provider } from 'react-redux';
 
+
 //redux persist
 import {PersistGate} from 'redux-persist/es/integration/react';
 import {store, persistor} from './src/redux/store';

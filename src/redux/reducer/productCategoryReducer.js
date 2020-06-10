@@ -6,7 +6,7 @@ const initialState = {
     isLoading: true,
     categoryId:[],
     productList: [],
-    productDetails:[],
+    productDetails:'',
     productRatingRes:{},
     allProducts:[],
 };

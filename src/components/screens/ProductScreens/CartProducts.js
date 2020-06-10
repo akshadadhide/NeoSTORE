@@ -6,14 +6,38 @@ import {GET_CART_DATA_URLTYPE, BASE_URL} from '../../../API/apiConstants';
 import CustomHeader from '../../Common/Header';
 import {styles, WINDOW_WIDTH} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 class CartProducts extends Component {
+    constructor(props) {
+        super(props);
+        this.state={
+            cartData:'',
+        }
+    }
+    
 
     goBack = () => this.props.navigation.goBack();
 
-    componentDidMount(){
-        const type = GET_CART_DATA_URLTYPE;
-        this.props.getCartData(type);
+    async componentDidMount(){
+        // const type = GET_CART_DATA_URLTYPE;
+        // this.props.getCartData(type);
+
+        try {
+            const myArray = await AsyncStorage.getItem('cartProducts');
+            if (myArray !== null) {
+                this.setState({cartData: JSON.parse(myArray)})
+              console.log("In cart m: ",JSON.parse(myArray));
+            }
+            else{
+
+            }
+          } catch (error) {
+            console.log("Error: ", error);
+            
+          }
+
     }
 
     calculateTotalCost = (productInfo) => {
@@ -28,23 +52,20 @@ class CartProducts extends Component {
     }
 
     render() {
-       const {cartData, isLoading} = this.props;
-       console.log("in component", cartData, "isloading", isLoading);
-       let productInfo, totalCost;
-       (cartData !== undefined && isLoading === false)?
-       (productInfo = cartData, totalCost = this.calculateTotalCost(cartData) ):null
-       console.log("productInfo", productInfo, "total", totalCost);
-    //    console.log("Prod Image: ", productInfo.category_id.product_image);
-       
-       
+    //    const {cartData, isLoading} = this.props;
+        const{cartData} = this.state;
+        // console.log("in component render", cartData,);
+        let productInfo, totalCost;
+        totalCost = (cartData !== '') ? this.calculateTotalCost(cartData) : 0;
+        // console.log("productInfo", productInfo, "total", totalCost);
        
         return (
             <View style={{flex:1, }}>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts"  rightIconName="search"/>
-                {(isLoading !== false) ? (<ActivityIndicator />) :
+                {(cartData === undefined) ? (<ActivityIndicator />) :
                 (<ScrollView>
                     <FlatList
-                    data={productInfo}
+                    data={cartData}
                     renderItem={ ({item}) => (
                         <TouchableOpacity>
                             <View style={styles.productListView}>

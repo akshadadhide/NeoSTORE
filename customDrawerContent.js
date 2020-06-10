@@ -12,7 +12,6 @@ import { apiCall } from './src/API/apiCall';
 let userToken, cartData;
 
 const getUserToken = async() =>{
-    // let userToken, cartData;
     userToken = await AsyncStorage.getItem('userToken');
     console.log("getUserToken: ", userToken);
 
@@ -22,16 +21,8 @@ const getUserToken = async() =>{
 }
 
  CustomDrawerContent = (props) => {
-    // console.log("In custom dnav: ", props);
-
-    // const userData = useSelector(state => state.authReducer);
-    // console.log("state", userData);
-
-    // let userToken = getUserToken();
     getUserToken();
     console.log("user Token sidebar", userToken);
-    // console.log("user Token sidebar", userToken._55);
-    
     
     const userData = store.getState().authReducer.userData;
     console.log("user D", userData);
