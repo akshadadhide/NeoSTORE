@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React, { Component } from 'react';
 import {View, Text, StyleSheet, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {Header, Left, Body, Right, CheckBox ,Picker,} from 'native-base';
