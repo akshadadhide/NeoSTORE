@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { Component } from 'react';
-import {ScrollView,Alert, View, Text, Button, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
+import {ScrollView,Alert, View, Text, ActivityIndicator, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
 import { styles } from '../../styles/Styles';
 import {Input, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';

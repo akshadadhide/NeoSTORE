@@ -56,77 +56,90 @@ class Register extends Component {
     // }
 
     /*validation*/
-    handleValidation = () => {
+    handleValidation = (field_name) => {
         console.log("In validation");
         const {first_name, last_name, phone_no, email, pass, confirmPass,gender} = this.state;
         let {errors} = this.state;
-        let errorFlag = false;
+        let errorFlag = true;
 
         //first name validation
-        if(first_name.length === 0 || NAME_REGEX.test(first_name) === false){
-            errorFlag =  true;
-            const {valueMissing, wrongPattern} = customErrors.first_name;
-            errors.first_name = first_name === '' ? valueMissing : wrongPattern;
-        }
-        else{
-            delete errors.first_name;
+        if(field_name === 'first_name'){
+            if(first_name.length === 0 || NAME_REGEX.test(first_name) === false){
+                errorFlag =  true;
+                const {valueMissing, wrongPattern} = customErrors.first_name;
+                errors.first_name = first_name === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.first_name;
+            }
         }
 
          //last name validation
-         if(last_name.length === 0 || NAME_REGEX.test(last_name) === false){
-            errorFlag =  true;
-            const {valueMissing, wrongPattern} = customErrors.last_name;
-            errors.last_name = last_name === '' ? valueMissing : wrongPattern;
-        }
-        else{
-            delete errors.last_name;
+        if(field_name === 'last_name'){
+            if(last_name.length === 0 || NAME_REGEX.test(last_name) === false){
+                errorFlag =  true;
+                const {valueMissing, wrongPattern} = customErrors.last_name;
+                errors.last_name = last_name === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.last_name;
+            }
         }
 
         //phone number validation
-        if(phone_no.length === 0 || MOBILE_REGEX.test(phone_no) === false){
-            errorFlag = true;
-            const {valueMissing, wrongPattern} = customErrors.phone_no;
-            errors.phone_no = phone_no === '' ? valueMissing : wrongPattern;
-        }
-        else{
-            delete errors.phone_no;
+        if(field_name === 'phone_no'){
+            if(phone_no.length === 0 || MOBILE_REGEX.test(phone_no) === false){
+                errorFlag = true;
+                const {valueMissing, wrongPattern} = customErrors.phone_no;
+                errors.phone_no = phone_no === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.phone_no;
+            }
         }
 
         //email validation
-        if(email.length === 0 || EMAIL_REGEX.test(email) === false){
-            errorFlag = true;
-            const {valueMissing, wrongPattern} = customErrors.email;
-            errors.email = email === '' ? valueMissing : wrongPattern;
-        }
-        else{
-            delete errors.email;
+        if(field_name === 'email'){
+            if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+                errorFlag = true;
+                const {valueMissing, wrongPattern} = customErrors.email;
+                errors.email = email === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.email;
+            }
         }
       
         console.log("pass: ", pass, "length: ",pass.length);
         
         //password validation
-        if(pass.length < 8 || pass.length > 12){
-            errorFlag = true;
-            const {valueMissing, minLength} = customErrors.pass;
-            errors.pass = pass === '' ? valueMissing : minLength;
-        }
-        else if(PASSWORD_REGEX.test(pass)){
-            errorFlag = true;
-            const {wrongPattern} = customErrors.pass;
-            errors.pass = wrongPattern;
-        }
-        else{
-            delete errors.pass;
+        if(field_name === 'pass'){
+            if(pass.length < 8 || pass.length > 12){
+                errorFlag = true;
+                const {valueMissing, minLength} = customErrors.pass;
+                errors.pass = pass === '' ? valueMissing : minLength;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.pass;
+            }
         }
 
         //confirm password validation
-        if(confirmPass.length === 0 || pass !== confirmPass){
-            errorFlag = true;
-            const {valueMissing, diffPassword} = customErrors.confirmPass;
-            errors.confirmPass = confirmPass === '' ? valueMissing : diffPassword;
-        }
-        else{
-            delete errors.confirmPass;
+        if(field_name === 'confirmPass'){
+            if(confirmPass.length === 0 || pass !== confirmPass){
+                errorFlag = true;
+                const {valueMissing, diffPassword} = customErrors.confirmPass;
+                errors.confirmPass = confirmPass === '' ? valueMissing : diffPassword;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.confirmPass;
+            }
         }
 
         //gender validation
@@ -136,6 +149,7 @@ class Register extends Component {
             errors.gender = gender === '' ? valueMissing : '';
         }
         else{
+            errorFlag =  false;
             delete errors.gender;
         }
 
@@ -201,7 +215,7 @@ class Register extends Component {
                         <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input value={first_name} style={styles.inputBoxText} 
                                 onChangeText={first_name => {this.setState({ first_name }) }} 
-                                onBlur={this.handleValidation} 
+                                onBlur={() => this.handleValidation('first_name')} 
                                 placeholder='First Name' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
@@ -216,7 +230,7 @@ class Register extends Component {
                             value={last_name} 
                             style={styles.inputBoxText} 
                             onChangeText={last_name => {this.setState({ last_name }) }} 
-                            onBlur={this.handleValidation} 
+                            onBlur={() => this.handleValidation('last_name')} 
                             placeholder='Last name' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
@@ -231,7 +245,7 @@ class Register extends Component {
                             style={styles.inputBoxText} 
                             keyboardType='email-address' 
                             onChangeText={email => {this.setState({ email }) }} 
-                            onBlur={this.handleValidation} 
+                            onBlur={() => this.handleValidation('email')} 
                             placeholder='Email' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
@@ -246,7 +260,7 @@ class Register extends Component {
                             secureTextEntry={passwordHide} 
                             style={styles.inputBoxText} 
                             onChangeText={pass => {this.setState({pass}) }}  
-                            onBlur={this.handleValidation} 
+                            onBlur={() => this.handleValidation('pass')} 
                             placeholder='Password' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
@@ -262,7 +276,7 @@ class Register extends Component {
                             secureTextEntry={passwordHide} 
                             style={styles.inputBoxText} 
                             onChangeText={confirmPass => {this.setState({ confirmPass }) }} 
-                            onBlur={this.handleValidation} 
+                            onBlur={() => this.handleValidation('confirmPass')} 
                             placeholder='Confirm Password' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
@@ -288,7 +302,7 @@ class Register extends Component {
                             style={styles.inputBoxText} 
                             keyboardType='phone-pad' 
                             onChangeText={phone_no => {this.setState({ phone_no }) }} 
-                            onBlur={this.handleValidation} 
+                            onBlur={() => this.handleValidation('phone_no')} 
                             placeholder='Phone Number' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
