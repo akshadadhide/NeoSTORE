@@ -1,8 +1,19 @@
 import {Alert} from 'react-native';
 
 export const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
+export const EMAIL_REGEX = /^[A-Za-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
+
 
 export const customErrors = {
+    email: {
+        valueMissing: 'Please enter your email id',
+        wrongPattern: 'Invalid email id'
+    },
+    pass: {
+        valueMissing: 'Please enter password',
+        wrongPattern: 'password should contain alphabets, numbers and special symbol',
+        minLength: 'password length should be between 8 to 12 characters'
+    },
     address: {
         valueMissing: 'Please enter address',
     },

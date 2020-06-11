@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import React, { Component } from 'react';
-import {ScrollView, View, Text, Button, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
+import {ScrollView,Alert, View, Text, Button, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
 import { styles } from '../../styles/Styles';
 import {Input, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StyleConstants} from '../../styles/Constants';
-import {validation} from '../../../utils/Validation';
+import {validation, EMAIL_REGEX, customErrors} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 import { connect } from 'react-redux';
 
@@ -37,16 +37,52 @@ class Login extends Component {
         this.setState({passwordHide: !this.state.passwordHide });
     }
 
+    handleValidation = () => {
+        console.log("In validation");
+        const {email, pass} = this.state;
+        let {errors} = this.state;
+        console.log("e: ", email, " pass: ", pass, " err: ", errors);
+    
+        let errorFlag = false;
+    
+        //email validation
+        if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+          errorFlag = true;
+          const {valueMissing, wrongPattern} = customErrors.email;
+          errors.email = email === '' ? valueMissing : wrongPattern;
+        }
+        else{
+          delete errors.email;
+        }
+        
+        //password validation
+        if(pass.length < 8 || pass.length > 12){
+            errorFlag = true;
+            const {valueMissing, minLength} = customErrors.pass;
+            errors.pass = pass === '' ? valueMissing : minLength;
+        }
+        else{
+            delete errors.password
+        }
+
+        this.setState({errors}); 
+        console.log("Errors: ",errors, "ErrorFlag: ", errorFlag);
+        return errorFlag;
+          
+      }
+
     async handleLogin(){
+        let {errors} = this.state;
         
         const logData = {
             email: this.state.email,
             pass: this.state.pass,
         };
 
-        const {errors} = this.state;
+        const errorFlag = this.handleValidation();
+        console.log("Err Flag in submit: ", errorFlag);
        
-        if(logData){
+        if(errorFlag === false){
             await this.props.login(logData, 'login');
             const { isLogin, userData } = this.props;
             console.log("userD", userData);
@@ -57,11 +93,14 @@ class Login extends Component {
             }
             else{
                 // this.setState({errorMsg:userData.message})
-                errors.submitError = userData.message !== undefined ? userData.message : 'Something went wrong!!'
+                errors.submitError = userData.message !== undefined ? userData.message : 'Something went wrong'
+                this.setState({errors});
             }
             
         }
-        this.setState({errors});
+        else{
+           Alert.alert('Please check all the information is properlly filled');
+        }
 
     }
 
@@ -69,6 +108,8 @@ class Login extends Component {
     render() {
         const {email, pass} = this.state;
         const {passIcon, passwordHide} =  this.state;
+        const {errors} = this.state;
+
 
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
@@ -81,14 +122,18 @@ class Login extends Component {
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={email} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={ () => validation('email', this.state.email.trim())} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input value={email} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={this.handleValidation} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                         </Item>
+                        <Text style={styles.errorText}> {errors.email}</Text>
+
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => this.setState({pass}) } onBlur={() => validation('password', this.state.pass.trim())} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => this.setState({pass}) } onBlur={this.handleValidation} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
                         </Item>
+                        <Text style={styles.errorText}> {errors.pass}</Text>
+
 
 
                         <TouchableHighlight style={styles.button} onPress={this.handleLogin}>
