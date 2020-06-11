@@ -88,7 +88,7 @@ class ProductList extends Component {
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
                 {(productList === undefined) ?
                 (<ActivityIndicator />) :
-                // (<ScrollView style={{marginBottom: StyleConstants.MARGIN_15}}>
+                (<ScrollView style={{marginBottom: StyleConstants.MARGIN_15}}>
                     <FlatList
                     data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
                     renderItem={ ({item}) => (
@@ -112,10 +112,12 @@ class ProductList extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={item => {item.product_id}}
+                    keyExtractor={(item,index) => item.product_id}
                     ItemSeparatorComponent={() => <View style={{height: 0.5, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
                     />
-                // </ScrollView>)
+
+                    <View style={{height:50}}></View>
+                </ScrollView>)
             }
             </View>
         );

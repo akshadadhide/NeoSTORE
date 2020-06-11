@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, Image, Picker, ScrollView, TouchableOpacity, TouchableHighlight} from 'react-native';
+import {View, Text, Image, Picker,Alert, ScrollView, TouchableOpacity, TouchableHighlight} from 'react-native';
 // import {Picker} from '@react-native-community/picker';
 import {BASE_URL} from '../../../API/apiConstants';
 import {store} from '../../../redux/store';
@@ -17,7 +17,7 @@ class OrderSummary extends Component {
         super();
         this.state ={
             productCount:1,
-            custAddress:''
+            custAddress:'',
         }
     }
     componentDidMount(){
@@ -46,15 +46,17 @@ class OrderSummary extends Component {
   render() {
     const userData = store.getState().authReducer.userData;
     const customerDetails = userData.customer_details;
+    const {custAddress} = this.state;
     const {product_name,product_id, product_material, product_image, product_cost} = this.props.route.params;
     const type = PLACE_ORDER_URLTYPE;
-    const data = {
+    const data = [{
+        _id: product_id,
         product_id: product_id,
         quantity: this.state.productCount,
-    }
+    },{flag : "checkout"}];
     console.log("data-----", data);
     
-    const address =  this.handleAddress(this.state.custAddress);
+    const address = custAddress !== undefined ? this.handleAddress(custAddress) : null
     console.log("In render deliver add: ", address);
     
     
@@ -105,7 +107,11 @@ class OrderSummary extends Component {
                 <Text style={[styles.productDetailTitle,{color:StyleConstants.COLOR_282727, }]}> Rs.{product_cost} </Text>
                 {/* <Button title="Order Now" color={StyleConstants.COLOR_FE3F3F} style={{padding:35, height:40, width:60, }} /> */}
                 <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]}
-                    onPress={() => this.props.placeOrder(data, type)}
+                    onPress={() => {
+                        this.props.placeOrder(data, type);
+                        (this.props.res !== undefined) ? (Alert.alert(res.message)):null;
+
+                    }}
                 >
                     <Text style={styles.TabNavButtonText}> ORDER NOW </Text>
                 </TouchableOpacity>

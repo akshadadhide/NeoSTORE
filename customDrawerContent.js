@@ -20,6 +20,40 @@ const getUserToken = async() =>{
     return userToken;
 }
 
+handleLogout = async() => {
+    console.log("In handleLogout ");
+
+    try {
+        const myArray = await AsyncStorage.getItem('cartProducts');
+        if (myArray !== null) {
+            console.log("In logout cartData: ",JSON.parse(myArray));
+            let cartProducts = JSON.parse(myArray);
+            
+            cartProducts.map((val) => {
+                let cartItem = [{_id:val.product_id,product_id:val.product_id,quantity:1},{ flag: "logout" }];
+                console.log("cartItem: ",cartItem);
+
+                apiCall(cartItem,'POST','addProductToCartCheckout')
+                .then(
+                    (response) => 
+                        console.log("logout addProductToCartCheckout response",response)
+                )
+                .catch((error) => 
+                        console.log("Error in addProductToCartCheckout on logout",error)
+                )
+                
+            });
+            
+        }
+    } catch (error) {
+        console.log("Error: ", error);
+        
+    }
+
+    await AsyncStorage.removeItem('userToken');
+    props.navigation.navigate('DrawerNav');
+}
+
  CustomDrawerContent = (props) => {
     getUserToken();
     console.log("user Token sidebar", userToken);
@@ -150,13 +184,14 @@ const getUserToken = async() =>{
                         'Do you want to logout?',
                         [
                           {text: 'Cancel', onPress: () => {return null}},
-                          {text: 'Confirm', onPress: async() => {
-                              await apiCall([JSON.parse(cartData),{flag:'logout'}],'POST','addProductToCartCheckout')
-                              .then((response)=> console.log("logout addProductToCartCheckout response",response))
-                              .catch((error) => console.log("Error in addProductToCartCheckout on logout",error)
-                              )
-                            await AsyncStorage.removeItem('userToken');
-                            props.navigation.navigate('DrawerNav');
+                          {text: 'Confirm', onPress: () =>{ 
+                              handleLogout()
+                            //   await apiCall([JSON.parse(cartData),{flag:'logout'}],'POST','addProductToCartCheckout')
+                            //   .then((response)=> console.log("logout addProductToCartCheckout response",response))
+                            //   .catch((error) => console.log("Error in addProductToCartCheckout on logout",error)
+                            //   )
+                            // await AsyncStorage.removeItem('userToken');
+                            // props.navigation.navigate('DrawerNav');
                           }},
                         ],
                         { cancelable: false }
@@ -168,12 +203,5 @@ const getUserToken = async() =>{
     );
 };
 
-// function mapState(state) {
-//     // const { isLogin, userData} = state.authReducer;
-//     // return { isLogin, userData };
-//     return{
-//         data:state
-//     }
-// }
 
 export default CustomDrawerContent;
