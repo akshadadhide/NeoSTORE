@@ -173,7 +173,7 @@ handleLogout = async() => {
             <DrawerItem 
             icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
             label={() => <Text style={styles.sidebarLink}> My Orders </Text>} 
-            onPress={() => { props.navigation.navigate('DrawerNav')}}  />
+            onPress={() => { props.navigation.navigate('OrderList')}}  />
 
             <DrawerItem 
                 icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
