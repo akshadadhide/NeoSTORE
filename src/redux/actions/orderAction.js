@@ -3,6 +3,7 @@ import { apiCall } from '../../API/apiCall';
 
 export const orderActions = {
     placeOrder,
+    getOrderDetails,
 }
 
 function placeOrder(data, type){
@@ -33,5 +34,27 @@ function placeOrder(data, type){
             type: ActionTypes.PLACE_ORDER_FAILURE,
             payload: error
         }
+    }
+}
+
+function getOrderDetails(type){
+    return dispatch =>{
+        apiCall(null,'GET',type)
+        .then((result) => {
+            console.log("res: ",result);
+            dispatch(getOrderDetailsSuccess(result.product_details));
+        })
+        .catch((error) =>{
+            console.log("Error: ", error);
+            
+        })
+    }
+
+    function getOrderDetailsSuccess(result){
+        return {
+            type: ActionTypes.GET_ORDER_DETAILS_SUCCESS,
+            payload: result
+        }
+
     }
 }

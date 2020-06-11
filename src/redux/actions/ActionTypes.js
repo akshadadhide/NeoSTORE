@@ -84,7 +84,9 @@ export const ActionTypes = {
     GET_ALL_PRODUCTS_SUCCESS: 'GET_ALL_PRODUCTS_SUCCESS',
     /*get all products */
 
-
+    /*get Order Details*/
+    GET_ORDER_DETAILS_SUCCESS: 'GET_ORDER_DETAILS_SUCCESS',
+    /*getOrderDetails*/
 
     
 }

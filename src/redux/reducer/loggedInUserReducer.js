@@ -59,6 +59,7 @@ export function loggedInUserReducer(state =  initialState, action){
             return {...state, changePasswordRes: action.payload}
         /*change password*/
 
+        
 
         default:
             return {state};

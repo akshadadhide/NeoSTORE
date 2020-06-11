@@ -189,3 +189,4 @@ function changePassword(data, type){
         }
     }
 }
+
