@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
         borderColor:StyleConstants.COLOR_FFFFFF,
         borderWidth: 7,
         color: StyleConstants.COLOR_FFFFFF,
-        marginBottom: StyleConstants.TEXTBOX_MARGIN_BOTTOM,
+        // marginBottom: StyleConstants.TEXTBOX_MARGIN_BOTTOM,
         padding: StyleConstants.PADDING,
     },
 

@@ -1,14 +1,12 @@
 import PropTypes from "prop-types";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, ScrollView, Text, Button, TouchableHighlight, TouchableOpacity, Alert, ImageBackground } from 'react-native';
+import { View, ScrollView, Text, ActivityIndicator, TouchableHighlight, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import {Input, Item, Radio, CheckBox} from 'native-base';
 import { styles } from '../../styles/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StyleConstants} from '../../styles/Constants';
-import {validation} from '../../../utils/Validation';
-// import {validatePassword} from '../../../utils/Validation';
-import {Services} from '../../../API/Services';
+import {validation, NAME_REGEX, customErrors, MOBILE_REGEX, PASSWORD_REGEX, EMAIL_REGEX} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 
 
@@ -24,6 +22,8 @@ class Register extends Component {
             confirmPass: '',
             gender: '',
             phone_no: '',
+
+            errors:{},
             
             inputProp: 'regular',
 
@@ -31,7 +31,7 @@ class Register extends Component {
             passwordHide: true,
         }
         this.handleRegister = this.handleRegister.bind(this);
-        this.validatePassword = this.validatePassword.bind(this);
+        // this.validatePassword = this.validatePassword.bind(this);
     }
 
     setPasswordVisiblility = () => {
@@ -44,16 +44,109 @@ class Register extends Component {
         this.setState({passwordHide: !this.state.passwordHide });
     }
 
-    validatePassword(){
-        const {pass, confirmPass} = this.state;
-        if(confirmPass === ''){
-            alert("Please Confirm the password");
+    // validatePassword(){
+    //     const {pass, confirmPass} = this.state;
+    //     if(confirmPass === ''){
+    //         alert("Please Confirm the password");
+    //     }
+    //     else if(pass !== confirmPass){
+    //         console.log("in val--- pass:-", pass, " cpass:-", confirmPass);
+    //         alert("Both Password should be same");
+    //     }
+    // }
+
+    /*validation*/
+    handleValidation = () => {
+        console.log("In validation");
+        const {first_name, last_name, phone_no, email, pass, confirmPass,gender} = this.state;
+        let {errors} = this.state;
+        let errorFlag = false;
+
+        //first name validation
+        if(first_name.length === 0 || NAME_REGEX.test(first_name) === false){
+            errorFlag =  true;
+            const {valueMissing, wrongPattern} = customErrors.first_name;
+            errors.first_name = first_name === '' ? valueMissing : wrongPattern;
         }
-        else if(pass !== confirmPass){
-            console.log("in val--- pass:-", pass, " cpass:-", confirmPass);
-            alert("Both Password should be same");
+        else{
+            delete errors.first_name;
         }
+
+         //last name validation
+         if(last_name.length === 0 || NAME_REGEX.test(last_name) === false){
+            errorFlag =  true;
+            const {valueMissing, wrongPattern} = customErrors.last_name;
+            errors.last_name = last_name === '' ? valueMissing : wrongPattern;
+        }
+        else{
+            delete errors.last_name;
+        }
+
+        //phone number validation
+        if(phone_no.length === 0 || MOBILE_REGEX.test(phone_no) === false){
+            errorFlag = true;
+            const {valueMissing, wrongPattern} = customErrors.phone_no;
+            errors.phone_no = phone_no === '' ? valueMissing : wrongPattern;
+        }
+        else{
+            delete errors.phone_no;
+        }
+
+        //email validation
+        if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+            errorFlag = true;
+            const {valueMissing, wrongPattern} = customErrors.email;
+            errors.email = email === '' ? valueMissing : wrongPattern;
+        }
+        else{
+            delete errors.email;
+        }
+      
+        console.log("pass: ", pass, "length: ",pass.length);
+        
+        //password validation
+        if(pass.length < 8 || pass.length > 12){
+            errorFlag = true;
+            const {valueMissing, minLength} = customErrors.pass;
+            errors.pass = pass === '' ? valueMissing : minLength;
+        }
+        else if(PASSWORD_REGEX.test(pass)){
+            errorFlag = true;
+            const {wrongPattern} = customErrors.pass;
+            errors.pass = wrongPattern;
+        }
+        else{
+            delete errors.pass;
+        }
+
+        //confirm password validation
+        if(confirmPass.length === 0 || pass !== confirmPass){
+            errorFlag = true;
+            const {valueMissing, diffPassword} = customErrors.confirmPass;
+            errors.confirmPass = confirmPass === '' ? valueMissing : diffPassword;
+        }
+        else{
+            delete errors.confirmPass;
+        }
+
+        //gender validation
+        if(gender.length === 0){
+            errorFlag = true;
+            const {valueMissing} = customErrors.gender;
+            errors.gender = gender === '' ? valueMissing : '';
+        }
+        else{
+            delete errors.gender;
+        }
+
+       
+      this.setState({errors});
+      console.log("Error: ",errors, " errFlag: ", errorFlag);
+      return errorFlag;
+      
+  
     }
+    /*validation*/
 
     handleRegister(){
         const logData = {
@@ -67,13 +160,18 @@ class Register extends Component {
         }
         console.log("form data", logData);
 
-            if(validation){
+        let {errors} = this.state;
+        const errorFlag = this.handleValidation();
+        console.log("Err Flag in submit: ", errorFlag);
+
+
+            if(errorFlag === false){
                 this.props.register(logData,'register');
                 const {isRegistered, registrationResult} = this.props;
                 // console.log("isReg:",isRegistered, "regRes:",registrationResult);
                 
                 if(isRegistered === true && registrationResult.status_code === 200 ){
-                    Alert.alert(registrationResult.message);
+                    // Alert.alert(registrationResult.message);
                     this.props.navigation.navigate('Login');
                 }
                 else{
@@ -89,44 +187,89 @@ class Register extends Component {
     render() {
         const {first_name, last_name, email, pass, confirmPass, phone_no, gender} = this.state;
         const {passIcon, passwordHide} =  this.state;
+        const {errors} = this.state;
+
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
             <ScrollView>
                 <View style={styles.container}>
                     <Text style={styles.brandName}>NeoSTORE</Text>
+                    {/* <Text style={styles.errorText}>{errors.submitError}</Text> */}
 
                     <Item regular style={styles.textboxStyle}>
                         <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input value={first_name} style={styles.inputBoxText} 
                                 onChangeText={first_name => {this.setState({ first_name }) }} 
-                                onBlur={ () => validation('first_name', this.state.first_name.trim())} 
+                                onBlur={this.handleValidation} 
                                 placeholder='First Name' 
-                                placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                                placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                        />
                         
                     </Item>
+                    <Text style={styles.errorText}> {errors.first_name}</Text>
+
 
                     <Item regular style={styles.textboxStyle}>
                         <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                        <Input value={last_name} style={styles.inputBoxText} onChangeText={last_name => {this.setState({ last_name }) }} onBlur={ () => validation('last_name', this.state.last_name.trim())} placeholder='Last name' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                        <Input 
+                            value={last_name} 
+                            style={styles.inputBoxText} 
+                            onChangeText={last_name => {this.setState({ last_name }) }} 
+                            onBlur={this.handleValidation} 
+                            placeholder='Last name' 
+                            placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                        />
                     </Item>
+                    <Text style={styles.errorText}> {errors.last_name}</Text>
+
 
                     <Item regular style={styles.textboxStyle}>
                         <Icon active name='envelope' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                        <Input value={email} style={styles.inputBoxText} onChangeText={email => {this.setState({ email }) }} onBlur={ () => validation('email', this.state.email.trim())} placeholder='Email' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                        <Input 
+                            value={email} 
+                            style={styles.inputBoxText} 
+                            keyboardType='email-address' 
+                            onChangeText={email => {this.setState({ email }) }} 
+                            onBlur={this.handleValidation} 
+                            placeholder='Email' 
+                            placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                        />
                     </Item>
+                    <Text style={styles.errorText}> {errors.email}</Text>
+
 
                     <Item regular style={styles.textboxStyle}>
                         <Icon active name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                        <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => {this.setState({pass}) }}  onBlur={ () => validation('password', this.state.pass)} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                        <Input 
+                            value={pass} 
+                            secureTextEntry={passwordHide} 
+                            style={styles.inputBoxText} 
+                            onChangeText={pass => {this.setState({pass}) }}  
+                            onBlur={this.handleValidation} 
+                            placeholder='Password' 
+                            placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                        />
                         <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
                     </Item>
+                    <Text style={styles.errorText}> {errors.pass}</Text>
+
 
                     <Item regular style={styles.textboxStyle}>
                         <Icon active name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                        <Input value={confirmPass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={confirmPass => {this.setState({ confirmPass }) }} onBlur={this.validatePassword} onChange={() => this.validatePassword} placeholder='Confirm Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                        <Input 
+                            value={confirmPass} 
+                            secureTextEntry={passwordHide} 
+                            style={styles.inputBoxText} 
+                            onChangeText={confirmPass => {this.setState({ confirmPass }) }} 
+                            onBlur={this.handleValidation} 
+                            placeholder='Confirm Password' 
+                            placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                        />
                         <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
                     </Item>
+                    <Text style={styles.errorText}> {errors.confirmPass}</Text>
+
 
                     <View style={styles.genderContainer}>
                         <Text style={styles.linkText}> Gender </Text>
@@ -135,11 +278,23 @@ class Register extends Component {
                         <Radio color={StyleConstants.COLOR_FFFFFF} onPress={() => this.setState({ gender: 'F' })} selected={gender == 'F'}/> 
                         <Text style={styles.linkText}> Female </Text>
                     </View>
+                    <Text style={styles.errorText}> {errors.gender}</Text>
+
                     
                     <Item regular style={styles.textboxStyle}>
                         <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                        <Input value={phone_no} style={styles.inputBoxText} onChangeText={phone_no => {this.setState({ phone_no }) }} onBlur={ () => validation('phone_no', this.state.phone_no.trim())} placeholder='Phone Number' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                        <Input 
+                            value={phone_no} 
+                            style={styles.inputBoxText} 
+                            keyboardType='phone-pad' 
+                            onChangeText={phone_no => {this.setState({ phone_no }) }} 
+                            onBlur={this.handleValidation} 
+                            placeholder='Phone Number' 
+                            placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                        />
                     </Item>
+                    <Text style={styles.errorText}> {errors.phone_no}</Text>
+
 
                     <View style={{flexDirection:'row'}}>
                         <CheckBox checked={true}  style={styles.checkboxStyle}/>

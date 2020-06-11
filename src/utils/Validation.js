@@ -2,17 +2,42 @@ import {Alert} from 'react-native';
 
 export const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
 export const EMAIL_REGEX = /^[A-Za-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
+export const NAME_REGEX = /^[a-zA-Z '.-]+$/;
+export const MOBILE_REGEX = /^\d{10}$/;
+export const PASSWORD_REGEX = /^[a-zA-Z]+\d$/;
 
 
 export const customErrors = {
+    first_name: {
+        valueMissing: 'Please enter your first Name',
+        wrongPattern: 'Invalid name'
+    },
+    last_name: {
+        valueMissing: 'Please enter your last Name',
+        wrongPattern: 'Invalid name'
+    },
+    phone_no: {
+        valueMissing: 'Please enter your phone number',
+        wrongPattern: 'Invalid phone number'
+    },
     email: {
         valueMissing: 'Please enter your email id',
         wrongPattern: 'Invalid email id'
     },
     pass: {
         valueMissing: 'Please enter password',
-        wrongPattern: 'password should contain alphabets, numbers and special symbol',
+        wrongPattern: 'password should contain only alphabets and numbers',
         minLength: 'password length should be between 8 to 12 characters'
+    },
+    confirmPass: {
+        valueMissing: 'Please confirm password',
+        diffPassword: 'Both password should be same'
+    },
+    gender: {
+        valueMissing: 'Please select gender',
+    },
+    birthDate: {
+        valueMissing: 'Please enter birth date',
     },
     address: {
         valueMissing: 'Please enter address',
@@ -38,18 +63,14 @@ export function validation(fieldName, value){
     const emailRegex = /^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
     const passwordRegex = /^[a-zA-Z0-9]$/;
 
-    // let errorFlag = false;
     let errorMsg = '';
     
 
 
     if(fieldName === 'first_name' && value === ''){
         Alert.alert("first name cannot be empty");
-        // return false;
-        // errorFlag = true;
         errorMsg = 'required';
         return errorMsg;
-        // return {errorFlag, errorMsg}
     }
     
     else if(fieldName === 'first_name' || fieldName === 'last_name'){
@@ -79,29 +100,12 @@ export function validation(fieldName, value){
         }
     }
 
-    // if(fieldName === 'password'){
-    //     if(!passwordRegex.test(value)){
-    //         Alert.alert("Password should contain characters and numbers");
-    //     }
-    //     else if(value.length < 8 || value.length > 12){
-    //         Alert.alert("Password length should be 8 to 12 chars");
-    //     }
-    //     else{
-    //         pwd = value;
-    //     }
-    // }
 
     else if(fieldName === 'confirm_password' && value === ''){
         Alert.alert("Please confirm the password");
         errorMsg = 'required';
         return errorMsg;
     }
-
-    // else if(fieldName === 'confirm_password' && value !== ''){
-    //     if(!validatePassword){
-    //         Alert.alert("Both passwords should be same");
-    //     }
-    // }
 
     else if(fieldName === 'phone_no' && value === ''){
         Alert.alert("Please enter phone number");
@@ -123,13 +127,3 @@ export function validation(fieldName, value){
         return errorMsg;
     }
 }
-
-// export function validatePassword(password, confirm_password){
-//     if(password !== confirm_password){
-//         console.log("in val--- pass:-", password, " cpass:-", confirm_password);
-//         return false;
-//     }
-//     else{
-//         return true;
-//     }
-// }
