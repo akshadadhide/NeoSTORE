@@ -211,9 +211,9 @@ class Register extends Component {
                     <Text style={styles.brandName}>NeoSTORE</Text>
                     {/* <Text style={styles.errorText}>{errors.submitError}</Text> */}
 
-                    <Item regular style={styles.textboxStyle}>
+                    <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                        <Input value={first_name} style={styles.inputBoxText} 
+                        <Input value={first_name.trim()} style={styles.inputBoxText} 
                                 onChangeText={first_name => {this.setState({ first_name }) }} 
                                 onBlur={() => this.handleValidation('first_name')} 
                                 placeholder='First Name' 
@@ -224,10 +224,10 @@ class Register extends Component {
                     <Text style={styles.errorText}> {errors.first_name}</Text>
 
 
-                    <Item regular style={styles.textboxStyle}>
+                    <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input 
-                            value={last_name} 
+                            value={last_name.trim()} 
                             style={styles.inputBoxText} 
                             onChangeText={last_name => {this.setState({ last_name }) }} 
                             onBlur={() => this.handleValidation('last_name')} 
@@ -238,10 +238,10 @@ class Register extends Component {
                     <Text style={styles.errorText}> {errors.last_name}</Text>
 
 
-                    <Item regular style={styles.textboxStyle}>
+                    <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='envelope' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input 
-                            value={email} 
+                            value={email.trim()} 
                             style={styles.inputBoxText} 
                             keyboardType='email-address' 
                             onChangeText={email => {this.setState({ email }) }} 
@@ -253,7 +253,7 @@ class Register extends Component {
                     <Text style={styles.errorText}> {errors.email}</Text>
 
 
-                    <Item regular style={styles.textboxStyle}>
+                    <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input 
                             value={pass} 
@@ -269,7 +269,7 @@ class Register extends Component {
                     <Text style={styles.errorText}> {errors.pass}</Text>
 
 
-                    <Item regular style={styles.textboxStyle}>
+                    <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input 
                             value={confirmPass} 
@@ -295,10 +295,10 @@ class Register extends Component {
                     <Text style={styles.errorText}> {errors.gender}</Text>
 
                     
-                    <Item regular style={styles.textboxStyle}>
+                    <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input 
-                            value={phone_no} 
+                            value={phone_no.trim()} 
                             style={styles.inputBoxText} 
                             keyboardType='phone-pad' 
                             onChangeText={phone_no => {this.setState({ phone_no }) }} 

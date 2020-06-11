@@ -97,7 +97,8 @@ handleLogout = async() => {
             {(b) ?
             (<DrawerItem 
                 icon={() => <Icon name="shopping-cart" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
-            label={() => <Text style={[styles.sidebarLink,{marginRight: 10,}]}> My Carts 
+            label={() => <Text style={[styles.sidebarLink,{marginRight: 10,}]}> 
+                            <Text style={{marginRight: 20,paddingRight:20,}}>My Carts</Text>  
                             <Text style={styles.cartCount}> 
                                 {userData.cart_count}  
                             </Text> 

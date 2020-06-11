@@ -122,7 +122,7 @@ class Login extends Component {
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={email} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={this.handleValidation} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input value={email.trim()} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={this.handleValidation} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                         </Item>
                         <Text style={styles.errorText}> {errors.email}</Text>
 
