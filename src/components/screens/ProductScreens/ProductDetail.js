@@ -24,7 +24,7 @@ class ProductDetail extends Component{
     this.state= {
         ratingData:{
           product_id: '',
-          product_rating: '',
+          product_rating: 2.5,
         },
         modalVisible: false,
         base64Data:'',
@@ -136,14 +136,18 @@ class ProductDetail extends Component{
     console.log("--onstartpress data", this.state.ratingData);
   }
   
-  async setModalVisible(visible) {
+  setModalVisible(visible) {
     this.setState({modalVisible: visible});
+  }
 
+  async onSubmitRating(visible){
     await this.props.updateProductRating(this.state.ratingData, RATE_TO_PRODUCT_URLTYPE);
     const {productRatingRes} = await this.props;
     console.log("productRatingRes", productRatingRes);
-    (productRatingRes !== undefined) &&
-    (Alert.alert(productRatingRes.message))
+    setTimeout(()=>{(productRatingRes !== undefined) &&
+    (Alert.alert(productRatingRes.message))},2000);
+    this.setState({modalVisible: visible});
+
   }
 
  
@@ -222,7 +226,7 @@ class ProductDetail extends Component{
 
                   <TouchableHighlight 
                     style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F, margin:10, } ]} 
-                    onPress={ () => this.setModalVisible(!this.state.modalVisible)}>
+                    onPress={ () => this.onSubmitRating(!this.state.modalVisible)}>
                       <Text style={styles.TabNavButtonText}>RATE NOW</Text>
                   </TouchableHighlight>
               </View>
@@ -300,7 +304,7 @@ class ProductDetail extends Component{
               <TouchableOpacity 
                   style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,} ]} 
                     onPress={() => {
-                      (userToken !== undefined && userToken !== null) ? this.setModalVisible(true) : (alert('Please Login first'))
+                      (userToken !== null) ? this.setModalVisible(true) : (alert('Please Login first'))
                 
               }}>
                 <Text style={styles.TabNavButtonText}> RATE </Text>
