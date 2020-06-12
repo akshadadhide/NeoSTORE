@@ -30,9 +30,7 @@ class CartProducts extends Component {
                 this.setState({cartData: JSON.parse(myArray)})
               console.log("In cart m: ",JSON.parse(myArray));
             }
-            else{
-
-            }
+            
         }
         catch (error) {
             console.log("Error: ", error);            
@@ -66,8 +64,8 @@ class CartProducts extends Component {
                 (<ScrollView>
                     <FlatList
                     data={cartData}
-                    renderItem={ ({item}) => (
-                        <TouchableOpacity>
+                    renderItem={ ({item,index}) => (
+                        <TouchableOpacity key={item._id} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
                             <View style={styles.productListView}>
                                 <View style={{marginRight:5,}}>
                                     <Image
@@ -83,7 +81,7 @@ class CartProducts extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={item => {item.product_id}}
+                    keyExtractor={(item) => {item._id}}
                     ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
                     />
                 </ScrollView>)}

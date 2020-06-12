@@ -16,6 +16,13 @@ class OrderList extends Component {
         const {orderDetails} = this.props;
         console.log("orderDetails: ", orderDetails);
     }
+    // componentDidUpdate(prevProps){
+    //     if(this.props.orderDetails !== prevProps.orderDetails){
+    //         // this.props.getOrderDetails('getOrderDetails');
+    //         const {orderDetails} = this.props;
+    //         console.log("jhhk: ",orderDetails);
+    //     }
+    // }
 
     render() {
         const {orderDetails,isLoading} = this.props;

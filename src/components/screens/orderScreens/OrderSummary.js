@@ -16,7 +16,7 @@ class OrderSummary extends Component {
     constructor(){
         super();
         this.state ={
-            productCount:1,
+            productCount:new Array(5),
             custAddress:'',
         }
     }
@@ -25,6 +25,42 @@ class OrderSummary extends Component {
         .then((result)=> {console.log("In compDidM, Addr:",result.customer_address), this.setState({custAddress:result.customer_address})}
         )
         .catch(error => console.log("In compDidM, Addr error:",error))
+
+        const {productDetails} = this.props.route.params;
+        console.log("len--- : ",productDetails.length);
+        let arr=[productDetails.length];
+        for(let i=0; i<productDetails.length; i++){
+            console.log("i: ",i);
+            arr[i]=1;
+            // this.setState(state => ({
+            //     productCount: {
+            //         ...state.productCount,
+            //         [state.productCount[i].val]:1,
+            //     },
+            // }))
+        }
+        this.setState({productCount:arr})
+
+        console.log("hjhbj: ",arr,"pdn fodksl: ",this.state.productCount);
+        
+        
+    }
+
+    handlePickerChange(index,itemValue){
+        const { productCount } = this.state;
+        productCount.splice(index, 1, itemValue);
+
+        this.setState({ productCount: [...productCount] });
+    }
+
+    calculateTotalCost(){
+        const {productDetails} = this.props.route.params;
+        const {productCount} = this.state
+        let totalCost=0;
+        for(let i=0; i<productDetails.length; i++){
+            totalCost = totalCost + (productDetails[i].product_cost * productCount[i]);
+        }
+        return totalCost;
     }
 
     goBack = () => this.props.navigation.goBack();
@@ -62,10 +98,11 @@ class OrderSummary extends Component {
     
     const address = custAddress !== undefined ? this.handleAddress(custAddress) : null
     console.log("In render deliver add: ", address);
+    console.log("c---------: ",this.state.productCount, "len: ",productDetails.length);
     
+    let totalCost = this.calculateTotalCost();
+    // console.log("total cost: ",totalCost);
     
-    
-
     return (
       <View style={{flex:1,}}>
             <Header iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Order Summary"  />
@@ -82,7 +119,7 @@ class OrderSummary extends Component {
                 
                 <FlatList 
                 data={productDetails}
-                renderItem={ ({item}) => (
+                renderItem={ ({item,index}) => (
                     <View style={styles.orderSummaryView}>
                         <View style={styles.rowSpaceBetween}>
                             <Text style={[styles.productDetailTitle, {width:WINDOW_WIDTH/2.5, } ]}>{item.product_name} </Text>
@@ -90,9 +127,9 @@ class OrderSummary extends Component {
                         </View>
                         <View style={styles.rowSpaceBetween}>
                             <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000, width:WINDOW_WIDTH/2, }]}> {item.product_material} </Text>
-                            <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000}]}> Rs. {item.product_cost} </Text>
+                            <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000}]}> Rs. {this.state.productCount[index] * item.product_cost} </Text>
                         </View>
-                        <Picker selectedValue={this.state.productCount} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.setState({productCount:itemValue})}>
+                        <Picker selectedValue={this.state.productCount[index]} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.handlePickerChange(index,itemValue)}>
                             <Picker.Item label='1' value={1} />
                             <Picker.Item label='2' value={2} />
                             <Picker.Item label='3' value={3} />
@@ -108,13 +145,13 @@ class OrderSummary extends Component {
                     <Text style={{color:StyleConstants.COLOR_333333, textDecorationLine:'underline', fontSize:StyleConstants.FONT_20}}> PRICE DETAILS </Text>
                     <View style={[styles.rowSpaceBetween,{padding:StyleConstants.PADDING}]}>
                         <Text style={{color:StyleConstants.COLOR_7F7F7F, fontSize: StyleConstants.FONT_20}}> Price </Text>
-                        {/* <Text style={{color:StyleConstants.COLOR_7F7F7F, fontSize: StyleConstants.FONT_20}}> {product_cost * this.state.productCount} </Text> */}
+                        <Text style={{color:StyleConstants.COLOR_7F7F7F, fontSize: StyleConstants.FONT_20}}> {totalCost} </Text>
                     </View>
                 </View>
             </ScrollView>
 
             <View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF, }]}>
-                {/* <Text style={[styles.productDetailTitle,{color:StyleConstants.COLOR_282727, }]}> Rs.{product_cost * this.state.productCount} </Text> */}
+                <Text style={[styles.productDetailTitle,{color:StyleConstants.COLOR_282727, }]}> Rs.{totalCost} </Text>
                 <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]}
                     onPress={() => {
                         this.props.placeOrder(data, type);
