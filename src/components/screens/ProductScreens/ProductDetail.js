@@ -296,8 +296,8 @@ class ProductDetail extends Component{
             <View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF}]}>
               <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
                 onPress={ () =>  (userToken !== null) ?
-                  (this.props.navigation.navigate('OrderSummary',{product_name:productD.product_name, product_id: productD.product_id, product_material:productD.product_material, 
-                    product_image:productD.product_image, product_cost:productD.product_cost})):
+                  (this.props.navigation.navigate('OrderSummary',{productDetails:[{product_name:productD.product_name, product_id: productD.product_id, product_material:productD.product_material, 
+                    product_image:productD.product_image, product_cost:productD.product_cost}]})):
                   (alert('Please Login first')) } >
                 <Text style={styles.TabNavButtonText}> BUY NOW </Text>
               </TouchableOpacity>

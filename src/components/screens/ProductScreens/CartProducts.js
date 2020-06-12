@@ -33,10 +33,10 @@ class CartProducts extends Component {
             else{
 
             }
-          } catch (error) {
-            console.log("Error: ", error);
-            
-          }
+        }
+        catch (error) {
+            console.log("Error: ", error);            
+        }
 
     }
 
@@ -92,10 +92,9 @@ class CartProducts extends Component {
                 <View style={[styles.rowSpaceBetween, {backgroundColor:StyleConstants.COLOR_FFFFFF ,borderTopColor: StyleConstants.COLOR_000000, padding:StyleConstants.PADDING,}]}>
                     <Text style={[styles.productDetailTitle, {marginBottom:0, padding:StyleConstants.PADDING}]}> Rs.{totalCost} </Text>
                     <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
-                        onPress={ () =>  (productInfo !== undefined) ?
-                        (this.props.navigation.navigate('OrderSummary',{product_name:productInfo.product_name, product_id: productInfo.product_id, product_material:productInfo.product_material, 
-                            product_image:productInfo.category_id.product_image, product_cost:productInfo.product_cost})):
-                        (alert('Please Login first')) } >
+                        onPress={ () =>  (cartData !== undefined) ?
+                        (this.props.navigation.navigate('OrderSummary',{productDetails:cartData})):
+                        (alert('Please first add product to cart')) } >
                         <Text style={styles.TabNavButtonText}> ORDER NOW </Text>
                     </TouchableOpacity>
                 </View>
