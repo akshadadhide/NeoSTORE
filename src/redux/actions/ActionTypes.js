@@ -88,5 +88,8 @@ export const ActionTypes = {
     GET_ORDER_DETAILS_SUCCESS: 'GET_ORDER_DETAILS_SUCCESS',
     /*getOrderDetails*/
 
+    /*getCustomerOrderInDetail*/
+    GET_ORDER_IN_DETAIL_SUCCESS: 'GET_ORDER_IN_DETAIL_SUCCESS',
+    /*getCustomerOrderInDetail*/
     
 }

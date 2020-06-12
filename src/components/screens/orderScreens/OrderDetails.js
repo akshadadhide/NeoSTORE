@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, Image} from 'react-native';
 import Header from '../../Common/Header';
 import { StyleConstants } from '../../styles/Constants';
 import {styles} from '../../styles/Styles';
+import { BASE_URL } from '../../../API/apiConstants';
 
 
 class OrderDetails extends Component {
@@ -10,19 +11,30 @@ class OrderDetails extends Component {
     goBack = () => this.props.navigation.goBack();
 
     render() {
+        const {productDetails} = this.props.route.params;
+        console.log("productDetails: ",productDetails);
+        const orderInfo = productDetails.product_details[0];
+        const productInfo = orderInfo.product_details[0];
+
+
         return (
             <View style={{flex: 1,}}>
-                <Header iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle="OrderNum"  rightIconName="search"/>
+                <Header iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle={orderInfo.order_id}  rightIconName="search"/>
                 <ScrollView style={{padding: StyleConstants.PADDING}}>
 
                     <View style={styles.rowSpaceBetween}>
-                        <View></View>
                         <View>
-                            <Text style={[styles.productDetailTitle, {marginBottom:0,}]}> Product Name </Text>
-                            <Text style={styles.productDetailMaterial}> (material) </Text>
+                        <Image
+                            style={{width: 80, height: 80}}
+                            source={{uri: BASE_URL+productInfo.product_image}}
+                        />
+                        </View>
+                        <View>
+                            <Text style={[styles.productDetailTitle, {marginBottom:0,}]}> {productInfo.product_name} </Text>  
+                            <Text style={styles.productDetailMaterial}> {productInfo.product_material} </Text>
                             <View style={styles.rowSpaceBetween}>
-                                <Text style={styles.productDetailMaterial}> QTY: </Text>
-                                <Text style={styles.productDetailMaterial}> Rs.Price </Text>
+                                <Text style={styles.productDetailMaterial}> QTY: {orderInfo.quantity} </Text>
+                                <Text style={styles.productDetailMaterial}> Rs.{(productInfo.product_cost) * (orderInfo.quantity)} </Text>
                             </View>
 
                         </View>
@@ -33,7 +45,7 @@ class OrderDetails extends Component {
 
                 <View style={[styles.rowSpaceBetween, {backgroundColor:StyleConstants.COLOR_FFFFFF ,borderTopColor: StyleConstants.COLOR_000000,}]}>
                     <Text style={[styles.productDetailTitle, {marginBottom:0, padding:StyleConstants.PADDING}]}> Total </Text>
-                    <Text style={[styles.productDetailTitle, {marginBottom:0,padding:StyleConstants.PADDING,}]}> Rs price</Text>
+                    <Text style={[styles.productDetailTitle, {marginBottom:0,padding:StyleConstants.PADDING,}]}> Rs. {productInfo.product_cost * orderInfo.quantity}</Text>
                 </View>
 
             </View>

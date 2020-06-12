@@ -15,6 +15,12 @@ class Home extends Component {
         this.props.getCarouselImages();
     }
 
+    componentDidUpdate(prevProps){
+        // const {isLoading} = this.props;
+
+        // if(isLoading )
+    }
+
     handleToggleDrawer = () => this.props.navigation.toggleDrawer();
 
     searchHandler = (searchText) =>{

@@ -4,6 +4,7 @@ import { apiCall } from '../../API/apiCall';
 export const orderActions = {
     placeOrder,
     getOrderDetails,
+    getCustomerOrderInDetail,
 }
 
 function placeOrder(data, type){
@@ -57,4 +58,27 @@ function getOrderDetails(type){
         }
 
     }
+}
+
+function getCustomerOrderInDetail(type){
+
+    return dispatch => {
+        apiCall(null,'GET',type)
+        .then((result)=>{
+            console.log("Result of getCustomerOrderInDetail: ",result);
+            dispatch(getOrderInDetailSuccess(result));
+            
+        })
+        .catch((error) => {
+            console.log("Error in getCustomerOrderInDetail: ", error);
+        });
+    }
+
+    function getOrderInDetailSuccess(result){
+        return {
+            type: ActionTypes.GET_ORDER_IN_DETAIL_SUCCESS,
+            payload: result
+        }
+    }
+
 }

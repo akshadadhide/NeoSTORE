@@ -5,7 +5,7 @@ const initialState = {
     res:{},
     errorMsg:'',
     orderDetails:{},
-
+    OrderInDetail:{},
 }
 
 export function orderReducer(state = initialState, action){
@@ -21,6 +21,11 @@ export function orderReducer(state = initialState, action){
         case ActionTypes.GET_ORDER_DETAILS_SUCCESS:
             return {...state, orderDetails: action.payload, isLoading:false}
         /*get order details*/
+
+        /* getCustomerOrderInDetail */
+        case ActionTypes.GET_ORDER_IN_DETAIL_SUCCESS:
+            return {...state, OrderInDetail: action.payload, isLoading:false}
+        /* getCustomerOrderInDetail */
 
         default: 
             return {}
