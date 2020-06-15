@@ -78,7 +78,8 @@ export const styles = StyleSheet.create({
     //Error
     errorText:{
         fontSize: StyleConstants.FONT_18,
-        color: StyleConstants.COLOR_FFBA00,
+        fontWeight:StyleConstants.FONT_BOLD,
+        color: StyleConstants.COLOR_FFFF00,
         paddingBottom: StyleConstants.PADDING_10
         
     },
@@ -354,6 +355,11 @@ export const styles = StyleSheet.create({
         
     },
     /* Edit Profile */
+
+    /*loader*/
+    loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0, 0.5)', zIndex: 5},
+    loaderView: {justifyContent: 'center', alignItems: 'center',},
+    /*loader*/
     
     
 });

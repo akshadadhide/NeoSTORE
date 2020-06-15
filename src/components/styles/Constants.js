@@ -38,6 +38,7 @@ export const StyleConstants = {
 
     /* Yellow */
     COLOR_FFBA00:'#ffba00',
+    COLOR_FFFF00: '#ffff00',
 
     /*blue*/
     COLOR_3366FF:'#3366FF',

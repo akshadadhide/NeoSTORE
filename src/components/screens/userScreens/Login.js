@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { Component } from 'react';
-import {ScrollView,Alert, View, Text, ActivityIndicator, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
+import {ScrollView,Alert, View, Text, ActivityIndicator, StyleSheet, ImageBackground, TouchableHighlight, TouchableOpacity} from 'react-native';
 import { styles } from '../../styles/Styles';
 import {Input, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,6 +8,7 @@ import {StyleConstants} from '../../styles/Constants';
 import {validation, EMAIL_REGEX, customErrors} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 import { connect } from 'react-redux';
+import Loader from "../../Common/Loader";
 
 
 
@@ -22,10 +23,16 @@ class Login extends Component {
 
             passIcon: 'eye',
             passwordHide: true,
+
+            showLoader:false,
             
         }
         this.handleLogin = this.handleLogin.bind(this);
     }
+
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
+
 
     setPasswordVisiblility = () => {
         if(this.state.passIcon === 'eye'){
@@ -38,13 +45,13 @@ class Login extends Component {
     }
 
     handleValidation = () => {
-        console.log("In validation");
         const {email, pass} = this.state;
         let {errors} = this.state;
-        console.log("e: ", email, " pass: ", pass, " err: ", errors);
     
         let errorFlag = false;
     
+        console.log("e: ",email, "pass: ",pass);
+        
         //email validation
         if(email.length === 0 || EMAIL_REGEX.test(email) === false){
           errorFlag = true;
@@ -62,16 +69,16 @@ class Login extends Component {
             errors.pass = pass === '' ? valueMissing : minLength;
         }
         else{
-            delete errors.password
+            delete errors.pass
         }
 
         this.setState({errors}); 
-        console.log("Errors: ",errors, "ErrorFlag: ", errorFlag);
         return errorFlag;
           
       }
 
     async handleLogin(){
+        this.showLoader();
         let {errors} = this.state;
         
         const logData = {
@@ -80,19 +87,15 @@ class Login extends Component {
         };
 
         const errorFlag = this.handleValidation();
-        console.log("Err Flag in submit: ", errorFlag);
        
         if(errorFlag === false){
             await this.props.login(logData, 'login');
             const { isLogin, userData } = this.props;
-            console.log("userD", userData);
             
             if(isLogin == true && userData.status_code === 200){
-                // alert(userData.message);
-                this.props.navigation.navigate('DrawerNav');
+                this.props.navigation.navigate('Home');
             }
             else{
-                // this.setState({errorMsg:userData.message})
                 errors.submitError = userData.message !== undefined ? userData.message : 'Something went wrong'
                 this.setState({errors});
             }
@@ -101,6 +104,7 @@ class Login extends Component {
         else{
            Alert.alert('Please check all the information is properlly filled');
         }
+        this.hideLoader();
 
     }
 
@@ -158,6 +162,7 @@ class Login extends Component {
                         </View>
                     </View>
                 </View>
+                {(this.state.showLoader) && (<Loader />)}
             </ScrollView>
             </ImageBackground>
         );
