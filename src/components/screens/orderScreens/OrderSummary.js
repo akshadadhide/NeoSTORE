@@ -14,9 +14,9 @@ import { apiCall } from '../../../API/apiCall';
 import Loader from '../../Common/Loader';
 
 class OrderSummary extends Component {
-    constructor(props){
-        super(props);
-        this.state ={
+    constructor(){
+        super();
+        this.state = {
             productCount:new Array(5),
             custAddress:'',
             showLoader:false,
@@ -84,8 +84,8 @@ class OrderSummary extends Component {
         }
     }
 
-    async handleOrderNow(){
-        await this.showLoader();
+    handleOrderNow(){
+        this.showLoader();
         console.log("loader",this.state.showLoader);
 
         const {productDetails} = this.props.route.params;
