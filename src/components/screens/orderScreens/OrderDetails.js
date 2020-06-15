@@ -19,7 +19,7 @@ class OrderDetails extends Component {
 
         return (
             <View style={{flex: 1,}}>
-                <Header iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle={orderInfo.order_id}  rightIconName="search"/>
+                <Header iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle={orderInfo.order_id}/>
                 <ScrollView style={{padding: StyleConstants.PADDING}}>
 
                     <View style={styles.rowSpaceBetween}>

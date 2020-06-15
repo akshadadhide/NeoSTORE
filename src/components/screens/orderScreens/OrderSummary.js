@@ -11,14 +11,18 @@ import {orderActions} from '../../../redux/actions/orderAction';
 import {PLACE_ORDER_URLTYPE} from '../../../API/apiConstants';
 import {connect} from 'react-redux';
 import { apiCall } from '../../../API/apiCall';
+import Loader from '../../Common/Loader';
 
 class OrderSummary extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state ={
             productCount:new Array(5),
             custAddress:'',
+            showLoader:false,
         }
+
+        this.handleOrderNow = this.handleOrderNow.bind(this);
     }
     componentDidMount(){
         apiCall(null,'GET','getCustAddress')
@@ -41,10 +45,11 @@ class OrderSummary extends Component {
         }
         this.setState({productCount:arr})
 
-        console.log("hjhbj: ",arr,"pdn fodksl: ",this.state.productCount);
-        
-        
+        // console.log("hjhbj: ",arr,"pdn fodksl: ",this.state.productCount);   
     }
+
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
 
     handlePickerChange(index,itemValue){
         const { productCount } = this.state;
@@ -79,7 +84,40 @@ class OrderSummary extends Component {
         }
     }
 
+    async handleOrderNow(){
+        await this.showLoader();
+        console.log("loader",this.state.showLoader);
+
+        const {productDetails} = this.props.route.params;
+
+        const type = PLACE_ORDER_URLTYPE;
+
+        productDetails.map( (value,index) => {
+            console.log("Val: ",value, "index: ",index);
+            
+            const data = [{
+                _id: value.product_id,
+                product_id: value.product_id,
+                quantity: this.state.productCount[index],
+            },{flag : "checkout"}];
+            console.log("data-----", data);
+
+            if(data !== undefined){
+                this.props.placeOrder(data, type);
+                const {res} = this.props;
+                setTimeout(()=>{
+                    (res !== undefined) ? (Alert.alert(res.message)): Alert.alert("Something went wrong!!!try again");
+                },3000);
+            }
+        });
+        this.hideLoader();
+        console.log("----loader",this.state.showLoader);
+
+    }
+
   render() {
+    console.log("render loader",this.state.showLoader);
+
     const userData = store.getState().authReducer.userData;
     const customerDetails = userData.customer_details;
     const {custAddress} = this.state;
@@ -88,13 +126,7 @@ class OrderSummary extends Component {
     console.log("productDetails: ",productDetails);
     // product_id = productDetails[0].product_id;
     
-    // const type = PLACE_ORDER_URLTYPE;
-    // const data = [{
-    //     _id: product_id,
-    //     product_id: product_id,
-    //     quantity: this.state.productCount,
-    // },{flag : "checkout"}];
-    // console.log("data-----", data);
+    
     
     const address = custAddress !== undefined ? this.handleAddress(custAddress) : null
     console.log("In render deliver add: ", address);
@@ -153,15 +185,13 @@ class OrderSummary extends Component {
             <View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF, }]}>
                 <Text style={[styles.productDetailTitle,{color:StyleConstants.COLOR_282727, }]}> Rs.{totalCost} </Text>
                 <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]}
-                    onPress={() => {
-                        this.props.placeOrder(data, type);
-                        (this.props.res !== undefined) ? (Alert.alert(res.message)):null;
-
-                    }}
+                    onPress={this.handleOrderNow}
                 >
                     <Text style={styles.TabNavButtonText}> ORDER NOW </Text>
                 </TouchableOpacity>
             </View>
+
+            {this.state.showLoader && <Loader />}
       </View>
     );
   }
