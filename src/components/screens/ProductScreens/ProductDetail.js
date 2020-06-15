@@ -16,6 +16,7 @@ import StarRating from 'react-native-star-rating';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {productActions} from '../../../redux/actions/productActions';
 import {store} from '../../../redux/store';
+import Loader from '../../Common/Loader';
 
 class ProductDetail extends Component{
 
@@ -32,19 +33,23 @@ class ProductDetail extends Component{
         mainImageName:'',
         cartProductsArr:[],
         userToken:'',
+
+        showLoader:false,
     }
   }
   
   async componentDidMount(){
     token = await AsyncStorage.getItem('userToken');
-    this.setState({userToken:token});
-    console.log("getUserToken: ", this.state.userToken);
-
-    const {productId} = this.props.route.params;
-    const type = 'getProductByProdId/'+productId;
-    this.props.getProductDetails(type);
+      this.setState({userToken:token});
+      console.log("getUserToken: ", this.state.userToken);
+  
+      const {productId} = this.props.route.params;
+      const type = 'getProductByProdId/'+productId;
+      this.props.getProductDetails(type);
   }
 
+  showLoader = () => { this.setState({ showLoader:true }); };
+  hideLoader = () => { this.setState({ showLoader:false }); };
   goBack = () => this.props.navigation.goBack();
 
   // getUserToken = async() =>{
@@ -54,6 +59,7 @@ class ProductDetail extends Component{
   // }
 
   async handleAddToCart(){
+    await this.showLoader();
     let productInfo;
     const {productDetails} = this.props;
     const {cartProductsArr} = this.state;
@@ -92,6 +98,7 @@ class ProductDetail extends Component{
     } catch (error) {
       console.log("Error saving data in asyncstorage cart: ",error);
     }
+    await this.hideLoader();
 
 
     // (productDetails)&&(productInfo = {
@@ -141,11 +148,16 @@ class ProductDetail extends Component{
   }
 
   async onSubmitRating(visible){
+    await this.showLoader();
     await this.props.updateProductRating(this.state.ratingData, RATE_TO_PRODUCT_URLTYPE);
     const {productRatingRes} = await this.props;
     console.log("productRatingRes", productRatingRes);
-    setTimeout(()=>{(productRatingRes !== undefined) &&
-    (Alert.alert(productRatingRes.message))},2000);
+    setTimeout(()=>{
+      this.hideLoader();
+      (productRatingRes !== undefined) ?
+      (Alert.alert(productRatingRes.message)) : 
+      (Alert.alert("Something went wrong!!!try again"));
+    },3000);
     this.setState({modalVisible: visible});
 
   }
@@ -262,20 +274,19 @@ class ProductDetail extends Component{
 
                         </View>
                         <Image source={{uri: mainImage}} style={styles.productDetailImage}/>
-                        {/* <ScrollView horizontal={true}> */}
-                            <FlatList
-                                data = {subImages}
-                                numColumns={3}
-                                renderItem = { ({item}) => (
-                                  <TouchableHighlight 
-                                    style={{flexDirection:"row", justifyContent:'space-evenly', padding:10,}}
-                                    onPress={ () => this.setState({showSubImage: !this.state.showSubImage, mainImageName:item}) }
-                                  >
-                                      <Image source={{uri: item}} style={styles.productDetailSubImage} />
-                                  </TouchableHighlight>
-                                )}
-                            />
-                        {/* </ScrollView> */}
+                        <FlatList
+                            data = {subImages}
+                            horizontal={true}
+                            renderItem = { ({item}) => (
+                              <TouchableHighlight key={item.toString()}
+                                style={{flexDirection:"row", justifyContent:'space-evenly', padding:10,}}
+                                onPress={ () => this.setState({showSubImage: !this.state.showSubImage, mainImageName:item}) }
+                              >
+                                  <Image source={{uri: item}} style={styles.productDetailSubImage} />
+                              </TouchableHighlight>
+                            )}
+                            keyExtractor={(item) => item.toString()}
+                        />
                     </View>
 
                     <View style={styles.productDetailView22}>
@@ -313,7 +324,9 @@ class ProductDetail extends Component{
               </TouchableOpacity>
             </View>
             {/* buy and rate button view ends */}
-
+            
+            {/* Loader */}
+            {(this.state.showLoader) && <Loader />}
             
         </View>)
       // <Text> In prod det return</Text> 

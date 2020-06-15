@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, ScrollView, TouchableWithoutFeedback, FlatList, TouchableHighlight} from 'react-native';
+import {View, Text, ScrollView, Alert, FlatList, TouchableHighlight} from 'react-native';
 import {Radio} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
@@ -7,6 +7,7 @@ import { StyleConstants } from '../../styles/Constants';
 import {GET_ADDR_URLTYPE, SAVE_ADDR_URLTYPE} from '../../../API/apiConstants';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import {connect} from 'react-redux';
+import Loader from '../../Common/Loader';
 
 class AddressList extends Component {
 
@@ -23,10 +24,12 @@ class AddressList extends Component {
                 isDeliveryAddress:false,
             },
             addr: '',
-
+            showLoader:false,
         }
     }
     
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
 
     componentDidMount(){
         this.props.getAddress(GET_ADDR_URLTYPE);
@@ -37,15 +40,33 @@ class AddressList extends Component {
     addAddress = () => { console.log("In addAdress");
      this.props.navigation.navigate('AddAddress');}
 
-    handleSaveAddress = () =>{
-        console.log("Sel customer add: ", this.state.custmorAddress);
-        this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
-        this.props.navigation.navigate('OrderSummary');
+    handleSaveAddress = async() =>{
+        await this.showLoader();
+        console.log("loader: ",this.state.showLoader);
         
+        console.log("Sel customer add: ", this.state.custmorAddress);
+        await this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
+        const {saveAddressResponse} = this.props;
+        setTimeout(()=>{
+            this.hideLoader();
+            if(saveAddressResponse !== undefined){
+                if(saveAddressResponse.status_code === 200){
+                    this.props.navigation.navigate('OrderSummary')
+                }
+                else{
+                    Alert.alert(saveAddressResponse.message);
+                }
+            }
+            else{
+                Alert.alert("something went wrong!! try again")
+            }
+        },2000);
     }
 
 
   render() {
+    console.log("loader in render: ",this.state.showLoader);
+
       const {custmorAddress, addr} = this.state;
     //   const {address, pincode, city, state, country} = this.state.custmorAddress;
       const {custName} = this.props.route.params;
@@ -103,14 +124,15 @@ class AddressList extends Component {
                     <Text style={[styles.buttonText, {color: StyleConstants.COLOR_FFFFFF, alignSelf: 'center',}]}> SAVE ADDRESS </Text>
                 </TouchableHighlight>
             </View>
+            { (this.state.showLoader) && (<Loader />)}
         </View>
     );
   }
 }
 
 function mapState(state){
-    const {addressList} = state.loggedInUserReducer;
-    return {addressList};
+    const {addressList,saveAddressResponse} = state.loggedInUserReducer;
+    return {addressList,saveAddressResponse};
 }
 
 const actionCreators = {
