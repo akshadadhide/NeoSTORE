@@ -184,7 +184,10 @@ class ProductDetail extends Component{
   render() {
     const {productDetails, isLoading} = this.props;
     const {product_rating} = this.state.ratingData
-    const {userToken} = this.state.userToken;
+    const userToken = (this.state.userToken !== null) ? this.state.userToken : '' ;
+    // let flag = userToken !== null && userToken !== ''
+    // console.log("token: ",userToken, "Flag: ", flag);
+    
     // console.log("Product details render ", productDetails, "isload", isLoading);
     // console.log("details===>",productDetails);
   
@@ -198,7 +201,6 @@ class ProductDetail extends Component{
       subImages = subImages.map((value) => {return BASE_URL.concat(value)});
       mainImage = this.state.showSubImage ? this.state.mainImageName : BASE_URL+productD.product_image;
     }
-    console.log("MainImg: ", mainImage);
     
 
     return (
@@ -295,7 +297,7 @@ class ProductDetail extends Component{
             {/* buy and rate button view starts */}
             <View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF}]}>
               <TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
-                onPress={ () =>  (userToken !== null) ?
+                onPress={ () =>  (userToken !== null && userToken !== '') ?
                   (this.props.navigation.navigate('OrderSummary',{productDetails:[{product_name:productD.product_name, product_id: productD.product_id, product_material:productD.product_material, 
                     product_image:productD.product_image, product_cost:productD.product_cost}]})):
                   (alert('Please Login first')) } >
@@ -304,7 +306,7 @@ class ProductDetail extends Component{
               <TouchableOpacity 
                   style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,} ]} 
                     onPress={() => {
-                      (userToken !== null) ? this.setModalVisible(true) : (alert('Please Login first'))
+                      (userToken !== null && userToken !== '') ? this.setModalVisible(true) : (alert('Please Login first'))
                 
               }}>
                 <Text style={styles.TabNavButtonText}> RATE </Text>

@@ -29,9 +29,9 @@ class ProductList extends Component {
         await this.props.getProductList(type);
 
         const {productList} = this.props;
-        console.log("Product list----",productList); 
+        // console.log("Product list----",productList); 
         (productList !== undefined) && (this.setState({productListArray: productList}));
-        console.log("Prductlist array: ", this.state.productListArray);
+        // console.log("Prductlist array: ", this.state.productListArray);
     }
 
     //to update the state with current redux state
@@ -46,8 +46,8 @@ class ProductList extends Component {
     goBack = () => this.props.navigation.goBack();
 
     searchHandler = (searchText) =>{
-        console.log("On search handler, searchText=", searchText);
-        console.log("Prductlist array: ", this.state.productListArray);
+        // console.log("On search handler, searchText=", searchText);
+        // console.log("Prductlist array: ", this.state.productListArray);
 
         const {productList} = this.props;
         const {productListArray} = this.state;
@@ -72,8 +72,8 @@ class ProductList extends Component {
 
         );
 
-        console.log("filtered array: ",newData);
-        console.log("productListArray array---: ",productListArray);
+        // console.log("filtered array: ",newData);
+        // console.log("productListArray array---: ",productListArray);
         
     }
 
@@ -81,14 +81,14 @@ class ProductList extends Component {
     const {category} = this.props.route.params;
     const {productList,isLoading} = this.props;
     const {productListArray} = this.state;
-    console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
+    // console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
     
         return (
             <View>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
                 {(productList === undefined) ?
                 (<ActivityIndicator />) :
-                (<ScrollView style={{marginBottom: StyleConstants.MARGIN_15}}>
+                (<View style={{marginBottom: 35}}>
                     <FlatList
                     data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
                     renderItem={ ({item}) => (
@@ -117,7 +117,7 @@ class ProductList extends Component {
                     />
 
                     <View style={{height:50}}></View>
-                </ScrollView>)
+                </View>)
             }
             </View>
         );
