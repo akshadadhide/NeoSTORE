@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {StyleConstants} from '../../styles/Constants';
 import {validation, NAME_REGEX, customErrors, MOBILE_REGEX, PASSWORD_REGEX, EMAIL_REGEX} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
+import Loader from "../../Common/Loader";
 
 
 class Register extends Component {
@@ -29,19 +30,39 @@ class Register extends Component {
 
             passIcon: 'eye',
             passwordHide: true,
+            confirmPassIcon: 'eye',
+            confirmPasswordHide: true,
+
+            showLoader:false,
+
         }
         this.handleRegister = this.handleRegister.bind(this);
         // this.validatePassword = this.validatePassword.bind(this);
     }
 
-    setPasswordVisiblility = () => {
-        if(this.state.passIcon === 'eye'){
-            this.setState({passIcon: 'eye-slash', })
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
+
+    setPasswordVisiblility = (name) => {
+
+        if(name === 'passIcon'){
+            if(this.state.passIcon === 'eye'){
+                this.setState({passIcon: 'eye-slash', })
+            }
+            else{ 
+                this.setState({passIcon: 'eye', })
+            }
+            this.setState({passwordHide: !this.state.passwordHide });
         }
-        else{ 
-            this.setState({passIcon: 'eye', })
+        else if(name === 'confirmPassIcon'){
+            if(this.state.confirmPassIcon === 'eye'){
+                this.setState({confirmPassIcon: 'eye-slash', })
+            }
+            else{ 
+                this.setState({confirmPassIcon: 'eye', })
+            }
+            this.setState({confirmPasswordHide: !this.state.confirmPasswordHide });
         }
-        this.setState({passwordHide: !this.state.passwordHide });
     }
 
     // validatePassword(){
@@ -163,6 +184,7 @@ class Register extends Component {
     /*validation*/
 
     handleRegister(){
+        this.showLoader();
         const logData = {
             first_name: this.state.first_name,
             last_name: this.state.last_name,
@@ -195,12 +217,13 @@ class Register extends Component {
             else{
                 Alert.alert('Please check all information is properly filled');
             }
+        this.hideLoader();
             
     }   
 
     render() {
         const {first_name, last_name, email, pass, confirmPass, phone_no, gender} = this.state;
-        const {passIcon, passwordHide} =  this.state;
+        const {passIcon, passwordHide, confirmPassIcon, confirmPasswordHide} =  this.state;
         const {errors} = this.state;
 
         
@@ -264,7 +287,7 @@ class Register extends Component {
                             placeholder='Password' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
-                        <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
+                        <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={() => this.setPasswordVisiblility('passIcon')}/>
                     </Item>
                     <Text style={styles.errorText}> {errors.pass}</Text>
 
@@ -273,14 +296,14 @@ class Register extends Component {
                         <Icon active name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input 
                             value={confirmPass} 
-                            secureTextEntry={passwordHide} 
+                            secureTextEntry={confirmPasswordHide} 
                             style={styles.inputBoxText} 
                             onChangeText={confirmPass => {this.setState({ confirmPass }) }} 
                             onBlur={() => this.handleValidation('confirmPass')} 
                             placeholder='Confirm Password' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
-                        <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
+                        <Icon active name={confirmPassIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={() => this.setPasswordVisiblility('confirmPassIcon')}/>
                     </Item>
                     <Text style={styles.errorText}> {errors.confirmPass}</Text>
 
@@ -323,6 +346,8 @@ class Register extends Component {
                     </TouchableHighlight>
 
                 </View>
+
+        { this.state.showLoader && <Loader /> }
             </ScrollView>
             </ImageBackground>
         );
