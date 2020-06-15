@@ -11,15 +11,21 @@ import {getCarouselImages} from '../../redux/actions/productActions';
 class Home extends Component {
 
     componentDidMount(){
-        // console.log("In componentDidMount");
-        this.props.getCarouselImages();
+        this._unsubscribe = this.props.navigation.addListener('focus', () => {
+            // do something
+            this.props.getCarouselImages();
+          });
+        // console.log("In componentDidMount Home");
+        const {images} = this.props;
+        const {isLoading} = this.props;
+        const {categoryId} = this.props;
+        // console.log("componentDidMount images",images, "isloading state:   ", isLoading);
+        // console.log("category ids in home componentDidMount", categoryId);
     }
 
-    componentDidUpdate(prevProps){
-        // const {isLoading} = this.props;
-
-        // if(isLoading )
-    }
+    componentWillUnmount() {
+        this._unsubscribe();
+      }
 
     handleToggleDrawer = () => this.props.navigation.toggleDrawer();
 
@@ -28,10 +34,12 @@ class Home extends Component {
     }
 
     render() {
+        // console.log("In render Home");
+
        const {images} = this.props;
        const {isLoading} = this.props;
        const {categoryId} = this.props;
-       console.log("in render images",images, "isloading state:   ", isLoading);
+    //    console.log("in render images",images, "isloading state:   ", isLoading);
     //    console.log("category ids in home", categoryId);
        
         return (
