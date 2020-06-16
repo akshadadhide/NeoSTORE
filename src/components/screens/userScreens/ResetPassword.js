@@ -35,14 +35,6 @@ class ResetPassword extends Component {
     goBack = () => this.props.navigation.goBack();
 
     setPasswordVisiblility = (i) => {
-        // if(this.state.passIcon === 'eye'){
-        //     this.setState({passIcon: 'eye-slash', })
-        // }
-        // else{ 
-        //     this.setState({passIcon: 'eye', })
-        // }
-        // this.setState({passwordHide: !this.state.passwordHide });
-
         const {passIcon,passwordHide} = this.state; 
         if(this.state.passIcon[i] === 'eye'){
             passIcon.splice(i,1,'eye-slash');
