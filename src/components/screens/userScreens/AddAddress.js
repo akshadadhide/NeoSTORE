@@ -3,10 +3,10 @@ import {View, Text, ScrollView, TextInput, TouchableHighlight, Alert} from 'reac
 import CustomHeader from '../../Common/Header';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
 import { StyleConstants } from '../../styles/Constants';
-import AddressValidation from '../../../utils/AddrValidation';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import {connect} from 'react-redux';
 import { PINCODE_REGEX, customErrors } from '../../../utils/Validation';
+import Loader from '../../Common/Loader';
 
 class AddAddress extends Component {
 
@@ -18,78 +18,89 @@ class AddAddress extends Component {
             city:'',
             state:'',
             country:'',
-            
-            errorMsg:'',
-
-            errors:{}
-            
+            errors:{},
+            showLoader:false,
         }
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     goBack = () => this.props.navigation.goBack();
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
 
-    handleValidation = () =>{
-        // const errorMsg = AddressValidation(fieldName, value);
-        // this.setState({errorMsg: errorMsg});
-        // console.log("error msg", errorMsg);
+    handleValidation = (field_name) =>{
 
         const {address,pincode,city,state,country} = this.state;
         const {errors} =  this.state;
-        let errorFlag = false;
+        let errorFlag = true;
 
-        if(address.trim() === ''){
-            errorFlag = true;
-            const {valueMissing} = customErrors.address;
-            errors.address = valueMissing;
-        }
-        else{
-            delete errors.address;
-        }
-    
-        if(pincode.length === 0 || (!PINCODE_REGEX.test(pincode)) ){
-            errorFlag = true;
-            const {valueMissing,wrongPattern} = customErrors.pincode;
-            errors.pincode = pincode === '' ? valueMissing : wrongPattern;
-        }
-        else{
-            delete errors.pincode;
+        if(field_name === 'address'){
+            if(address === ''){
+                errorFlag = true;
+                errors.address = 'Required';
+
+            }
+            else{
+                errorFlag = false;
+                delete errors.address;
+            }
         }
     
-        if(city.trim() === ''){
-            errorFlag = true;
-            const {valueMissing} = customErrors.city;
-            errors.city =  valueMissing;
-        }
-        else{
-            delete errors.city;
-        }
-    
-        if(state.trim() === ''){
-            errorFlag = true;
-            const {valueMissing} = customErrors.state;
-            errors.state =  valueMissing;
-        }
-        else{
-            delete errors.state;
+        if(field_name === 'pincode'){
+            if(pincode === '' || (!PINCODE_REGEX.test(pincode)) ){
+                errorFlag = true;
+                const {valueMissing,wrongPattern} = customErrors.pincode;
+                errors.pincode = pincode === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag = false;
+                delete errors.pincode;
+            }
         }
     
-        if(country.trim() === ''){
-            errorFlag = true;
-            const {valueMissing} = customErrors.country;
-            errors.country = valueMissing;
+        if(field_name === 'city'){
+            if(city === ''){
+                errorFlag = true;
+                errors.city = 'Required';
+
+            }
+            else{
+                errorFlag = false;
+                delete errors.city;
+            }
         }
-        else{
-            delete errors.country;
+    
+        if(field_name === 'state'){
+            if(state === ''){
+                errorFlag = true;
+                errors.state =  'Required';
+
+            }
+            else{
+                errorFlag = false;
+                delete errors.state;
+            }
+        }
+    
+        if(field_name === 'country'){
+            if(country === ''){
+                errorFlag = true;
+                errors.country = 'Required';
+
+            }
+            else{
+                errorFlag = false;
+                delete errors.country;
+            }
         }
 
         this.setState({errors});
-        console.log("Errors: ", errors, "ErrorFlag: ", errorFlag);
-        
+        return errorFlag;
         
     }
 
     async handleSubmit(){
+        this.showLoader();
         const address = {
             address: this.state.address,
             pincode: this.state.pincode,
@@ -97,23 +108,31 @@ class AddAddress extends Component {
             state: this.state.state,
             country: this.state.country,
         }
-        const errorFlag = this.handleValidation();
+        const errorFlag = (this.handleValidation('address') && this.handleValidation('city') && this.handleValidation('state') && this.handleValidation('pincode') && this.handleValidation('country'));
 
-        if(errorFlag === false){
+        if(errorFlag === false && JSON.stringify(this.state.errors).length <= 2){
             await this.props.addAddress(address,'address');
             const {addAddrResponse} = this.props;
 
-            console.log("kdsjf ",addAddrResponse);
+            setTimeout(()=> {
+                this.hideLoader();
+                if(addAddrResponse !== undefined){
+                    if(addAddrResponse.status_code === 200){
+                        Alert.alert(addAddrResponse.message);
+                        this.props.navigation.navigate('AddressList');
+                    }
+                    else{
+                        Alert.alert(addAddrResponse.error_message)
+                    }
+                }
+                else{
+                    Alert.alert('Something went wrong!!!Please try again');
+                }
+            },3000);
             
-
-            if(addAddrResponse.status_code === 200){
-                this.props.navigation.navigate('AddressList');
-            }
-            else{
-                Alert.alert('Something went wrong');
-            }
         }
         else{
+            this.hideLoader();
             Alert.alert("Please check all information is properly filled");
         }
 
@@ -122,7 +141,6 @@ class AddAddress extends Component {
 
     render() {
         const {address, pincode, city, state, country } = this.state;
-        console.log(address, pincode, city);
         const {errors} = this.state;
         
 
@@ -135,13 +153,13 @@ class AddAddress extends Component {
                     <View style={{padding: StyleConstants.PADDING,}}>
                         <View>
                             <Text style={styles.productDetailCategory}> Address </Text>
-                            <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.address}</Text>
+                            <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.address}</Text>
                         </View>
                         <TextInput 
-                            value={address}
+                            value={address.trim()}
                             style={[styles.addressInput, {height: 150, marginTop:5}]}
                             onChangeText = {address => {this.setState({address})}}
-                            onBlur ={this.handleValidation}
+                            onBlur ={() => this.handleValidation('address')}
                         />
 
 
@@ -149,12 +167,12 @@ class AddAddress extends Component {
                             <View>
                                 <View>
                                     <Text style={styles.productDetailCategory}> City </Text>
-                                    <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.city}</Text>
+                                    <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.city}</Text>
                                 </View> 
                                 <TextInput 
-                                    value={city}
+                                    value={city.trim()}
                                     onChangeText = {city => {this.setState({city})}}
-                                    onBlur ={this.handleValidation}
+                                    onBlur ={() => this.handleValidation('city')}
                                     style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
@@ -162,12 +180,12 @@ class AddAddress extends Component {
                             <View>
                                 <View>
                                     <Text style={styles.productDetailCategory}> State </Text>
-                                    <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.state}</Text>
+                                    <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.state}</Text>
                                 </View>
                                 <TextInput 
-                                    value={state}
+                                    value={state.trim()}
                                     onChangeText = {state => {this.setState({state})}}
-                                    onBlur ={this.handleValidation}
+                                    onBlur ={() => this.handleValidation('state')}
                                     style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
@@ -177,13 +195,13 @@ class AddAddress extends Component {
                             <View>
                             <View>
                                 <Text style={styles.productDetailCategory}> ZIP CODE </Text>
-                                <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.pincode}</Text>
+                                <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.pincode}</Text>
                             </View>
                                 <TextInput
-                                    value={pincode}
+                                    value={pincode.trim()}
                                     onChangeText = {pincode => {this.setState({pincode})}}
                                     keyboardType='number-pad'
-                                    onBlur ={this.handleValidation}
+                                    onBlur ={() => this.handleValidation('pincode')}
                                     style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
@@ -191,12 +209,12 @@ class AddAddress extends Component {
                             <View>
                             <View>
                                 <Text style={styles.productDetailCategory}> COUNTRY  </Text>
-                                <Text style={{color:StyleConstants.COLOR_FE3F3F}}> {errors.country}</Text>
+                                <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.country}</Text>
                             </View>
                                 <TextInput 
-                                    value={country}
+                                    value={country.trim()}
                                     onChangeText = {country => {this.setState({country})}}
-                                    onBlur ={this.handleValidation}
+                                    onBlur ={() => this.handleValidation('country')}
                                     style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
                                 />
                             </View>
@@ -213,6 +231,7 @@ class AddAddress extends Component {
                         <Text style={[styles.buttonText, {color: StyleConstants.COLOR_FFFFFF, alignSelf: 'center',}]}> SAVE ADDRESS </Text>
                     </TouchableHighlight>
                 </View>
+                {(this.state.showLoader) && <Loader />}
             </View>
         );
     }
