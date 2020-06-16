@@ -13,25 +13,18 @@ class ProductList extends Component {
     
     constructor(props) {
         super(props);
+        this.page = 1;
         this.state = {
             productListArray:[],
+            offset: 0, 
+            limit: 8,
+            isLoading: false,
         };
     }
     
 
-    async componentDidMount(){
-        const {category_id} = this.props.route.params;
-        // console.log("cat id=",category_id);
-        let type;
-    
-        type = 'commonProducts?category_id='+category_id+'&pageNo=1&perPage=10';
-        // console.log("type = ",type);
-        await this.props.getProductList(type);
-
-        const {productList} = this.props;
-        // console.log("Product list----",productList); 
-        (productList !== undefined) && (this.setState({productListArray: productList}));
-        // console.log("Prductlist array: ", this.state.productListArray);
+    componentDidMount(){
+        this.fetchResult(this.page);
     }
 
     //to update the state with current redux state
@@ -41,57 +34,64 @@ class ProductList extends Component {
         }
     }
 
+    fetchResult = async(page) => {
+        const {category_id} = this.props.route.params;
+        let type;
+        // type='getProductByCateg/'+category_id;
+        type = `commonProducts?category_id=${category_id}&pageNo=${page}&perPage=6`;
+        console.log("Type: ",type);
+        
+        this.setState({isLoading:true});
+        await this.props.getProductList(type);
+
+        const {productList} = this.props;
+        // console.log("Product list----",productList); 
+        if(productList !== undefined){
+            let listData = this.state.productListArray;
+            let data = listData.concat(productList);
+            this.setState({productListArray: data, isLoading:false});
+        }
+        else{
+            this.setState({isLoading:false});
+        }
+        // console.log("Prductlist array: ", this.state.productListArray);
+    };
+
+    handleLoadMore(){
+        console.log("In hLM pg: ",this.page,"isload: ",this.state.isLoading);
+        
+        if((!this.state.isLoading) && (this.page < 2)){
+            this.page = this.page+1;
+            this.fetchResult(this.page);
+        }
+    }
     
 
     goBack = () => this.props.navigation.goBack();
 
     searchHandler = (searchText) =>{
-        // console.log("On search handler, searchText=", searchText);
-        // console.log("Prductlist array: ", this.state.productListArray);
-
-        const {productList} = this.props;
-        const {productListArray} = this.state;
-        let newData;
-
-        (productListArray !== '' && searchText !== '') ?
-        (
-        // productListArray = productList,
-        // console.log("In if, productListArr: ", productListArray),
-
-         newData = productList.filter(item =>{
-            const itemData = `${item.product_name.toLowerCase()} ${item.product_material.toLowerCase()}`;
-            const searchTxt = searchText.toLowerCase();
-
-            return itemData.indexOf(searchTxt) > -1;
-        }),
-        this.setState({productListArray: newData})
-        
-        ) : 
-        (
-            this.setState({productListArray: productList})
-
-        );
-
-        // console.log("filtered array: ",newData);
-        // console.log("productListArray array---: ",productListArray);
-        
+        this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
     }
 
   render() {
     const {category} = this.props.route.params;
     const {productList,isLoading} = this.props;
     const {productListArray} = this.state;
-    // console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
+    console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
     
         return (
             <View>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
-                {(productList === undefined) ?
+                {(productList === undefined && this.state.isLoading) ?
                 (<ActivityIndicator />) :
-                (<View style={{marginBottom: 35}}>
+                (
+                <View  style={{paddingBottom: 150}}>
                     <FlatList
-                    data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
-                    renderItem={ ({item}) => (
+                    data={productListArray}
+                    // data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
+                    extraData={this.state}
+                    // initialNumToRender={3}
+                    renderItem={ ({item,index}) => (
                         <TouchableOpacity key={item.product_id} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
                             <View style={styles.productListView}> 
                                 <View style={{marginRight:10,}}>
@@ -113,11 +113,12 @@ class ProductList extends Component {
                         </TouchableOpacity>
                     )}
                     keyExtractor={(item,index) => item.product_id}
-                    ItemSeparatorComponent={() => <View style={{height: 0.5, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
+                    ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
+                    onEndReachedThreshold={0.1}
+                    onEndReached={this.handleLoadMore.bind(this)}
                     />
-
-                    <View style={{height:50}}></View>
-                </View>)
+                </View>
+                )
             }
             </View>
         );
