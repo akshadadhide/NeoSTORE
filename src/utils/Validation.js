@@ -30,7 +30,7 @@ export const customErrors = {
     },
     confirmPass: {
         valueMissing: 'Please confirm password',
-        diffPassword: 'Both password should be same'
+        diffPassword: 'password should match with the above password'
     },
     gender: {
         valueMissing: 'Please select gender',
@@ -54,6 +54,9 @@ export const customErrors = {
     country:{
         valueMissing: 'Please enter country',
     },
+    otpCode:{
+        valueMissing: 'Please enter otp',
+    }
 }
 
 export function validation(fieldName, value){
