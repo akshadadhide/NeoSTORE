@@ -9,6 +9,7 @@ export const loggedInUserActions ={
     getAddress,
     saveAddress,
     changePassword,
+    deleteAddress,
 };
 
 
@@ -190,3 +191,24 @@ function changePassword(data, type){
     }
 }
 
+function deleteAddress(type){
+    return dispatch => {
+        apiCall(null, 'DELETE', type)
+        .then((result) => {
+            console.log("res----",result);
+            dispatch(deleteAddrSuccess(result));
+        })
+        .catch((error) => {
+            console.log("Error: ",error);
+        })
+    }
+
+    function deleteAddrSuccess(result){
+        return {
+            type: ActionTypes.DELETE_ADDRESS_SUCCESS,
+            payload: result
+        }
+    }
+
+   
+}

@@ -4,6 +4,7 @@ import {Radio} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
 import { StyleConstants } from '../../styles/Constants';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {GET_ADDR_URLTYPE, SAVE_ADDR_URLTYPE} from '../../../API/apiConstants';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import {connect} from 'react-redux';
@@ -23,6 +24,7 @@ class AddressList extends Component {
                 country:'',
                 isDeliveryAddress:false,
             },
+            addressListArr:'',
             addr: '',
             showLoader:false,
         }
@@ -33,6 +35,15 @@ class AddressList extends Component {
 
     componentDidMount(){
         this.props.getAddress(GET_ADDR_URLTYPE);
+        const {addressList} = this.props;
+        this.setState({addressListArr:addressList});
+    }
+    componentDidUpdate(prevProps){
+        if(this.props.addressList !== prevProps.addressList){
+            console.log("inbuidk");
+            this.setState({addressListArr:this.props.addressList});
+
+        }
     }
 
     goBack = () => this.props.navigation.goBack();
@@ -63,6 +74,32 @@ class AddressList extends Component {
         },2000);
     }
 
+    handleDeleteAddress = (address_id) => {
+        this.showLoader();
+        let type = `deladdress/${address_id}`;
+
+        if(address_id !== undefined){
+            this.props.deleteAddress(type);
+            const {deleteAddrRes} = this.props;
+            console.log("deleteAddrRes: ",deleteAddrRes);
+
+            setTimeout(()=>{
+                this.hideLoader();
+                if(deleteAddrRes !== undefined){
+                    Alert.alert(deleteAddrRes.message);
+                    this.props.getAddress(GET_ADDR_URLTYPE);
+                }
+                else{
+                    Alert.alert("Something went wrong!!!Please try again");
+                }
+            },3000);
+        }
+        else{
+            this.hideLoader();
+            Alert.alert("Something went wrong!!!Please try again");
+        }
+    }
+
 
   render() {
     console.log("loader in render: ",this.state.showLoader);
@@ -73,50 +110,74 @@ class AddressList extends Component {
       const {addressList} = this.props;
       console.log("addr  List: ", addressList);
       let customer_address;
-      (addressList !== undefined)&&(customer_address = addressList.customer_address);
+      (this.state.addressListArr !== undefined)&&(customer_address = this.state.addressListArr.customer_address);
      
     return (
         <View style={{flex:1}}>
             <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Address List" handleAddAddr={this.addAddress} rightIconName="plus"/>
 
-            <ScrollView style={{padding: StyleConstants.PADDING}}>
+            <ScrollView>
                 <Text style={[styles.productDetailCategory, {marginBottom: StyleConstants.MARGIN_15,}]}> Shipping Address </Text>
                 <Text style={[styles.productDetailTitle, {paddingLeft:StyleConstants.PADDING_10,}]}> {custName} </Text>
+                <View style={{height: 5, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: StyleConstants.MARGIN_15}}/>
 
                 <FlatList
                     data={customer_address}
                     renderItem={ ({item}) =>(
-                        <View style={{flexDirection:'row', alignItems:'center'}}>
-                            <Radio 
-                                onPress={() => {this.setState({addr: item.address+', '+item.city+', '+item.state+', '+item.pincode+', '+item.country });
-                                            this.setState({ 
-                                                custmorAddress:{ 
-                                                    // ...custmorAddress,
-                                                    address_id: item.address_id,  
-                                                    address: item.address,
-                                                    pincode:item.pincode,
-                                                    city:item.city,
-                                                    state:item.state,
-                                                    country:item.country,
-                                                    isDeliveryAddress: true,
-                                                }
-                                            })
-                                            }
+                        <View style={{flexDirection:'row', alignItems:'center', padding:StyleConstants.PADDING}}>
+                            <View style={styles.rowSpaceBetween}>
+                                <View>
+                                    <Radio 
+                                        onPress={() => {this.setState({addr: item.address+', '+item.city+', '+item.state+', '+item.pincode+', '+item.country });
+                                                    this.setState({ 
+                                                        custmorAddress:{ 
+                                                            // ...custmorAddress,
+                                                            address_id: item.address_id,  
+                                                            address: item.address,
+                                                            pincode:item.pincode,
+                                                            city:item.city,
+                                                            state:item.state,
+                                                            country:item.country,
+                                                            isDeliveryAddress: true,
+                                                        }
+                                                    })
+                                                    }
+                                                } 
+                                        selected={addr == item.address+', '+item.city+', '+item.state+', '+item.pincode+', '+item.country } 
+                                        style={{marginRight:10,paddingBottom:StyleConstants.PADDING_10}}
+                                    />
+                                    <Icon 
+                                        name="trash-alt" 
+                                        size={25} 
+                                        onPress={() => 
+                                                Alert.alert(
+                                                    'Delete Address',
+                                                    'Do you want to delete Address?',
+                                                    [
+                                                    {text: 'Cancel', onPress: () => {return null}},
+                                                    {text: 'Confirm', onPress: () =>{ 
+                                                        this.handleDeleteAddress(item.address_id)
+                                                    }},
+                                                    ],
+                                                    { cancelable: false }
+                                                )  
                                         } 
-                                selected={addr == item.address+', '+item.city+', '+item.state+', '+item.pincode+', '+item.country } 
-                                style={{marginRight:10}}
-                            /> 
-                            <Text style={styles.productListName}> {item.address}, {item.city}, {item.state}, {item.pincode}, {item.country} </Text>
+                                    />
+                                </View>
+                                <View style={{paddingRight:StyleConstants.PADDING_10}}>
+                                    <Text style={[styles.productListName,{paddingRight:StyleConstants.PADDING_10}]}> {item.address}, {item.city}, {item.state}, {item.pincode}, {item.country} </Text>
+                                </View>
+                            </View>
                         </View>
                     )}
                     keyExtractor={item => {item.address_id}}
-                    ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: StyleConstants.MARGIN_15}}/> }
+                    ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: StyleConstants.MARGIN_15}}/> }
                 />
                 
 
             </ScrollView>
 
-            <View style={{backgroundColor: StyleConstants.COLOR_FFFFFF}}>
+            <View style={{backgroundColor: StyleConstants.COLOR_FFFFFF,marginTop:30}}>
                 <TouchableHighlight 
                     style={styles.saveAdrrButton} 
                     onPress = { () => this.handleSaveAddress()}
@@ -124,20 +185,21 @@ class AddressList extends Component {
                     <Text style={[styles.buttonText, {color: StyleConstants.COLOR_FFFFFF, alignSelf: 'center',}]}> SAVE ADDRESS </Text>
                 </TouchableHighlight>
             </View>
-            { (this.state.showLoader) && (<Loader />)}
+            { (this.state.showLoader) && <Loader />}
         </View>
     );
   }
 }
 
 function mapState(state){
-    const {addressList,saveAddressResponse} = state.loggedInUserReducer;
-    return {addressList,saveAddressResponse};
+    const {addressList,saveAddressResponse,deleteAddrRes} = state.loggedInUserReducer;
+    return {addressList,saveAddressResponse,deleteAddrRes};
 }
 
 const actionCreators = {
     getAddress: loggedInUserActions.getAddress,
     saveAddress: loggedInUserActions.saveAddress,
+    deleteAddress: loggedInUserActions.deleteAddress,
 }
 
 export default connect(mapState, actionCreators)(AddressList);

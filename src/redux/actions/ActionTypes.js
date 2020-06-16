@@ -66,6 +66,8 @@ export const ActionTypes = {
 
     SAVE_ADDRESS_SUCCESS: 'SAVE_ADDRESS_SUCCESS',
     SAVE_ADDRESS_FAILURE: 'SAVE_ADDRESS_FAILURE',
+
+    DELETE_ADDRESS_SUCCESS: 'DELETE_ADDRESS_SUCCESS',
     /*address*/
 
     /*forgot pwd and set pwd */

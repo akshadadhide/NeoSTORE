@@ -207,7 +207,7 @@ export const styles = StyleSheet.create({
     productListView:{
         flex: 1,
         flexDirection: 'row',
-        padding: StyleConstants.PADDING_10,
+        padding: 20,
 
     },
     productListName:{

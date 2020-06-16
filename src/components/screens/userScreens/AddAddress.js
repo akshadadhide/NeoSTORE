@@ -119,7 +119,7 @@ class AddAddress extends Component {
                 if(addAddrResponse !== undefined){
                     if(addAddrResponse.status_code === 200){
                         Alert.alert(addAddrResponse.message);
-                        this.props.navigation.navigate('AddressList');
+                        this.props.navigation.navigate('OrderSummary');
                     }
                     else{
                         Alert.alert(addAddrResponse.error_message)
@@ -128,7 +128,7 @@ class AddAddress extends Component {
                 else{
                     Alert.alert('Something went wrong!!!Please try again');
                 }
-            },3000);
+            },5000);
             
         }
         else{

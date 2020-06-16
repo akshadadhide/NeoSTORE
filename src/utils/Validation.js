@@ -42,7 +42,7 @@ export const customErrors = {
         valueMissing: 'Please enter address',
     },
     pincode: {
-        valueMissing: 'Please enter pincode',
+        valueMissing: 'Required',
         wrongPattern: 'Invalid zipcode'
     },
     city:{
