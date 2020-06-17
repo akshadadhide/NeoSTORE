@@ -9,64 +9,62 @@ import {BASE_URL} from './src/API/apiConstants';
 import {store} from './src/redux/store';
 import { apiCall } from './src/API/apiCall';
 
-let userToken, cartData;
+let userToken, cartData, cartCount=0;
 
 const getUserToken = async() =>{
     userToken = await AsyncStorage.getItem('userToken');
-    console.log("getUserToken: ", userToken);
+    // console.log("getUserToken: ", userToken);
+     return userToken;
+}
 
-    cartData = await AsyncStorage.getItem('cartData');
-    console.log("get cart data from local storage: ", [JSON.parse(cartData),{flag:'logout'}]);
-    return userToken;
+const getCartCount = async() => {
+    const myArray = await AsyncStorage.getItem('cartProducts');
+    if(myArray !== null){
+        cartCount = JSON.parse(myArray).length;
+    }
+    // console.log("cnt: ",cartCount ,"arr:==",myArray);
+    
+    return cartCount;
 }
 
 handleLogout = async() => {
-    console.log("In handleLogout ");
-
     try {
         const myArray = await AsyncStorage.getItem('cartProducts');
         if (myArray !== null) {
-            console.log("In logout cartData: ",JSON.parse(myArray));
+            // console.log("In logout cartData: ",JSON.parse(myArray));
             let cartProducts = JSON.parse(myArray);
             
             cartProducts.map((val) => {
                 let cartItem = [{_id:val.product_id,product_id:val.product_id,quantity:1},{ flag: "logout" }];
-                console.log("cartItem: ",cartItem);
+                // console.log("cartItem: ",cartItem);
 
                 apiCall(cartItem,'POST','addProductToCartCheckout')
                 .then(
-                    (response) => 
-                        console.log("logout addProductToCartCheckout response",response)
+                    (response) => {
+                        console.log("logout addProductToCartCheckout response",response);
+                    }
                 )
                 .catch((error) => 
                         console.log("Error in addProductToCartCheckout on logout",error)
                 )
-                
             });
-            
+            AsyncStorage.removeItem('cartProducts');
         }
     } catch (error) {
-        console.log("Error: ", error);
-        
+        console.log("Error: ", error);    
     }
-
     await AsyncStorage.removeItem('userToken');
-    props.navigation.navigate('DrawerNav');
 }
 
  CustomDrawerContent = (props) => {
     getUserToken();
-    console.log("user Token sidebar", userToken);
+    getCartCount();
+    // console.log("user Token sidebar", userToken);
     
     const userData = store.getState().authReducer.userData;
-    console.log("user D", userData);
-    const isLogin = store.getState().authReducer.isLogin;
-    console.log("isLogin in sidebar: ", isLogin);
+    // console.log("user D", userData);
     const customerDetails = userData.customer_details;
-    console.log("cust details" , customerDetails);
     const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
-    console.log("b:", b);
-    
     
     
     return (
@@ -95,15 +93,16 @@ handleLogout = async() => {
             }
 
             {(b) ?
-            (<DrawerItem 
+            (
+            <View style={styles.rowSpaceBetween}>
+                <DrawerItem 
                 icon={() => <Icon name="shopping-cart" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
-            label={() => <Text style={[styles.sidebarLink,{marginRight: 10,}]}> 
-                            <Text style={{marginRight: 20,paddingRight:20,}}>My Carts</Text>  
-                            <Text style={styles.cartCount}> 
-                                {userData.cart_count}  
-                            </Text> 
-                        </Text>} 
+                label={() => <Text style={styles.sidebarLink}>My Carts</Text> } 
                 onPress={() => {props.navigation.navigate('CartProducts')}}  />
+                <View  style={styles.cartCount}>
+                    <Text style={styles.sidebarLink}> {userData.cart_count + cartCount} </Text>
+                </View>
+            </View>
             ):
             (<View style={{flex:1, }}>
                 <TouchableHighlight >
@@ -186,13 +185,8 @@ handleLogout = async() => {
                         [
                           {text: 'Cancel', onPress: () => {return null}},
                           {text: 'Confirm', onPress: () =>{ 
-                              handleLogout()
-                            //   await apiCall([JSON.parse(cartData),{flag:'logout'}],'POST','addProductToCartCheckout')
-                            //   .then((response)=> console.log("logout addProductToCartCheckout response",response))
-                            //   .catch((error) => console.log("Error in addProductToCartCheckout on logout",error)
-                            //   )
-                            // await AsyncStorage.removeItem('userToken');
-                            // props.navigation.navigate('DrawerNav');
+                              handleLogout(),
+                              props.navigation.navigate('Home');
                           }},
                         ],
                         { cancelable: false }

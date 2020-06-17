@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {View, Text, ScrollView, FlatList, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
+import {View, Text, ScrollView, FlatList, Picker, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {connect} from 'react-redux';
 import {cartAction} from '../../../redux/actions/cartAction';
 import {GET_CART_DATA_URLTYPE, BASE_URL} from '../../../API/apiConstants';
@@ -14,27 +15,61 @@ class CartProducts extends Component {
         super(props);
         this.state={
             cartData:'',
+            productCount:new Array(50),
         }
     }
-    
 
     goBack = () => this.props.navigation.goBack();
 
-    async componentDidMount(){
-        // const type = GET_CART_DATA_URLTYPE;
-        // this.props.getCartData(type);
+    handlePickerChange(index,itemValue){
+        const { productCount } = this.state;
+        productCount.splice(index, 1, itemValue);
+        this.setState({ productCount: [...productCount] });
+    }
 
+    async componentDidMount(){
+        const type = GET_CART_DATA_URLTYPE;
+        await this.props.getCartData(type);
+        const {cartData} = await this.props;
+        // console.log("cartData:----",cartData);
+        
         try {
             const myArray = await AsyncStorage.getItem('cartProducts');
             if (myArray !== null) {
-                this.setState({cartData: JSON.parse(myArray)})
-              console.log("In cart m: ",JSON.parse(myArray));
+                let cartProducts = cartData.concat(JSON.parse(myArray));
+                this.setState({cartData: cartProducts})
+                // console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
+            } 
+            else{
+                this.setState({cartData: cartData})
             }
-            
         }
         catch (error) {
             console.log("Error: ", error);            
         }
+    }
+
+    async componentDidUpdate(prevProps){
+        if(this.props.cartData !== prevProps.cartData){
+            const {cartData} = this.props;
+            try {
+                const myArray = await AsyncStorage.getItem('cartProducts');
+                if (myArray !== null) {
+                    let cartProducts = cartData.concat(JSON.parse(myArray));
+                    this.setState({cartData: cartProducts})
+                //   console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
+                }
+                else{
+                    this.setState({cartData: cartData})
+                } 
+            }
+            catch (error) {
+                console.log("Error: ", error);            
+            }
+        }
+    }
+
+    handleDeleteProduct = (product_id) => {
 
     }
 
@@ -50,27 +85,26 @@ class CartProducts extends Component {
     }
 
     render() {
-    //    const {cartData, isLoading} = this.props;
         const{cartData} = this.state;
-        // console.log("in component render", cartData,);
-        let productInfo, totalCost;
-        totalCost = (cartData !== '') ? this.calculateTotalCost(cartData) : 0;
-        // console.log("productInfo", productInfo, "total", totalCost);
+        // console.log("in component render cartD---", cartData);
+
+        let totalCost;
+        totalCost = (cartData !== '' && cartData !== undefined) ? this.calculateTotalCost(cartData) : 0;
        
         return (
             <View style={{flex:1, }}>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts"  rightIconName="search"/>
-                {(cartData === undefined) ? (<ActivityIndicator />) :
+                {(cartData === '') ? (<ActivityIndicator size='large' />) :
                 (<ScrollView>
                     <FlatList
                     data={cartData}
                     renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={item._id} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
+                        <TouchableOpacity key={item.product_id} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
                             <View style={styles.productListView}>
                                 <View style={{marginRight:5,}}>
                                     <Image
                                         style={{width: 80, height: 80}}
-                                        source={{uri: BASE_URL+item.category_id.product_image}}
+                                        source={{uri: BASE_URL+item.product_image}}
                                     />
                                 </View>
                                 <View>
@@ -79,9 +113,36 @@ class CartProducts extends Component {
                                     <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text>
                                 </View>
                             </View>
+                            <View style={{flexDirection:'row',marginLeft:90}}>
+                                <Picker selectedValue={this.state.productCount[index]} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.handlePickerChange(index,itemValue)}>
+                                    <Picker.Item label='1' value={1} />
+                                    <Picker.Item label='2' value={2} />
+                                    <Picker.Item label='3' value={3} />
+                                    <Picker.Item label='4' value={4} />
+                                    <Picker.Item label='5' value={5} />
+                                </Picker>
+                                <Icon 
+                                    name="trash-alt" 
+                                    size={25} 
+                                    style={{paddingLeft:20}}
+                                    onPress={() => 
+                                            Alert.alert(
+                                                'Delete Address',
+                                                'Do you want to delete Address?',
+                                                [
+                                                {text: 'Cancel', onPress: () => {return null}},
+                                                {text: 'Confirm', onPress: () =>{ 
+                                                    this.handleDeleteProduct(item.product_id);
+                                                }},
+                                                ],
+                                                { cancelable: false }
+                                            )  
+                                    } 
+                                />
+                            </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={(item) => {item._id}}
+                    keyExtractor={(item) => {item.product_id}}
                     ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
                     />
                 </ScrollView>)}
