@@ -92,7 +92,7 @@ class ProductList extends Component {
                     extraData={this.state}
                     // initialNumToRender={3}
                     renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={item.product_id} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
+                        <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
                             <View style={styles.productListView}> 
                                 <View style={{marginRight:10,}}>
                                 <Image
@@ -114,7 +114,7 @@ class ProductList extends Component {
                     )}
                     keyExtractor={(item,index) => item.product_id}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
-                    onEndReachedThreshold={0.1}
+                    onEndReachedThreshold={0}
                     onEndReached={this.handleLoadMore.bind(this)}
                     />
                 </View>

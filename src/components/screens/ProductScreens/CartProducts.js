@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, ScrollView, FlatList, Picker, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import {View, Text, Alert, ScrollView, FlatList, Picker, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {cartAction} from '../../../redux/actions/cartAction';
 import {GET_CART_DATA_URLTYPE, BASE_URL} from '../../../API/apiConstants';
@@ -8,6 +7,7 @@ import CustomHeader from '../../Common/Header';
 import {styles, WINDOW_WIDTH} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import AsyncStorage from '@react-native-community/async-storage';
+import Loader from '../../Common/Loader';
 
 
 class CartProducts extends Component {
@@ -16,10 +16,14 @@ class CartProducts extends Component {
         this.state={
             cartData:'',
             productCount:new Array(50),
+            showLoader:false,
+
         }
     }
 
     goBack = () => this.props.navigation.goBack();
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
 
     handlePickerChange(index,itemValue){
         const { productCount } = this.state;
@@ -67,10 +71,26 @@ class CartProducts extends Component {
                 console.log("Error: ", error);            
             }
         }
+
     }
 
     handleDeleteProduct = (product_id) => {
+        this.showLoader();
+        let type = `deleteCustomerCart/${product_id}`;
+        this.props.deleteCartProduct(type);
+        const {deleteCartResult} = this.props;
+        console.log("deleteCartResult: ",deleteCartResult);
 
+        setTimeout(()=>{
+            this.hideLoader();
+            if(deleteCartResult !== undefined){
+                Alert.alert(deleteCartResult.message);
+            }
+            else{
+                Alert.alert("Something went wrong!!Please try again");
+            }
+        },5000);
+        
     }
 
     calculateTotalCost = (productInfo) => {
@@ -121,24 +141,25 @@ class CartProducts extends Component {
                                     <Picker.Item label='4' value={4} />
                                     <Picker.Item label='5' value={5} />
                                 </Picker>
-                                <Icon 
-                                    name="trash-alt" 
-                                    size={25} 
-                                    style={{paddingLeft:20}}
+
+                                <TouchableOpacity 
+                                    style={[styles.TabNavButton, {width:70,height:35,backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
                                     onPress={() => 
-                                            Alert.alert(
-                                                'Delete Address',
-                                                'Do you want to delete Address?',
-                                                [
-                                                {text: 'Cancel', onPress: () => {return null}},
-                                                {text: 'Confirm', onPress: () =>{ 
-                                                    this.handleDeleteProduct(item.product_id);
-                                                }},
-                                                ],
-                                                { cancelable: false }
-                                            )  
+                                        Alert.alert(
+                                            'Delete Product',
+                                            'Do you want to delete product from cart?',
+                                            [
+                                            {text: 'Cancel', onPress: () => {return null}},
+                                            {text: 'Confirm', onPress: () =>{ 
+                                                this.handleDeleteProduct(item.product_id);
+                                            }},
+                                            ],
+                                            { cancelable: false }
+                                        ) 
                                     } 
-                                />
+                                >
+                                    <Text style={[styles.TabNavButtonText,{fontSize: StyleConstants.FONT_16}]}> Delete </Text>
+                                </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
                     )}
@@ -157,18 +178,21 @@ class CartProducts extends Component {
                         <Text style={styles.TabNavButtonText}> ORDER NOW </Text>
                     </TouchableOpacity>
                 </View>
+
+                {(this.state.showLoader) && <Loader />}
             </View>
         );
     }
 }
 
 function mapState(state){
-    const {cartData, isLoading} = state.cartReducer;
-    return {cartData, isLoading};
+    const {cartData, isLoading,deleteCartResult} = state.cartReducer;
+    return {cartData, isLoading,deleteCartResult};
 }
 
 const actionCrators = {
-    getCartData: cartAction.getCartData
+    getCartData: cartAction.getCartData,
+    deleteCartProduct: cartAction.deleteCartProduct
 }
 
 export default connect(mapState,actionCrators)(CartProducts); 

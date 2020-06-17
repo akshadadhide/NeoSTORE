@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 export const cartAction ={
     addToCart,
     getCartData,
+    deleteCartProduct,
 }
 
 function addToCart(type, productInfo){
@@ -76,6 +77,27 @@ function getCartData(type){
         return {
             type:ActionTypes.GET_CART_DATA_SUCCESS,
             payload: data
+        }
+    }
+}
+
+function deleteCartProduct(type){
+
+    return dispatch => {
+        apiCall(null, 'DELETE', type)
+        .then((result) => {
+            console.log("Res disp: ",result);
+            dispatch(deleteCartProductSuccess(result));
+        })
+        .catch((error) => {
+            console.log("Error: ",error);
+        })
+    }
+
+    function deleteCartProductSuccess(result){
+        return {
+            type: ActionTypes.DELETE_CART_PRODUCT_SUCCESS,
+            payload: result
         }
     }
 }

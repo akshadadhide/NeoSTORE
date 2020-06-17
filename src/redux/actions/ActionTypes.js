@@ -43,6 +43,9 @@ export const ActionTypes = {
     /*get cart data*/
     GET_CART_DATA_SUCCESS: 'GET_CART_DATA_SUCCESS',
 
+    /* delete cart product */
+    DELETE_CART_PRODUCT_SUCCESS: 'DELETE_CART_PRODUCT_SUCCESS',
+
     /*place order */
     PLACE_ORDER_SECCESS: 'PLACE_ORDER_SECCESS',
     PLACE_ORDER_FAILURE: 'PLACE_ORDER_FAILURE',

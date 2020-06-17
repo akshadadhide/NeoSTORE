@@ -4,7 +4,7 @@ const initialState = {
     cartResult: {},
     cartData:{},
     isLoading: true,
-
+    deleteCartResult:{},
 }
 
 export function cartReducer(state = initialState, action){
@@ -28,6 +28,10 @@ export function cartReducer(state = initialState, action){
             console.log("In reducer cartData: ", action.payload)
             return {...state, cartData: action.payload, isLoading: false}
         /*get cart data*/
+
+        /*delete cart product*/
+        case ActionTypes.DELETE_CART_PRODUCT_SUCCESS:
+            return {...state, deleteCartResult: action.payload}
 
         default:
             return {state};
