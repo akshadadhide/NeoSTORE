@@ -12,6 +12,11 @@ import {store, persistor} from './src/redux/store';
 
 console.disableYellowBox = true;
 
+YellowBox.ignoreWarnings([
+  'VirtualizedLists should never be nested', // TODO: Remove when fixed
+])
+
+
 export default class App extends Component {
 
   // async componentDidMount(){

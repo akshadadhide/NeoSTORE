@@ -36,15 +36,31 @@ class CartProducts extends Component {
         await this.props.getCartData(type);
         const {cartData} = await this.props;
         // console.log("cartData:----",cartData);
+       this.setCartData(cartData); 
+       
+    }
+
+    setCartData = async(cartData) => {
+        console.log("***cartData= ",cartData);
         
         try {
             const myArray = await AsyncStorage.getItem('cartProducts');
-            if (myArray !== null) {
+            console.log("myArray: ===",myArray);
+            console.log("f==",myArray !== null && cartData !== '');
+            
+            if (myArray !== null && cartData !== undefined) {
+                console.log("1st");
+                
                 let cartProducts = cartData.concat(JSON.parse(myArray));
                 this.setState({cartData: cartProducts})
                 // console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
             } 
+            if(myArray !== null){
+                console.log("2nd");
+                this.setState({cartData:JSON.parse(myArray)})
+            }
             else{
+                console.log("3rd");
                 this.setState({cartData: cartData})
             }
         }
@@ -56,20 +72,7 @@ class CartProducts extends Component {
     async componentDidUpdate(prevProps){
         if(this.props.cartData !== prevProps.cartData){
             const {cartData} = this.props;
-            try {
-                const myArray = await AsyncStorage.getItem('cartProducts');
-                if (myArray !== null) {
-                    let cartProducts = cartData.concat(JSON.parse(myArray));
-                    this.setState({cartData: cartProducts})
-                //   console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
-                }
-                else{
-                    this.setState({cartData: cartData})
-                } 
-            }
-            catch (error) {
-                console.log("Error: ", error);            
-            }
+            this.setCartData(cartData);
         }
 
     }
@@ -93,42 +96,55 @@ class CartProducts extends Component {
         
     }
 
-    calculateTotalCost = (productInfo) => {
-        let costArr, totalCost=0;
-        costArr = productInfo.map(value => value.product_cost);
-        let len =  costArr.length;
+    calculateTotalCost = (cartData) => {
+        console.log("cartData: ",cartData);
+        
+        let totalCost=0;
+        if(cartData !== undefined && cartData !== ''){
+            let costArr = cartData.map((value) => {return value.product_cost})
+            let len =  costArr.length;
 
-        for(let i=0; i<len; i++){
-            totalCost = totalCost + costArr[i];
+            for(let i=0; i<len; i++){
+                totalCost = totalCost + costArr[i];
+            }
+        }
+        else{
+            totalCost = 0;
         }
         return totalCost;        
     }
 
     render() {
         const{cartData} = this.state;
-        // console.log("in component render cartD---", cartData);
+        console.log("in component render cartD---", cartData);
 
         let totalCost;
-        totalCost = (cartData !== '' && cartData !== undefined) ? this.calculateTotalCost(cartData) : 0;
+        totalCost =this.calculateTotalCost(cartData);
        
         return (
             <View style={{flex:1, }}>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts"  rightIconName="search"/>
-                {(cartData === '') ? (<ActivityIndicator size='large' />) :
+                {
+                 (cartData === undefined) ? 
+                 (  <ScrollView>
+                        <Text style={[styles.productListCost,{textAlign:'center'}]}> Your cart is empty!! </Text>
+                    </ScrollView>):
+                ((cartData === '') ? 
+                (<ActivityIndicator size='large' />) :
                 (<ScrollView>
                     <FlatList
                     data={cartData}
                     renderItem={ ({item,index}) => (
                         <TouchableOpacity key={item.product_id} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
                             <View style={styles.productListView}>
-                                <View style={{marginRight:5,}}>
+                                <View style={{paddingRight:5,}}>
                                     <Image
                                         style={{width: 80, height: 80}}
                                         source={{uri: BASE_URL+item.product_image}}
                                     />
                                 </View>
                                 <View>
-                                    <Text style={[styles.productDetailTitle, {marginBottom:0,}]}> {item.product_name} </Text>
+                                    <Text numberOfLines={1} style={[styles.productDetailTitle, {marginBottom:0,}]}> {item.product_name} </Text>
                                     <Text style={styles.productDetailMaterial}> ({item.product_material}) </Text>
                                     <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text>
                                 </View>
@@ -166,7 +182,7 @@ class CartProducts extends Component {
                     keyExtractor={(item) => {item.product_id}}
                     ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
                     />
-                </ScrollView>)}
+                </ScrollView>))}
                 
 
                 <View style={[styles.rowSpaceBetween, {backgroundColor:StyleConstants.COLOR_FFFFFF ,borderTopColor: StyleConstants.COLOR_000000, padding:StyleConstants.PADDING,}]}>

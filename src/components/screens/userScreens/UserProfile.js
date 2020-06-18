@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, TouchableOpacity,ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight, TextInput} from 'react-native';
+import {View, TouchableOpacity,ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight, Image} from 'react-native';
 import {Input, Item} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -7,25 +7,42 @@ import { connect } from 'react-redux';
 import {styles} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
-import {GET_USER_PROFILE_URLTYPE} from '../../../API/apiConstants';
+import {GET_USER_PROFILE_URLTYPE,BASE_URL} from '../../../API/apiConstants';
 
 
 class UserProfile extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            userProfile:'',
+        }
+    }
+    
+
     componentDidMount(){
         this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
+        const {userProfile} =  this.props;
+        console.log("In userProfile: ", userProfile);
+        this.setState({userProfile:userProfile});
+    }
+
+    componentDidUpdate(prevProps){
+        console.log("ifghg");
+        
+        if(this.props.userProfile !== prevProps.userProfile){
+            console.log("in if---");
+            
+            this.setState({userProfile:this.props.userProfile});
+        }   
     }
 
     goBack = () => this.props.navigation.goBack();
 
     render() {
-        const {userProfile} =  this.props;
-        console.log("In userProfile: ", userProfile);
-
-        // const {customer_proile} = userProfile.customer_proile;
-        // console.log("in uProf", customer_proile);
+        const {userProfile} = this.state;
+        console.log("userProfile: ",userProfile);
         
-
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
             <ScrollView>
@@ -63,6 +80,11 @@ class UserProfile extends Component {
                             <Item regular style={styles.textboxStyle}>
                                 <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input disabled style={styles.inputBoxText} placeholder={userProfile.phone_no} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            </Item>
+
+                            <Item regular style={styles.textboxStyle}>
+                                <Icon active name='calendar' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
+                                <Input disabled style={styles.inputBoxText} placeholder={(userProfile.dob === null)? 'Birth date' :userProfile.dob} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             </Item>
 
                             <TouchableHighlight style={styles.button} onPress={() => {this.props.navigation.navigate('EditProfile')}} >

@@ -22,7 +22,7 @@ const getCartCount = async() => {
     if(myArray !== null){
         cartCount = JSON.parse(myArray).length;
     }
-    // console.log("cnt: ",cartCount ,"arr:==",myArray);
+    console.log("cnt: ",cartCount ,"arr:==",myArray);
     
     return cartCount;
 }

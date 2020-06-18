@@ -81,24 +81,27 @@ class ProductDetail extends Component{
             }
         });
 
-        if(flag === false){
-          newProduct.push(productDetails[0]);
-          console.log("Modified myArray newProduct: ",newProduct);
-          Alert.alert("Added to cart");
-        }
-        else{
-          Alert.alert('Already in cart');
-        }
+        setTimeout(() => {
+            this.hideLoader();
+            if(flag === false){
+              newProduct.push(productDetails[0]);
+              console.log("Modified myArray newProduct: ",newProduct);
+              Alert.alert("Added to cart");
+            }
+            else{
+              Alert.alert('Already in cart');
+            }
+        },4000);
         await AsyncStorage.setItem('cartProducts', JSON.stringify(newProduct));
       }
       else{
+        this.hideLoader();
         await AsyncStorage.setItem('cartProducts', JSON.stringify(productDetails));
       }
       
     } catch (error) {
       console.log("Error saving data in asyncstorage cart: ",error);
     }
-    await this.hideLoader();
 
 
     // (productDetails)&&(productInfo = {

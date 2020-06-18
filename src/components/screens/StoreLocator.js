@@ -43,10 +43,10 @@ class StoreLocator extends Component {
                 },
             ],
             region: {
-                latitude: 19.024428,
-                longitude: 72.844279,
-                latitudeDelta: 0.04864195044303443,
-                longitudeDelta: 0.040142817690068,
+                latitude: 18.509161,
+                longitude: 73.744279,
+                latitudeDelta: 1.04864195044303443,
+                longitudeDelta: 2.040142817690068,
             },
             isStoreShown: false,
             storeIcon: 'sign-out-alt',
@@ -56,8 +56,6 @@ class StoreLocator extends Component {
     }
 
     backHandlerButton({navigation}){
-        console.log("In backhandler");
-        
         navigation.goBack();
     }
 
@@ -81,8 +79,6 @@ class StoreLocator extends Component {
 
     render() {
         const {markers, isStoreShown, region} = this.state;
-        console.log("markers", markers);
-
         
         return (
             <View>
@@ -97,9 +93,9 @@ class StoreLocator extends Component {
                     <Body>
                     <Text numberOfLines={1} style={{fontSize: StyleConstants.FONT_20,color: StyleConstants.COLOR_FFFFFF,}}> Stores </Text>
                     </Body>
-                    <Right>
+                    {/* <Right>
                         <Icon name='share-alt' size={25} color={StyleConstants.COLOR_FFFFFF} />
-                    </Right>
+                    </Right> */}
                 </Header>
 
                 {(isStoreShown === false) &&

@@ -14,12 +14,7 @@ class CustomHeader extends Component {
             textboxShown: 'none',
             searchInput: '',
         }
-
-        console.log("props in header: ", this.props);
-        
     }
-    
-
 
     render(){
         const {searchInput} = this.state;
@@ -36,7 +31,6 @@ class CustomHeader extends Component {
                 <Right>
                     <Icon name={this.props.rightIconName} size={25} color={StyleConstants.COLOR_FFFFFF} style={{display:this.state.iconShown}} 
                         onPress={ ()=>{
-                            console.log("In header, searchInput: ", searchInput),
                             (this.props.rightIconName === 'search') && (this.setState({textboxShown:'flex', iconShown:'none'})),
                             (this.props.rightIconName === 'plus') ? this.props.handleAddAddr() : null
                             }

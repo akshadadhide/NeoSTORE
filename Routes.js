@@ -21,7 +21,6 @@ import AddressList from './src/components/screens/userScreens/AddressList';
 import OrderList from './src/components/screens/orderScreens/OrderList';
 import OrderDetails from './src/components/screens/orderScreens/OrderDetails';
 import ProductSearchRes from './src/components/screens/ProductScreens/ProductSearchRes';
-import OrderId from './src/components/screens/orderScreens/OrderId';
 
 const Stack = createStackNavigator();
 
@@ -56,7 +55,6 @@ class Routes extends Component {
                     <Stack.Screen name="OrderSummary" component={OrderSummary} options={{headerShown: false}}/>
                     <Stack.Screen name="OrderList" component={OrderList} options={{headerShown: false}} />
                     <Stack.Screen name="OrderDetails" component={OrderDetails} options={{headerShown: false}} />
-                    <Stack.Screen name="OrderId" component={OrderId} options={{headerShown: false}} />
 
                 </Stack.Navigator>
                 

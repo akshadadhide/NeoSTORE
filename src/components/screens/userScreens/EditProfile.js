@@ -8,10 +8,10 @@ import {styles} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import DatePicker from 'react-native-datepicker';
-import {validation} from '../../../utils/Validation';
-import {GET_USER_PROFILE_URLTYPE} from '../../../API/apiConstants';
+import {NAME_REGEX, customErrors, EMAIL_REGEX, MOBILE_REGEX} from '../../../utils/Validation';
+import {GET_USER_PROFILE_URLTYPE, BASE_URL} from '../../../API/apiConstants';
 import ImagePicker from 'react-native-image-picker';
-
+import Loader from '../../Common/Loader';
 
 
 class EditProfile extends Component {
@@ -28,12 +28,15 @@ class EditProfile extends Component {
                 email: userProfile.email,
                 dob: userProfile.dob,
                 phone_no: userProfile.phone_no,
-                gender:'female',
+                gender:userProfile.gender,
             },
-
+            errors:{},
+            changedImage:'',
+            selectedImage:'',
             calendarDisplay:'none',
-    
+            showLoader:false,
         }
+        this.upload = this.upload.bind(this);
     }
 
     componentDidMount(){
@@ -41,6 +44,8 @@ class EditProfile extends Component {
     }
 
     goBack = () => this.props.navigation.goBack();
+    showLoader = () => { this.setState({ showLoader:true }); };
+    hideLoader = () => { this.setState({ showLoader:false }); };
 
     uploadProfilePhoto = () =>{
         const {user} = this.state;
@@ -62,9 +67,15 @@ class EditProfile extends Component {
                 console.log("ImagePicker error: ", response.error);
             }
             else{
-                const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                this.setState({user:{...user, profile_img:source}});
-                console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+                let source = {uri: response.uri}
+                var photo = {
+                    uri: response.uri,
+                    type: response.type,
+                    name: response.fileName,
+                };
+                this.setState({user:{...user, profile_img:photo},changedImage:source,selectedImage:response});
+                console.log("In upload profile photo, profile_img: ", this.state.user.profile_img, "\n response: ",this.state.selectedImage,"changedImage:==",this.state.changedImage);
 
             }
             
@@ -75,30 +86,238 @@ class EditProfile extends Component {
         
     }
 
-    submitHandler = () => {
-        console.log("userData after edit: ", this.state.user);
-        
-        this.props.editProfile(this.state.user,'profile');
+    handleValidation = (field_name) => {
+        const {first_name, last_name,email,phone_no,dob} = this.state.user;
+        let {errors} = this.state;
+        let errorFlag = true;
 
-        const {editProfileRes} = this.props;
-        console.log("In subHandler of EditProf, res:",editProfileRes);
-        
-        if(editProfileRes !== undefined){
-            if(editProfileRes.status_code === 200){
-                this.props.navigation.navigate('UserProfile');
+        //first name validation
+        if(field_name === 'first_name'){
+            if(first_name.length === 0 || NAME_REGEX.test(first_name) === false){
+                errorFlag =  true;
+                const {valueMissing, wrongPattern} = customErrors.first_name;
+                errors.first_name = first_name === '' ? valueMissing : wrongPattern;
             }
             else{
-                alert(this.props.editProfileRes.message);
+                errorFlag =  false;
+                delete errors.first_name;
             }
         }
+
+        //last name validation
+        if(field_name === 'last_name'){
+            if(last_name.length === 0 || NAME_REGEX.test(last_name) === false){
+                errorFlag =  true;
+                const {valueMissing, wrongPattern} = customErrors.last_name;
+                errors.last_name = last_name === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.last_name;
+            }
+        }
+
+         //email validation
+         if(field_name === 'email'){
+            if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+                errorFlag = true;
+                const {valueMissing, wrongPattern} = customErrors.email;
+                errors.email = email === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.email;
+            }
+        }
+
+        //phone number
+        if(field_name === 'phone_no'){
+            if(phone_no.length === 0 || MOBILE_REGEX.test(phone_no) === false){
+                errorFlag = true;
+                const {valueMissing, wrongPattern} = customErrors.phone_no;
+                errors.phone_no = phone_no === '' ? valueMissing : wrongPattern;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.phone_no;
+            }
+        }
+
+        //date of birth
+        if(field_name === 'dob'){
+            if(dob.length === 0){
+                errorFlag = true;
+                const {valueMissing} = customErrors.birthDate;
+                errors.dob = valueMissing;
+            }
+            else{
+                errorFlag = false;
+                delete errors.dob;
+            }
+        }
+
+        this.setState({errors});
+        console.log("Error: ",errors, " errFlag: ", errorFlag);
+        return errorFlag;
+
+    }
+
+    //**********=================*************=================************ */
+    upload(url, data) {
+        let options = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTMsImlhdCI6MTU5MjM4MjU2Nn0.yAMdlJ41ZQyzSux5BzP8gm4dS9sVD7h3dan9VkMFMjw' 
+          },
+          method: 'POST'
+        };
+      
+        options.body = new FormData();
+        for (let key in data) {
+          options.body.append(key, data[key]);
+        }
+        console.log("data: ==",options.body);
+        
+      
+        return fetch(url, options)
+            .then(response => {
+              return response.json()
+                .then(responseJson => {
+                  //You put some checks here
+                  console.log("upload res== ",responseJson);
+                  
+                  return responseJson;
+                });
+            })
+            .catch(error => {
+                console.log("Err=== ",error);
+                
+            })
+    }
+    //**********=================*************=================************ */
+
+    submitHandler = async () => {
+        this.showLoader();
+        console.log("userData after edit: ", this.state.user);
+        const {user,selectedImage} = this.state;
+        let data;
+        if(user.profile_img === null){
+            data = {
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                dob: user.dob,
+                phone_no: user.phone_no,
+                gender: user.gender,
+            };
+        }
+        else{
+            data = user;
+        }
+
+        const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') 
+                            || this.handleValidation('email') || this.handleValidation('phone_no')
+                            || this.handleValidation('dob'));
+        console.log("EF---",errorFlag);
+
+        //****==========**********===========****************=============== */
+        await this.upload('http://180.149.241.208:3022/profile', {
+            profile_img: {
+                uri: selectedImage.uri,
+                type: selectedImage.type,
+                name: selectedImage.fileName,
+            },
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            dob: user.dob,
+            phone_no: user.phone_no,
+            gender: user.gender,
+
+            }).then(r => {
+            //do something with `r`
+            console.log("In submit r== ", r)
+            .catch(error => console.log("error in call: ", error)
+            )
+            
+            }
+        );
+
+        //****==========**********===========****************=============== */
+
     
+
+        // if(errorFlag === false){
+        //     this.props.editProfile(data,'profile');
+        //     const {editProfileRes} = this.props;
+        //     console.log("In subHandler of EditProf, res:",editProfileRes);
+//********************************************************************** */
+            // var uData = {
+            //     first_name: user.first_name,
+            //     last_name: user.last_name,
+            //     email: user.email,
+            //     dob: user.dob,
+            //     phone_no: user.phone_no,
+            //     gender: user.gender,
+            // }
+            // var myHeaders = new Headers();
+            // myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTMsImlhdCI6MTU5MjM4MjU2Nn0.yAMdlJ41ZQyzSux5BzP8gm4dS9sVD7h3dan9VkMFMjw");
+            // var formdata = new FormData();
+            // formdata.append("first_name", user.first_name);
+            // formdata.append("last_name", user.last_name);
+            // formdata.append("email", user.email.toString());
+            // formdata.append("phone_no", user.phone_no.toString());
+            // formdata.append("dob", user.dob.toString());
+            // formdata.append("gender", user.gender.toString());
+            // formdata.append("profile_img",selectedImage.uri,user.profile_img.toString());
+            // // formdata = formdata.concat("profile_img",type:selectedImage.type,uri:selectedImage.uri,name:user.profile_img.toString()});
+            // console.log("formdata:--",formdata);
+            
+            // var requestOptions = {
+            //     method: 'PUT',
+            //     headers: myHeaders,
+            //     body: formdata,
+            //     redirect: 'follow'
+            // };
+
+            // fetch("http://180.149.241.208:3022/profile", requestOptions)
+            // .then(response => response.text())
+            // .then(result => console.log("result of upload===",result))
+            // .catch(error => console.log('error', error));
+
+//****************************************************************************** */
+            
+        //     setTimeout(()=> {
+        //         this.hideLoader();
+        //         if(editProfileRes !== undefined){
+        //             if(editProfileRes.status_code === 200){
+        //                 Alert.alert(editProfileRes.message);
+        //                 this.props.navigation.navigate('UserProfile');
+        //             }
+        //             else{
+        //                 Alert.alert("Something went wrong!!Please try again");
+        //             }
+        //         }
+        //         else{
+        //             Alert.alert("Something went wrong!!Please try again");
+        //         }
+        //     },5000);
+        // }
+        // else{
+        //     this.hideLoader();
+        //     Alert.alert("Please check all information is correctly filled");
+        // }
+       await this.hideLoader(); 
     }
 
 
     render() {
         const {userProfile} =  this.props;
         // console.log("In editProfile userProfile: ", userProfile);
-        const {user} = this.state;
+        const {first_name, last_name, email, phone_no} = this.state.user;
+        const {user,errors} = this.state;
+        console.log("user info: ",user, "name:",user.last_name);
+        
 
         const today = new Date();
         // console.log("today: ", today);
@@ -118,7 +337,7 @@ class EditProfile extends Component {
                         )
                         :( (this.state.user.profile_img !== null)? 
                             (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
-                                <Image source={user.profile_img} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,width:150, height:150 }]}/>
+                                <Image source={this.state.changedImage} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,width:150, height:150 }]}/>
                             </TouchableOpacity>
                             ): 
                             (<TouchableOpacity style={[styles.sidebarUserLogo, {marginBottom: StyleConstants.PADDING,}]} onPress={ () => this.uploadProfilePhoto()}>
@@ -133,29 +352,21 @@ class EditProfile extends Component {
                             <Item regular style={styles.textboxStyle}>
                                 <Icon active name='user-alt' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
-                                    value={user.first_name} 
+                                    value={first_name} 
                                     style={styles.inputBoxText}  
-                                    onChange={text =>
-                                                this.setState(state => {
-                                                return {
-                                                    ...state,
-                                                    user: {
-                                                    ...state.user,
-                                                    first_name: text
-                                                    }
-                                                };
-                                                })} 
-                                    // placeholder={userProfile.first_name} 
-                                    // placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                                    onChangeText={ value => this.setState({user:{...user,first_name:value}}) }
+                                    onBlur={() => this.handleValidation('first_name')}
                                 />
                             </Item>
+                            <Text style={styles.errorText}> {errors.first_name}</Text>
+                            
 
                             <Item regular style={styles.textboxStyle}>
                                 <Icon active name='user-alt' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
-                                    value={user.last_name} 
+                                    value={last_name} 
                                     style={styles.inputBoxText}  
-                                    onChange={text =>
+                                    onChangeText={text =>
                                                 this.setState(state => {
                                                 return {
                                                     ...state,
@@ -164,20 +375,20 @@ class EditProfile extends Component {
                                                     last_name: text
                                                     }
                                                 };
-                                                })}
-                                    // placeholder={userProfile.last_name} 
-                                    // placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE} 
+                                                })
+                                    }
+                                    onBlur={() => this.handleValidation('last_name')}
                                 />
                             </Item>
+                            <Text style={styles.errorText}> {errors.last_name}</Text>
+
 
                             <Item regular style={styles.textboxStyle}>
                                 <Icon active name='envelope' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
-                                    value={user.email} 
-                                    style={styles.inputBoxText}
-                                    // placeholder={userProfile.email} 
-                                    // placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}   
-                                    onChange={text =>
+                                    value={email} 
+                                    style={styles.inputBoxText}  
+                                    onChangeText={text =>
                                                 this.setState(state => {
                                                 return {
                                                     ...state,
@@ -186,19 +397,20 @@ class EditProfile extends Component {
                                                     email: text
                                                     }
                                                 };
-                                                })} 
-                                    onBlur={() => validation('email', this.state.user.email)}
+                                                })
+                                    } 
+                                    onBlur={() => this.handleValidation('email')}
                                 />
                             </Item>
+                            <Text style={styles.errorText}> {errors.email}</Text>
+
 
                             <Item regular style={styles.textboxStyle}>
                                 <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
-                                    value={user.phone_no} 
-                                    style={styles.inputBoxText}
-                                    // placeholder={userProfile.phone_no} 
-                                    // placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}   
-                                    onChange={text =>
+                                    value={phone_no} 
+                                    style={styles.inputBoxText}   
+                                    onChangeText={text =>
                                                 this.setState(state => {
                                                 return {
                                                     ...state,
@@ -207,17 +419,20 @@ class EditProfile extends Component {
                                                     phone_no: text
                                                     }
                                                 };
-                                                })} 
-                                    onBlur={() => validation('phone_no', this.state.user.phone_no)}
+                                                })
+                                    }
+                                    onBlur={() => this.handleValidation('phone_no')}
                                 />
                             </Item>
+                            <Text style={styles.errorText}> {errors.phone_no}</Text>
+
 
                             <Item regular style={styles.textboxStyle}>
                                 <DatePicker 
                                     date={this.state.user.dob}
                                     mode="date"
-                                    // placeholder="select date"
-                                    format="DD/MM/YYYY"
+                                    placeholder="select birth date"
+                                    format="DD-MM-YYYY"
                                     minDate="1/1/1970"
                                     maxDate={today}
                                     confirmBtnText="Confirm"
@@ -238,6 +453,9 @@ class EditProfile extends Component {
                                             color: StyleConstants.COLOR_FFFFFF,
                                             fontSize: StyleConstants.FONT_18,
                                             fontWeight:StyleConstants.FONT_MEDIUM,
+                                          },
+                                          placeholderText:{
+                                              fontSize: StyleConstants.FONT_18
                                           }
                                     }}
                                     onDateChange={ dob => this.setState(state =>{
@@ -251,6 +469,7 @@ class EditProfile extends Component {
                                                         })
                                                     
                                     }
+                                    
 
                                 />
                             </Item>
@@ -265,6 +484,7 @@ class EditProfile extends Component {
                     }
                 </View>
             </ScrollView>
+            {(this.state.showLoader) && <Loader /> }
             </ImageBackground>
         );
     }

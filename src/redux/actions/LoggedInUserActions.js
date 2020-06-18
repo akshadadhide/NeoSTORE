@@ -60,6 +60,10 @@ function editProfile(data,type){
                 console.log("In dispatch");
                 dispatch(editProfileSuccess(result));
             })
+            .catch((error) => {
+                console.log("Error: ",error);
+                
+            })
     }
 
     function editProfileSuccess(result){

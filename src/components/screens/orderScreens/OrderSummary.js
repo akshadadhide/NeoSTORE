@@ -105,14 +105,19 @@ class OrderSummary extends Component {
             if(data !== undefined){
                 this.props.placeOrder(data, type);
                 const {res} = this.props;
+
                 setTimeout(()=>{
-                    (res !== undefined) ? (Alert.alert(res.message)): Alert.alert("Something went wrong!!!try again");
-                },3000);
+                    this.hideLoader();
+                    (res !== undefined) ? 
+                    (Alert.alert(res.message)): 
+                    Alert.alert("Something went wrong!!!try again");
+                },5000);
+            }
+            else{
+                this.hideLoader();
+                Alert.alert("Something went wrong!!!Please try again")
             }
         });
-        this.hideLoader();
-        console.log("----loader",this.state.showLoader);
-
     }
 
   render() {
@@ -191,7 +196,7 @@ class OrderSummary extends Component {
                 </TouchableOpacity>
             </View>
 
-            {this.state.showLoader && <Loader />}
+            {(this.state.showLoader) && <Loader />}
       </View>
     );
   }

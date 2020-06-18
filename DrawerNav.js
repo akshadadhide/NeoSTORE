@@ -21,7 +21,7 @@ class DrawerNav extends Component{
         
         return (
             
-            <Drawer.Navigator initialRouteName={Home} drawerContent={props => CustomDrawerContent(props)}  drawerType="slide"  drawerStyle={{backgroundColor: StyleConstants.COLOR_000000, width: 300,}} itemStyle= {{color: StyleConstants.COLOR_FFFFFF, }}>
+            <Drawer.Navigator initialRouteName={Home} drawerContent={props => <CustomDrawerContent {...props} />}  drawerType="slide"  drawerStyle={{backgroundColor: StyleConstants.COLOR_000000, width: 300,}} itemStyle= {{color: StyleConstants.COLOR_FFFFFF, }}>
                 <Drawer.Screen name="Home" component={Home} options={{drawerLabel: ()=>null}} />  
                 {/* <Drawer.Screen name="UserProfile" component={UserProfile} options={{headerShown: false}} /> */}
             </Drawer.Navigator>

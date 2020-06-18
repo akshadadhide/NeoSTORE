@@ -2,7 +2,6 @@ import {BASE_URL} from './apiConstants';
 import {store} from '../redux/store';
 import AsyncStorage from '@react-native-community/async-storage';
 
-// const userToken = store.getState().authReducer.userData.token;
 
 export const buildHeader = (headerParams) => {
     var header = {
@@ -10,7 +9,7 @@ export const buildHeader = (headerParams) => {
         'Content-Type': 'application/json',
     }
     Object.assign(header, headerParams);
-    console.log("Header: ", header);
+    // console.log("Header: ", header);
     
     return header;
 }
@@ -22,7 +21,7 @@ export const apiCall = async(data, methodType, urlType) => {
     console.log("user token", userToken);
 
     if (userToken == null) {
-        console.log('no token')
+        // console.log('no token')
         secureRequest = buildHeader({})
     }
     else {
@@ -52,7 +51,7 @@ export const apiCall = async(data, methodType, urlType) => {
 
     if(methodType === "POST" || methodType === "PUT"){
         return new Promise( (resolve, reject) => {
-            console.log("In post or put: ", methodType, "data: ", JSON.stringify(data));
+            console.log("In post or put: ", methodType, "urltype: ", urlType, "data: ", JSON.stringify(data));
             
             fetch(BASE_URL+urlType, {
                 method: methodType,
@@ -68,6 +67,23 @@ export const apiCall = async(data, methodType, urlType) => {
                 reject(error);
             });
             
+        });
+    }
+
+    if(methodType === "DELETE"){
+        return new Promise((resolve, reject) => {
+            fetch(BASE_URL+urlType,{
+                method: methodType,
+                headers: secureRequest
+                
+            })
+                .then( (response) => response.json())
+                .then( (responseJson) => {
+                    resolve(responseJson);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
         });
     }
 
