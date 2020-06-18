@@ -65,23 +65,11 @@ class Register extends Component {
         }
     }
 
-    // validatePassword(){
-    //     const {pass, confirmPass} = this.state;
-    //     if(confirmPass === ''){
-    //         alert("Please Confirm the password");
-    //     }
-    //     else if(pass !== confirmPass){
-    //         console.log("in val--- pass:-", pass, " cpass:-", confirmPass);
-    //         alert("Both Password should be same");
-    //     }
-    // }
-
     /*validation*/
     handleValidation = (field_name) => {
-        console.log("In validation");
         const {first_name, last_name, phone_no, email, pass, confirmPass,gender} = this.state;
         let {errors} = this.state;
-        let errorFlag = true;
+        let errorFlag = true, genderErrorFlag = true;
 
         //first name validation
         if(field_name === 'first_name'){
@@ -135,8 +123,6 @@ class Register extends Component {
             }
         }
       
-        console.log("pass: ", pass, "length: ",pass.length);
-        
         //password validation
         if(field_name === 'pass'){
             if(pass.length < 8 || pass.length > 12){
@@ -147,6 +133,16 @@ class Register extends Component {
             else{
                 errorFlag =  false;
                 delete errors.pass;
+            }
+
+            if(pass !== confirmPass && confirmPass.length > 0){
+                errorFlag = true;
+                const {diffPassword} = customErrors.confirmPass;
+                errors.confirmPass = diffPassword;
+            }
+            else{
+                errorFlag =  false;
+                delete errors.confirmPass;
             }
         }
 
@@ -164,20 +160,21 @@ class Register extends Component {
         }
 
         //gender validation
-        if(gender.length === 0){
-            errorFlag = true;
+        if(gender === ''){
+            genderErrorFlag = true;
             const {valueMissing} = customErrors.gender;
             errors.gender = gender === '' ? valueMissing : '';
         }
         else{
-            errorFlag =  false;
+            genderErrorFlag =  false;
             delete errors.gender;
         }
 
        
       this.setState({errors});
-      console.log("Error: ",errors, " errFlag: ", errorFlag);
-      return errorFlag;
+      console.log("Error: ",errors, " errFlag: ", errorFlag, "genderErrorFlag: ",genderErrorFlag);
+      let flag = (errorFlag || genderErrorFlag)
+      return flag;
       
   
     }
@@ -196,28 +193,33 @@ class Register extends Component {
         }
         console.log("form data", logData);
 
-        let {errors} = this.state;
-        const errorFlag = this.handleValidation();
+        const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') || this.handleValidation('email')
+                            || this.handleValidation('pass') || this.handleValidation('confirmPass') || this.handleValidation('phone_no')
+        );
         console.log("Err Flag in submit: ", errorFlag);
 
 
             if(errorFlag === false){
                 this.props.register(logData,'register');
                 const {isRegistered, registrationResult} = this.props;
-                // console.log("isReg:",isRegistered, "regRes:",registrationResult);
+                console.log("isReg:",isRegistered, "regRes:",registrationResult);
                 
-                if(isRegistered === true && registrationResult.status_code === 200 ){
-                    // Alert.alert(registrationResult.message);
-                    this.props.navigation.navigate('Login');
-                }
-                else{
-                    Alert.alert(registrationResult.message);
-                }
+                setTimeout(()=>{
+                    this.hideLoader();
+                    if(isRegistered === true && registrationResult.status_code === 200 ){
+                        // Alert.alert(registrationResult.message);
+                        this.props.navigation.navigate('Login');
+                    }
+                    else{
+                        Alert.alert(registrationResult.error_message);
+                    }
+                },5000);
+               
             }
             else{
+                this.hideLoader();
                 Alert.alert('Please check all information is properly filled');
-            }
-        this.hideLoader();
+            } 
             
     }   
 
@@ -284,6 +286,7 @@ class Register extends Component {
                             style={styles.inputBoxText} 
                             onChangeText={pass => {this.setState({pass}) }}  
                             onBlur={() => this.handleValidation('pass')} 
+                            onKeyPress={() => this.handleValidation('pass')}
                             placeholder='Password' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
@@ -300,6 +303,7 @@ class Register extends Component {
                             style={styles.inputBoxText} 
                             onChangeText={confirmPass => {this.setState({ confirmPass }) }} 
                             onBlur={() => this.handleValidation('confirmPass')} 
+                            onKeyPress={() => this.handleValidation('confirmPass')} 
                             placeholder='Confirm Password' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />

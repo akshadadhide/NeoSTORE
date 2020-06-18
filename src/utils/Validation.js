@@ -9,11 +9,11 @@ export const MOBILE_REGEX = /^\d{10}$/;
 export const customErrors = {
     first_name: {
         valueMissing: 'Please enter your first Name',
-        wrongPattern: 'Invalid name'
+        wrongPattern: 'Invalid first name'
     },
     last_name: {
         valueMissing: 'Please enter your last Name',
-        wrongPattern: 'Invalid name'
+        wrongPattern: 'Invalid last name'
     },
     phone_no: {
         valueMissing: 'Please enter your phone number',
