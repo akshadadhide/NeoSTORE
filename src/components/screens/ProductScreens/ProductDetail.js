@@ -41,7 +41,7 @@ class ProductDetail extends Component{
   async componentDidMount(){
     token = await AsyncStorage.getItem('userToken');
       this.setState({userToken:token});
-      console.log("getUserToken: ", this.state.userToken);
+      // console.log("getUserToken: ", this.state.userToken);
   
       const {productId} = this.props.route.params;
       const type = 'getProductByProdId/'+productId;
@@ -63,12 +63,12 @@ class ProductDetail extends Component{
       let productInfo;
       const {productDetails} = this.props;
       const {cartProductsArr} = this.state;
-      console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
+      // console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
       
 
       try {
             const myArray = await AsyncStorage.getItem('cartProducts');
-            console.log("myArray: ",JSON.parse(myArray));
+            // console.log("myArray: ",JSON.parse(myArray));
             let newProduct, flag=false;
 
             if(myArray !== null){ 
@@ -86,7 +86,7 @@ class ProductDetail extends Component{
                     if(flag === false){
                     newProduct.push(productDetails[0]);
                     Alert.alert("Added to cart");
-                    console.log("Modified myArray newProduct: ",newProduct);
+                    // console.log("Modified myArray newProduct: ",newProduct);
                     }
                     else{
                     Alert.alert('Already in cart');
@@ -101,7 +101,7 @@ class ProductDetail extends Component{
         
         }catch (error) {
             this.hideLoader();
-            console.log("Error saving data in asyncstorage cart: ",error);
+            // console.log("Error saving data in asyncstorage cart: ",error);
         }
 
 
@@ -144,7 +144,7 @@ class ProductDetail extends Component{
         }
       }
     });
-    console.log("--onstartpress data", this.state.ratingData);
+    // console.log("--onstartpress data", this.state.ratingData);
   }
   
   setModalVisible(visible) {

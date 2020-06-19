@@ -23,15 +23,15 @@ class UserProfile extends Component {
     componentDidMount(){
         this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
         const {userProfile} =  this.props;
-        console.log("In userProfile: ", userProfile);
+        // console.log("In userProfile: ", userProfile);
         this.setState({userProfile:userProfile});
     }
 
     componentDidUpdate(prevProps){
-        console.log("ifghg");
+        // console.log("ifghg");
         
         if(this.props.userProfile !== prevProps.userProfile){
-            console.log("in if---");
+            // console.log("in if---");
             
             this.setState({userProfile:this.props.userProfile});
         }   
@@ -41,7 +41,7 @@ class UserProfile extends Component {
 
     render() {
         const {userProfile} = this.state;
-        console.log("userProfile: ",userProfile);
+        // console.log("userProfile: ",userProfile);
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>

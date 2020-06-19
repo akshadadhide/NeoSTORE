@@ -222,7 +222,7 @@ class SetPassword extends Component {
         }
 
         this.setState({errors});
-        console.log("Error: ",errors, " errFlag: ", errorFlag);
+        // console.log("Error: ",errors, " errFlag: ", errorFlag);
         return errorFlag;
     }
     //=============================
@@ -245,12 +245,12 @@ class SetPassword extends Component {
             confirmPass: this.state.confirmPass,
         }
         const errorFlag = this.handleValidation('otpCode') && this.handleValidation('newPass') && this.handleValidation('confirmPass');
-        console.log("EF----",errorFlag);
+        // console.log("EF----",errorFlag);
 
         if(errorFlag === false){
             this.props.handleRecoverPassword(data, 'recoverPassword');
             const {recoverPasswordRes} = this.props;
-            console.log("recoverPasswordRes: ",recoverPasswordRes);
+            // console.log("recoverPasswordRes: ",recoverPasswordRes);
 
             setTimeout(()=>{
                 this.hideLoader();

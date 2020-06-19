@@ -40,7 +40,7 @@ class AddressList extends Component {
     }
     componentDidUpdate(prevProps){
         if(this.props.addressList !== prevProps.addressList){
-            console.log("inbuidk");
+            // console.log("inbuidk");
             this.setState({addressListArr:this.props.addressList});
 
         }
@@ -48,14 +48,15 @@ class AddressList extends Component {
 
     goBack = () => this.props.navigation.goBack();
 
-    addAddress = () => { console.log("In addAdress");
+    addAddress = () => { 
+        // console.log("In addAdress");
      this.props.navigation.navigate('AddAddress');}
 
     handleSaveAddress = async() =>{
         await this.showLoader();
-        console.log("loader: ",this.state.showLoader);
+        // console.log("loader: ",this.state.showLoader);
         
-        console.log("Sel customer add: ", this.state.custmorAddress);
+        // console.log("Sel customer add: ", this.state.custmorAddress);
         await this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
         const {saveAddressResponse} = this.props;
         setTimeout(()=>{
@@ -68,10 +69,10 @@ class AddressList extends Component {
                     Alert.alert(saveAddressResponse.message);
                 }
             }
-            else{
-                Alert.alert("something went wrong!! try again")
-            }
-        },2000);
+            // else{
+            //     Alert.alert("something went wrong!! try again")
+            // }
+        },6000);
     }
 
     handleDeleteAddress = (address_id) => {
@@ -81,7 +82,7 @@ class AddressList extends Component {
         if(address_id !== undefined){
             this.props.deleteAddress(type);
             const {deleteAddrRes} = this.props;
-            console.log("deleteAddrRes: ",deleteAddrRes);
+            // console.log("deleteAddrRes: ",deleteAddrRes);
 
             setTimeout(()=>{
                 this.hideLoader();
@@ -89,10 +90,10 @@ class AddressList extends Component {
                     Alert.alert(deleteAddrRes.message);
                     this.props.getAddress(GET_ADDR_URLTYPE);
                 }
-                else{
-                    Alert.alert("Something went wrong!!!Please try again");
-                }
-            },3000);
+                // else{
+                //     Alert.alert("Something went wrong!!!Please try again");
+                // }
+            },5000);
         }
         else{
             this.hideLoader();
@@ -102,13 +103,13 @@ class AddressList extends Component {
 
 
   render() {
-    console.log("loader in render: ",this.state.showLoader);
+    // console.log("loader in render: ",this.state.showLoader);
 
       const {custmorAddress, addr} = this.state;
     //   const {address, pincode, city, state, country} = this.state.custmorAddress;
       const {custName} = this.props.route.params;
       const {addressList} = this.props;
-      console.log("addr  List: ", addressList);
+    //   console.log("addr  List: ", addressList);
       let customer_address;
       (this.state.addressListArr !== undefined)&&(customer_address = this.state.addressListArr.customer_address);
      

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {View, Text, Alert, ScrollView, FlatList, Picker, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
+import {View, Text, Alert, ScrollView, FlatList, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
+import {Picker} from 'native-base';
 import {connect} from 'react-redux';
 import {cartAction} from '../../../redux/actions/cartAction';
 import {GET_CART_DATA_URLTYPE, BASE_URL} from '../../../API/apiConstants';
@@ -35,8 +36,8 @@ class CartProducts extends Component {
         const type = GET_CART_DATA_URLTYPE;
         await this.props.getCartData(type);
         const {cartData} = await this.props;
-        // console.log("cartData:----",cartData);
-       this.setCartData(cartData); 
+        console.log("cartData:----",cartData);
+        this.setCartData(cartData); 
        
     }
 
@@ -47,19 +48,20 @@ class CartProducts extends Component {
             const myArray = await AsyncStorage.getItem('cartProducts');
             // console.log("myArray: ===",myArray);
             // console.log("f==",myArray !== null && cartData !== '');
+            console.log("f: ",(cartData !== undefined && cartData !== ''));
             
-            if (myArray !== null && (cartData !== undefined || cartData !== '')) {
-                // console.log("1st");
+            if (myArray !== null && (cartData !== undefined && cartData !== '')) {
+                console.log("1st");
                 let cartProducts = cartData.concat(JSON.parse(myArray));
                 this.setState({cartData: cartProducts})
                 // console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
             } 
             if(myArray !== null && (cartData === undefined || cartData === '')){
-                // console.log("2nd");
+                console.log("2nd");
                 this.setState({cartData:JSON.parse(myArray)})
             }
-            if(myArray === null && (cartData !== undefined || cartData !== '')){
-                // console.log("3rd");
+            if(myArray === null && (cartData !== undefined && cartData !== '')){
+                console.log("3rd");
                 this.setState({cartData: cartData})
             }
         }
@@ -76,11 +78,12 @@ class CartProducts extends Component {
 
     }
 
-    handleDeleteProduct = (product_id) => {
+    handleDeleteProduct = async(product_id) => {
         this.showLoader();
         let type = `deleteCustomerCart/${product_id}`;
         this.props.deleteCartProduct(type);
         // console.log("deleteCartResult: ",deleteCartResult);
+        let productArray = await AsyncStorage.getItem('cartProducts');
 
         setTimeout(async()=>{
             const {deleteCartResult} = this.props;
@@ -88,16 +91,18 @@ class CartProducts extends Component {
             if(deleteCartResult !== undefined){
                 if(deleteCartResult.message === "Product not in the cart"){
                     console.log("in if");
-                    let productArray = await AsyncStorage.getItem('cartProducts');
-                    productArray = JSON.parse(productArray);
-                    let newProductArray;
-                    productArray.map(value => {
-                        if(value.product_id !== product_id){
-                            newProductArray.concat(value);
-                        }
-                    });
-                    console.log("newProductArray: **",newProductArray);
-                
+                    if(productArray !== null){
+                        let newProductArray = JSON.parse(productArray);
+                        console.log("newProductArray: ==",newProductArray);
+                        let modifiedArray;
+                        newProductArray.map((value,index) => {
+                            if(value.product_id !== product_id){
+                                modifiedArray.push(value);
+                            }
+                        });
+                        console.log("modifiedArray: **",modifiedArray);
+                    }
+               
                 }
                 else{
                     Alert.alert(deleteCartResult.message);
@@ -106,7 +111,7 @@ class CartProducts extends Component {
             else{
                 Alert.alert("Something went wrong!!Please try again");
             }
-        },5000);
+        },6000);
         
     }
 
@@ -139,12 +144,13 @@ class CartProducts extends Component {
             <View style={{flex:1, }}>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts"  rightIconName="search"/>
                 {
-                 (cartData === undefined) ? 
-                 (  <ScrollView>
-                        <Text style={[styles.productListCost,{textAlign:'center'}]}> Your cart is empty!! </Text>
-                    </ScrollView>):
-                ((cartData === '') ? 
-                (<ActivityIndicator size='large' />) :
+                //  (cartData === undefined) ? 
+                //  (  <ScrollView>
+                //         <Text style={[styles.productListCost,{textAlign:'center'}]}> Your cart is empty!! </Text>
+                //     </ScrollView>):
+                // (
+                    (cartData === '') ? 
+                    (<ActivityIndicator size='large' />) :
                 (<ScrollView>
                     <FlatList
                     data={cartData}
@@ -196,7 +202,9 @@ class CartProducts extends Component {
                     keyExtractor={(item) => {item.product_id.toString()}}
                     ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
                     />
-                </ScrollView>))}
+                </ScrollView>)
+                // )
+                }
                 
 
                 <View style={[styles.rowSpaceBetween, {backgroundColor:StyleConstants.COLOR_FFFFFF ,borderTopColor: StyleConstants.COLOR_000000, padding:StyleConstants.PADDING,}]}>

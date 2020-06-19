@@ -12,7 +12,7 @@ class OrderDetails extends Component {
 
     render() {
         const {productDetails} = this.props.route.params;
-        console.log("productDetails: ",productDetails);
+        // console.log("productDetails: ",productDetails);
         const orderInfo = productDetails.product_details[0];
         const productInfo = orderInfo.product_details[0];
 

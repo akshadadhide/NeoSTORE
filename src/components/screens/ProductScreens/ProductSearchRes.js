@@ -21,7 +21,7 @@ class ProductSearchRes extends Component {
     const {searchText} = this.props.route.params;
     this.props.getAllProducts('getAllProducts');
     const {allProducts} = this.props;
-    console.log("all Product list----",this.props.allProducts); 
+    // console.log("all Product list----",this.props.allProducts); 
 
     // (allProducts !== undefined) && (this.setState({productListArray: allProducts}));
     // console.log("Prductlist array: ", this.state.productListArray);
@@ -49,8 +49,8 @@ class ProductSearchRes extends Component {
 
     );
 
-    console.log("filtered array: ",newData);
-    console.log("productListArray array---: ",productListArray);
+    // console.log("filtered array: ",newData);
+    // console.log("productListArray array---: ",productListArray);
     
     //------------
   }
@@ -60,9 +60,9 @@ class ProductSearchRes extends Component {
 
   render() {
     const {searchText} = this.props.route.params;
-    console.log("render all Product list----",this.props.allProducts); 
+    // console.log("render all Product list----",this.props.allProducts); 
     const {productListArray} = this.state;
-    console.log("render all Product list array state----",productListArray); 
+    // console.log("render all Product list array state----",productListArray); 
 
 
 

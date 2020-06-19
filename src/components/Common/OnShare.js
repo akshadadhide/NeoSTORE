@@ -3,7 +3,7 @@ import {Platform} from 'react-native';
 import Share from 'react-native-share';
 
 const OnShare = (url, title, message) => {
-    console.log("url: ", url, "title: ", title, "message: ", message);
+    // console.log("url: ", url, "title: ", title, "message: ", message);
     
     const options = Platform.select({
         ios: {

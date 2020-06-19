@@ -25,7 +25,7 @@ class ForgotPassword extends Component {
     onSubmit = async() =>{
         this.showLoader();
         const {email} = this.state;
-        console.log("email ifj",email);
+        // console.log("email ifj",email);
        // {email:this.state.email}
        const data={
            email:this.state.email
@@ -34,7 +34,7 @@ class ForgotPassword extends Component {
         if(email !== ''){
             await this.props.handleForgotPassword(data,'forgotPassword');
             const {forgotPasswordRes} = await this.props;
-            console.log("In forgot pass compo", forgotPasswordRes);
+            // console.log("In forgot pass compo", forgotPasswordRes);
 
             setTimeout(()=> {
                 this.hideLoader();

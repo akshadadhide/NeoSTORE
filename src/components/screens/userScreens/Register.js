@@ -191,18 +191,18 @@ class Register extends Component {
             gender: this.state.gender,
             phone_no: this.state.phone_no,
         }
-        console.log("form data", logData);
+        // console.log("form data", logData);
 
         const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') || this.handleValidation('email')
                             || this.handleValidation('pass') || this.handleValidation('confirmPass') || this.handleValidation('phone_no')
         );
-        console.log("Err Flag in submit: ", errorFlag);
+        // console.log("Err Flag in submit: ", errorFlag);
 
 
             if(errorFlag === false){
                 this.props.register(logData,'register');
                 const {isRegistered, registrationResult} = this.props;
-                console.log("isReg:",isRegistered, "regRes:",registrationResult);
+                // console.log("isReg:",isRegistered, "regRes:",registrationResult);
                 
                 setTimeout(()=>{
                     this.hideLoader();

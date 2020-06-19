@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {View, Text, Image, Picker,Alert, ScrollView, FlatList, TouchableOpacity, TouchableHighlight} from 'react-native';
+import {View, Text, Image,Alert, ScrollView, FlatList, TouchableOpacity, TouchableHighlight} from 'react-native';
 // import {Picker} from '@react-native-community/picker';
+import {Picker} from 'native-base';
 import {BASE_URL} from '../../../API/apiConstants';
 import {store} from '../../../redux/store';
 import Header from '../../Common/Header';
@@ -26,15 +27,17 @@ class OrderSummary extends Component {
     }
     componentDidMount(){
         apiCall(null,'GET','getCustAddress')
-        .then((result)=> {console.log("In compDidM, Addr:",result.customer_address), this.setState({custAddress:result.customer_address})}
+        .then((result)=> {
+            // console.log("In compDidM, Addr:",result.customer_address), 
+            this.setState({custAddress:result.customer_address})}
         )
         .catch(error => console.log("In compDidM, Addr error:",error))
 
         const {productDetails} = this.props.route.params;
-        console.log("len--- : ",productDetails.length);
+        // console.log("len--- : ",productDetails.length);
         let arr=[productDetails.length];
         for(let i=0; i<productDetails.length; i++){
-            console.log("i: ",i);
+            // console.log("i: ",i);
             arr[i]=1;
             // this.setState(state => ({
             //     productCount: {
@@ -72,13 +75,13 @@ class OrderSummary extends Component {
 
     handleAddress = (address) =>{
         let addrArr = Object.values(address);
-        console.log("In handleAddr of OrderSummary, addArr: ", addrArr);
+        // console.log("In handleAddr of OrderSummary, addArr: ", addrArr);
         
         let customerAddress;
         for(let i=0; i<addrArr.length; i++){
             if(addrArr[i].isDeliveryAddress ===  true){
                 customerAddress = addrArr[i].address+', '+addrArr[i].city+', '+addrArr[i].state+', '+addrArr[i].country+', '+addrArr[i].pincode;
-                console.log("custmerAdrr: ", customerAddress);
+                // console.log("custmerAdrr: ", customerAddress);
                 return customerAddress;
             }
         }
@@ -86,21 +89,21 @@ class OrderSummary extends Component {
 
     handleOrderNow(){
         this.showLoader();
-        console.log("loader",this.state.showLoader);
+        // console.log("loader",this.state.showLoader);
 
         const {productDetails} = this.props.route.params;
 
         const type = PLACE_ORDER_URLTYPE;
 
         productDetails.map( (value,index) => {
-            console.log("Val: ",value, "index: ",index);
+            // console.log("Val: ",value, "index: ",index);
             
             const data = [{
                 _id: value.product_id,
                 product_id: value.product_id,
                 quantity: this.state.productCount[index],
             },{flag : "checkout"}];
-            console.log("data-----", data);
+            // console.log("data-----", data);
 
             if(data !== undefined){
                 this.props.placeOrder(data, type);
@@ -121,21 +124,21 @@ class OrderSummary extends Component {
     }
 
   render() {
-    console.log("render loader",this.state.showLoader);
+    // console.log("render loader",this.state.showLoader);
 
     const userData = store.getState().authReducer.userData;
     const customerDetails = userData.customer_details;
     const {custAddress} = this.state;
     // const {product_name,product_id, product_material, product_image, product_cost} = this.props.route.params;
     const {productDetails} = this.props.route.params;
-    console.log("productDetails: ",productDetails);
+    // console.log("productDetails: ",productDetails);
     // product_id = productDetails[0].product_id;
     
     
     
     const address = custAddress !== undefined ? this.handleAddress(custAddress) : null
-    console.log("In render deliver add: ", address);
-    console.log("c---------: ",this.state.productCount, "len: ",productDetails.length);
+    // console.log("In render deliver add: ", address);
+    // console.log("c---------: ",this.state.productCount, "len: ",productDetails.length);
     
     let totalCost = this.calculateTotalCost();
     // console.log("total cost: ",totalCost);

@@ -1,7 +1,7 @@
 
 export const searchHandler = (searchText) =>{
-    console.log("On search handler, searchText=", searchText);
-    console.log("Prductlist array: ", this.state.productListArray);
+    // console.log("On search handler, searchText=", searchText);
+    // console.log("Prductlist array: ", this.state.productListArray);
 
     const {productList} = this.props;
     const {productListArray} = this.state;
@@ -26,7 +26,7 @@ export const searchHandler = (searchText) =>{
 
     );
 
-    console.log("filtered array: ",newData);
-    console.log("productListArray array---: ",productListArray);
+    // console.log("filtered array: ",newData);
+    // console.log("productListArray array---: ",productListArray);
     
 }

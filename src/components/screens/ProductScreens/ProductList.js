@@ -39,7 +39,7 @@ class ProductList extends Component {
         let type;
         // type='getProductByCateg/'+category_id;
         type = `commonProducts?category_id=${category_id}&pageNo=${page}&perPage=6`;
-        console.log("Type: ",type);
+        // console.log("Type: ",type);
         
         this.setState({isLoading:true});
         await this.props.getProductList(type);
@@ -58,7 +58,7 @@ class ProductList extends Component {
     };
 
     handleLoadMore(){
-        console.log("In hLM pg: ",this.page,"isload: ",this.state.isLoading);
+        // console.log("In hLM pg: ",this.page,"isload: ",this.state.isLoading);
         
         if((!this.state.isLoading) && (this.page < 2)){
             this.page = this.page+1;
@@ -77,7 +77,7 @@ class ProductList extends Component {
     const {category} = this.props.route.params;
     const {productList,isLoading} = this.props;
     const {productListArray} = this.state;
-    console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
+    // console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
     
         return (
             <View>

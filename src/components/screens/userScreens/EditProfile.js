@@ -35,12 +35,15 @@ class EditProfile extends Component {
             selectedImage:'',
             calendarDisplay:'none',
             showLoader:false,
+            userToken:'',
         }
         this.upload = this.upload.bind(this);
     }
 
-    componentDidMount(){
-        this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
+    async componentDidMount(){
+        await this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
+        token = await AsyncStorage.getItem('userToken');
+        this.setState({userToken:token});
     }
 
     goBack = () => this.props.navigation.goBack();
@@ -162,12 +165,12 @@ class EditProfile extends Component {
 
     }
 
-    //**********=================*************=================************ */
+    //**image upload/
     upload(url, data) {
         let options = {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTMsImlhdCI6MTU5MjM4MjU2Nn0.yAMdlJ41ZQyzSux5BzP8gm4dS9sVD7h3dan9VkMFMjw' 
+            'Authorization': `Bearer ${this.state.userToken}` 
           },
           method: 'POST'
         };
@@ -194,12 +197,17 @@ class EditProfile extends Component {
                 
             })
     }
-    //**********=================*************=================************ */
+    //**image upload */
 
     submitHandler = async () => {
         this.showLoader();
         console.log("userData after edit: ", this.state.user);
         const {user,selectedImage} = this.state;
+        const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') 
+                            || this.handleValidation('email') || this.handleValidation('phone_no')
+                            || this.handleValidation('dob')
+                        );
+        console.log("EF---",errorFlag);
         let data;
         if(user.profile_img === null){
             data = {
@@ -212,102 +220,68 @@ class EditProfile extends Component {
             };
         }
         else{
-            data = user;
+            if(errorFlag === false){
+                await this.upload('http://180.149.241.208:3022/profile', {
+                    profile_img: {
+                        uri: selectedImage.uri,
+                        type: selectedImage.type,
+                        name: selectedImage.fileName,
+                    },
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    dob: user.dob,
+                    phone_no: user.phone_no,
+                    gender: user.gender,
+
+                    }).then(response => {
+                        //do something with `r`
+                        this.hideLoader();
+                        console.log("In submit r== ", response);
+                        if(response === undefined){
+                            Alert.alert("SOmething went wrong!!Please try again");
+                        }
+                        }
+                    )
+                    .catch(error => {
+                        this.hideLoader();
+                        console.log("error in call: ", error);
+                    }
+                    );
+            }
+            else{
+                this.hideLoader();
+                Alert.alert("Please check all information is correctly filled");
+            }
         }
 
-        const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') 
-                            || this.handleValidation('email') || this.handleValidation('phone_no')
-                            || this.handleValidation('dob'));
-        console.log("EF---",errorFlag);
-
-        //****==========**********===========****************=============== */
-        await this.upload('http://180.149.241.208:3022/profile', {
-            profile_img: {
-                uri: selectedImage.uri,
-                type: selectedImage.type,
-                name: selectedImage.fileName,
-            },
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            dob: user.dob,
-            phone_no: user.phone_no,
-            gender: user.gender,
-
-            }).then(r => {
-            //do something with `r`
-            console.log("In submit r== ", r)
-            .catch(error => console.log("error in call: ", error)
-            )
-            
+        if(user.profile_img === null){
+            if(errorFlag === false){
+                this.props.editProfile(data,'profile');
+                const {editProfileRes} = this.props;
+                console.log("In subHandler of EditProf, res:",editProfileRes);     
+                setTimeout(()=> {
+                    this.hideLoader();
+                    if(editProfileRes !== undefined){
+                        if(editProfileRes.status_code === 200){
+                            Alert.alert(editProfileRes.message);
+                            this.props.navigation.navigate('UserProfile');
+                        }
+                        else{
+                            Alert.alert("Something went wrong!!Please try again");
+                        }
+                    }
+                    else{
+                        Alert.alert("Something went wrong!!Please try again");
+                    }
+                },5000);
             }
-        );
-
-        //****==========**********===========****************=============== */
-
-    
-
-        // if(errorFlag === false){
-        //     this.props.editProfile(data,'profile');
-        //     const {editProfileRes} = this.props;
-        //     console.log("In subHandler of EditProf, res:",editProfileRes);
-//********************************************************************** */
-            // var uData = {
-            //     first_name: user.first_name,
-            //     last_name: user.last_name,
-            //     email: user.email,
-            //     dob: user.dob,
-            //     phone_no: user.phone_no,
-            //     gender: user.gender,
-            // }
-            // var myHeaders = new Headers();
-            // myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OTMsImlhdCI6MTU5MjM4MjU2Nn0.yAMdlJ41ZQyzSux5BzP8gm4dS9sVD7h3dan9VkMFMjw");
-            // var formdata = new FormData();
-            // formdata.append("first_name", user.first_name);
-            // formdata.append("last_name", user.last_name);
-            // formdata.append("email", user.email.toString());
-            // formdata.append("phone_no", user.phone_no.toString());
-            // formdata.append("dob", user.dob.toString());
-            // formdata.append("gender", user.gender.toString());
-            // formdata.append("profile_img",selectedImage.uri,user.profile_img.toString());
-            // // formdata = formdata.concat("profile_img",type:selectedImage.type,uri:selectedImage.uri,name:user.profile_img.toString()});
-            // console.log("formdata:--",formdata);
-            
-            // var requestOptions = {
-            //     method: 'PUT',
-            //     headers: myHeaders,
-            //     body: formdata,
-            //     redirect: 'follow'
-            // };
-
-            // fetch("http://180.149.241.208:3022/profile", requestOptions)
-            // .then(response => response.text())
-            // .then(result => console.log("result of upload===",result))
-            // .catch(error => console.log('error', error));
-
-//****************************************************************************** */
-            
-        //     setTimeout(()=> {
-        //         this.hideLoader();
-        //         if(editProfileRes !== undefined){
-        //             if(editProfileRes.status_code === 200){
-        //                 Alert.alert(editProfileRes.message);
-        //                 this.props.navigation.navigate('UserProfile');
-        //             }
-        //             else{
-        //                 Alert.alert("Something went wrong!!Please try again");
-        //             }
-        //         }
-        //         else{
-        //             Alert.alert("Something went wrong!!Please try again");
-        //         }
-        //     },5000);
-        // }
-        // else{
-        //     this.hideLoader();
-        //     Alert.alert("Please check all information is correctly filled");
-        // }
-       await this.hideLoader(); 
+            else{
+                this.hideLoader();
+                Alert.alert("Please check all information is correctly filled");
+            }
+        }
+    //    await this.hideLoader(); 
     }
 
 
@@ -316,7 +290,7 @@ class EditProfile extends Component {
         // console.log("In editProfile userProfile: ", userProfile);
         const {first_name, last_name, email, phone_no} = this.state.user;
         const {user,errors} = this.state;
-        console.log("user info: ",user, "name:",user.last_name);
+        console.log("user info: ",user);
         
 
         const today = new Date();

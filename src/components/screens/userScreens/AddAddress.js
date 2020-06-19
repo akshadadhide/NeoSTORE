@@ -108,7 +108,7 @@ class AddAddress extends Component {
             state: this.state.state,
             country: this.state.country,
         }
-        const errorFlag = (this.handleValidation('address') && this.handleValidation('city') && this.handleValidation('state') && this.handleValidation('pincode') && this.handleValidation('country'));
+        const errorFlag = (this.handleValidation('address') || this.handleValidation('city') || this.handleValidation('state') || this.handleValidation('pincode') || this.handleValidation('country'));
 
         if(errorFlag === false && JSON.stringify(this.state.errors).length <= 2){
             await this.props.addAddress(address,'address');
@@ -125,10 +125,10 @@ class AddAddress extends Component {
                         Alert.alert(addAddrResponse.error_message)
                     }
                 }
-                else{
-                    Alert.alert('Something went wrong!!!Please try again');
-                }
-            },5000);
+                // else{
+                //     Alert.alert('Something went wrong!!!Please try again');
+                // }
+            },7000);
             
         }
         else{

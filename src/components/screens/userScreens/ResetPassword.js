@@ -99,7 +99,7 @@ class ResetPassword extends Component {
         }
 
         this.setState({errors});
-        console.log("Error: ",errors, " errFlag: ", errorFlag);
+        // console.log("Error: ",errors, " errFlag: ", errorFlag);
         return errorFlag;
     }
 
@@ -111,12 +111,12 @@ class ResetPassword extends Component {
             confirmPass: this.state.confirmPass,
         }
         const errorFlag = this.handleValidation('oldPass') && this.handleValidation('newPass') && this.handleValidation('confirmPass');
-        console.log("EF----",errorFlag);
+        // console.log("EF----",errorFlag);
         
         if(errorFlag === false){
             await this.props.changePassword(data, CHANGE_PASSWORD_URLTYPE);
             const {changePasswordRes} = await this.props;
-            console.log("changePassRes in compo: ", changePasswordRes);
+            // console.log("changePassRes in compo: ", changePasswordRes);
             
             setTimeout(()=>{
                 this.hideLoader();
