@@ -1,7 +1,5 @@
 import {ActionTypes} from '../actions/ActionTypes';
-import {BASE_URL} from '../../API/apiConstants';
 import {apiCall} from '../../API/apiCall';
-import AsyncStorage from '@react-native-community/async-storage';
 
 
 export const cartAction ={
@@ -11,17 +9,17 @@ export const cartAction ={
 }
 
 function addToCart(type, productInfo){
-    console.log("Inaction addtocart");
+    // console.log("Inaction addtocart");
     
     return dispatch => {
-        console.log("In action dispatch");
+        // console.log("In action dispatch");
         
         dispatch(addToCartRequest());
-        console.log("after action request dispatch");
+        // console.log("after action request dispatch");
 
         apiCall(productInfo, 'POST', type)
             .then((result) =>{
-                console.log("addTOCart action result:", result);
+                // console.log("addTOCart action result:", result);
                 dispatch(addToCartSuccess(result));
             
             })
@@ -54,17 +52,20 @@ function addToCart(type, productInfo){
 }
 
 function getCartData(type){
-    console.log('in action');
+    // console.log('in action');
     
     return async dispatch =>{
-        console.log("in dispatch");
+        // console.log("in dispatch");
         
        apiCall(null, 'GET', type)
         .then((result) =>{
-            console.log("in disp", result);
-            let data = result.product_details
-            data = data.map((value) => value.product_id);
-            dispatch(getCartDataSuccess(data));
+            // console.log("in disp", result);
+            let data
+            if(result.product_details !== undefined){
+                data = result.product_details
+                data = data.map((value) => value.product_id);
+            }
+                dispatch(getCartDataSuccess(data));
         })
         .catch((error) =>{
             console.log("Error", error);
@@ -86,7 +87,7 @@ function deleteCartProduct(type){
     return dispatch => {
         apiCall(null, 'DELETE', type)
         .then((result) => {
-            console.log("Res disp: ",result);
+            // console.log("Res disp: ",result);
             dispatch(deleteCartProductSuccess(result));
         })
         .catch((error) => {

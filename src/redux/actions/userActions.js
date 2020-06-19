@@ -12,7 +12,7 @@ export const userActions = {
 
 function login(logData, type) {
   // try{
-  console.log("login details: ", logData);
+  // console.log("login details: ", logData);
 
   return async dispatch => {
     dispatch(userLoginRequest());
@@ -20,6 +20,8 @@ function login(logData, type) {
     await apiCall(logData, 'POST', type)
       .then((result) => {
         console.log("res in login dis: ", result);
+        const userD = JSON.stringify(result);
+        AsyncStorage.setItem('userData', userD);
         const token = result.token;
         AsyncStorage.setItem('userToken', token);
         console.log("Token-----", token);

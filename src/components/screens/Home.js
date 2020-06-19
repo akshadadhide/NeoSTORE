@@ -15,17 +15,11 @@ class Home extends Component {
             // do something
             this.props.getCarouselImages();
           });
-        // console.log("In componentDidMount Home");
-        const {images} = this.props;
-        const {isLoading} = this.props;
-        const {categoryId} = this.props;
-        // console.log("componentDidMount images",images, "isloading state:   ", isLoading);
-        // console.log("category ids in home componentDidMount", categoryId);
     }
 
     componentWillUnmount() {
         this._unsubscribe();
-      }
+    }
 
     handleToggleDrawer = () => this.props.navigation.toggleDrawer();
 

@@ -16,7 +16,7 @@ class Login extends Component {
     constructor(){
         super();
         this.state = {
-            email:'akshadad.neosofttech@gmail.com',
+            email:'akshadadhide26@gmail.com',
             pass:'Test@123',
             errorMsg:'',
             errors:{},
@@ -50,7 +50,7 @@ class Login extends Component {
     
         let errorFlag = false;
     
-        console.log("e: ",email, "pass: ",pass);
+        // console.log("e: ",email, "pass: ",pass);
         
         //email validation
         if(email.length === 0 || EMAIL_REGEX.test(email) === false){

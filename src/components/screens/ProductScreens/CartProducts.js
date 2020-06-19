@@ -25,11 +25,11 @@ class CartProducts extends Component {
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
 
-    handlePickerChange(index,itemValue){
-        const { productCount } = this.state;
-        productCount.splice(index, 1, itemValue);
-        this.setState({ productCount: [...productCount] });
-    }
+    // handlePickerChange(index,itemValue){
+    //     const { productCount } = this.state;
+    //     productCount.splice(index, 1, itemValue);
+    //     this.setState({ productCount: [...productCount] });
+    // }
 
     async componentDidMount(){
         const type = GET_CART_DATA_URLTYPE;
@@ -45,22 +45,21 @@ class CartProducts extends Component {
         
         try {
             const myArray = await AsyncStorage.getItem('cartProducts');
-            console.log("myArray: ===",myArray);
-            console.log("f==",myArray !== null && cartData !== '');
+            // console.log("myArray: ===",myArray);
+            // console.log("f==",myArray !== null && cartData !== '');
             
-            if (myArray !== null && cartData !== undefined) {
-                console.log("1st");
-                
+            if (myArray !== null && (cartData !== undefined || cartData !== '')) {
+                // console.log("1st");
                 let cartProducts = cartData.concat(JSON.parse(myArray));
                 this.setState({cartData: cartProducts})
                 // console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
             } 
-            if(myArray !== null){
-                console.log("2nd");
+            if(myArray !== null && (cartData === undefined || cartData === '')){
+                // console.log("2nd");
                 this.setState({cartData:JSON.parse(myArray)})
             }
-            else{
-                console.log("3rd");
+            if(myArray === null && (cartData !== undefined || cartData !== '')){
+                // console.log("3rd");
                 this.setState({cartData: cartData})
             }
         }
@@ -81,13 +80,28 @@ class CartProducts extends Component {
         this.showLoader();
         let type = `deleteCustomerCart/${product_id}`;
         this.props.deleteCartProduct(type);
-        const {deleteCartResult} = this.props;
-        console.log("deleteCartResult: ",deleteCartResult);
+        // console.log("deleteCartResult: ",deleteCartResult);
 
-        setTimeout(()=>{
+        setTimeout(async()=>{
+            const {deleteCartResult} = this.props;
             this.hideLoader();
             if(deleteCartResult !== undefined){
-                Alert.alert(deleteCartResult.message);
+                if(deleteCartResult.message === "Product not in the cart"){
+                    console.log("in if");
+                    let productArray = await AsyncStorage.getItem('cartProducts');
+                    productArray = JSON.parse(productArray);
+                    let newProductArray;
+                    productArray.map(value => {
+                        if(value.product_id !== product_id){
+                            newProductArray.concat(value);
+                        }
+                    });
+                    console.log("newProductArray: **",newProductArray);
+                
+                }
+                else{
+                    Alert.alert(deleteCartResult.message);
+                }
             }
             else{
                 Alert.alert("Something went wrong!!Please try again");
@@ -97,7 +111,7 @@ class CartProducts extends Component {
     }
 
     calculateTotalCost = (cartData) => {
-        console.log("cartData: ",cartData);
+        // console.log("cartData: ",cartData);
         
         let totalCost=0;
         if(cartData !== undefined && cartData !== ''){
@@ -135,7 +149,7 @@ class CartProducts extends Component {
                     <FlatList
                     data={cartData}
                     renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={item.product_id} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
+                        <TouchableOpacity key={item.product_id.toString()} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
                             <View style={styles.productListView}>
                                 <View style={{paddingRight:5,}}>
                                     <Image
@@ -150,13 +164,13 @@ class CartProducts extends Component {
                                 </View>
                             </View>
                             <View style={{flexDirection:'row',marginLeft:90}}>
-                                <Picker selectedValue={this.state.productCount[index]} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.handlePickerChange(index,itemValue)}>
+                                {/* <Picker selectedValue={this.state.productCount[index]} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.handlePickerChange(index,itemValue)}>
                                     <Picker.Item label='1' value={1} />
                                     <Picker.Item label='2' value={2} />
                                     <Picker.Item label='3' value={3} />
                                     <Picker.Item label='4' value={4} />
                                     <Picker.Item label='5' value={5} />
-                                </Picker>
+                                </Picker> */}
 
                                 <TouchableOpacity 
                                     style={[styles.TabNavButton, {width:70,height:35,backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
@@ -179,7 +193,7 @@ class CartProducts extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={(item) => {item.product_id}}
+                    keyExtractor={(item) => {item.product_id.toString()}}
                     ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
                     />
                 </ScrollView>))}

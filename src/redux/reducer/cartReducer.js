@@ -16,7 +16,6 @@ export function cartReducer(state = initialState, action){
             return {...state, isLoading: true}
 
         case ActionTypes.ADD_PRODUCT_TO_CART_SUCCESS:
-            console.log("In reducer cartResult: ", action.payload);
             return {...state, cartResult:action.payload, isLoading: false}
 
         case ActionTypes.ADD_PRODUCT_TO_CART_FAILURE:
@@ -25,7 +24,6 @@ export function cartReducer(state = initialState, action){
 
         /*get cart data*/
         case ActionTypes.GET_CART_DATA_SUCCESS:
-            console.log("In reducer cartData: ", action.payload)
             return {...state, cartData: action.payload, isLoading: false}
         /*get cart data*/
 

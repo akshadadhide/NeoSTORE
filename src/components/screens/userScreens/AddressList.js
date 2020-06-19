@@ -141,8 +141,8 @@ class AddressList extends Component {
                                                             isDeliveryAddress: true,
                                                         }
                                                     })
-                                                    }
-                                                } 
+                                                }
+                                        } 
                                         selected={addr == item.address+', '+item.city+', '+item.state+', '+item.pincode+', '+item.country } 
                                         style={{marginRight:10,paddingBottom:StyleConstants.PADDING_10}}
                                     />

@@ -14,15 +14,35 @@ let userToken, cartData, cartCount=0;
 const getUserToken = async() =>{
     userToken = await AsyncStorage.getItem('userToken');
     // console.log("getUserToken: ", userToken);
-     return userToken;
+    return userToken;
 }
 
 const getCartCount = async() => {
     const myArray = await AsyncStorage.getItem('cartProducts');
-    if(myArray !== null){
-        cartCount = JSON.parse(myArray).length;
+
+    const cartData = store.getState().cartReducer.cartData;
+    // console.log("cartData in sidebar:",cartData);
+    const userData = store.getState().authReducer.userData;
+    // console.log("userData in getCOunt: ",userData);
+    
+    let count1=0, count2=0;
+    if(cartData === undefined || cartData === null){
+        count1 = userData.cart_count
     }
-    console.log("cnt: ",cartCount ,"arr:==",myArray);
+    else if(cartData !== undefined || cartData !== null){
+        count1 = cartData.length;
+    }
+    // console.log("count1 outside: ",count1);
+    
+    if(myArray !== null){
+        count2 = JSON.parse(myArray).length;
+    }
+    else{
+        count2=0;
+    }
+    // console.log("count2 outside: ",count2);
+    cartCount = count1 + count2;
+    // console.log("final cartCount: ",cartCount);
     
     return cartCount;
 }
@@ -100,7 +120,7 @@ handleLogout = async() => {
                 label={() => <Text style={styles.sidebarLink}>My Carts</Text> } 
                 onPress={() => {props.navigation.navigate('CartProducts')}}  />
                 <View  style={styles.cartCount}>
-                    <Text style={styles.sidebarLink}> {userData.cart_count + cartCount} </Text>
+                    <Text style={styles.sidebarLink}> {cartCount} </Text>
                 </View>
             </View>
             ):

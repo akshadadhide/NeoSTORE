@@ -59,49 +59,50 @@ class ProductDetail extends Component{
   // }
 
   async handleAddToCart(){
-    await this.showLoader();
-    let productInfo;
-    const {productDetails} = this.props;
-    const {cartProductsArr} = this.state;
-    console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
-    
+      await this.showLoader();
+      let productInfo;
+      const {productDetails} = this.props;
+      const {cartProductsArr} = this.state;
+      console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
+      
 
-    try {
-      const myArray = await AsyncStorage.getItem('cartProducts');
-      console.log("myArray: ",JSON.parse(myArray));
-      let newProduct, flag=false;
+      try {
+            const myArray = await AsyncStorage.getItem('cartProducts');
+            console.log("myArray: ",JSON.parse(myArray));
+            let newProduct, flag=false;
 
-      if(myArray !== null){ 
-        
-        newProduct =  JSON.parse(myArray);
+            if(myArray !== null){ 
+                
+                newProduct =  JSON.parse(myArray);
 
-        newProduct.map( val =>{
-            if(val.product_id === productDetails[0].product_id){
-                flag = true;
-            }
-        });
+                newProduct.map( val =>{
+                    if(val.product_id === productDetails[0].product_id){
+                        flag = true;
+                    }
+                });
 
-        setTimeout(() => {
-            this.hideLoader();
-            if(flag === false){
-              newProduct.push(productDetails[0]);
-              console.log("Modified myArray newProduct: ",newProduct);
-              Alert.alert("Added to cart");
+                setTimeout(async() => {
+                    this.hideLoader();
+                    if(flag === false){
+                    newProduct.push(productDetails[0]);
+                    Alert.alert("Added to cart");
+                    console.log("Modified myArray newProduct: ",newProduct);
+                    }
+                    else{
+                    Alert.alert('Already in cart');
+                    }
+                    await AsyncStorage.setItem('cartProducts', JSON.stringify(newProduct));
+                },5000);
             }
             else{
-              Alert.alert('Already in cart');
+                this.hideLoader();
+                await AsyncStorage.setItem('cartProducts', JSON.stringify(productDetails));
             }
-        },4000);
-        await AsyncStorage.setItem('cartProducts', JSON.stringify(newProduct));
-      }
-      else{
-        this.hideLoader();
-        await AsyncStorage.setItem('cartProducts', JSON.stringify(productDetails));
-      }
-      
-    } catch (error) {
-      console.log("Error saving data in asyncstorage cart: ",error);
-    }
+        
+        }catch (error) {
+            this.hideLoader();
+            console.log("Error saving data in asyncstorage cart: ",error);
+        }
 
 
     // (productDetails)&&(productInfo = {
@@ -136,10 +137,10 @@ class ProductDetail extends Component{
       return {
         ...state,
         ratingData:{
-          ...state.product_id,
-          product_id: productId,
-          ...state.product_rating,
-          product_rating: rating
+            ...state.product_id,
+            product_id: productId,
+            ...state.product_rating,
+            product_rating: rating
         }
       }
     });
@@ -156,10 +157,10 @@ class ProductDetail extends Component{
     const {productRatingRes} = await this.props;
     console.log("productRatingRes", productRatingRes);
     setTimeout(()=>{
-      this.hideLoader();
-      (productRatingRes !== undefined) ?
-      (Alert.alert(productRatingRes.message)) : 
-      (Alert.alert("Something went wrong!!!try again"));
+        this.hideLoader();
+        (productRatingRes !== undefined) ?
+        (Alert.alert(productRatingRes.message)) : 
+        (Alert.alert("Something went wrong!!!try again"));
     },3000);
     this.setState({modalVisible: visible});
 
