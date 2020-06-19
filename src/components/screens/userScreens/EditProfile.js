@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {View, TouchableOpacity, Alert, ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight,Image, TextInput} from 'react-native';
+import {View, TouchableOpacity,Platform, Alert, ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight,Image, TextInput} from 'react-native';
 import {Input, Item} from 'native-base';
+import AsyncStorage from '@react-native-community/async-storage';
 import CustomHeader from '../../Common/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
@@ -42,7 +43,8 @@ class EditProfile extends Component {
 
     async componentDidMount(){
         await this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
-        token = await AsyncStorage.getItem('userToken');
+        const token = await AsyncStorage.getItem('userToken');
+        // console.log("token: ",token);
         this.setState({userToken:token});
     }
 
@@ -223,7 +225,7 @@ class EditProfile extends Component {
             if(errorFlag === false){
                 await this.upload('http://180.149.241.208:3022/profile', {
                     profile_img: {
-                        uri: selectedImage.uri,
+                        uri: selectedImage.uri, //selectedImage.uri.replace('content:/', ''),
                         type: selectedImage.type,
                         name: selectedImage.fileName,
                     },
@@ -239,7 +241,7 @@ class EditProfile extends Component {
                         this.hideLoader();
                         console.log("In submit r== ", response);
                         if(response === undefined){
-                            Alert.alert("SOmething went wrong!!Please try again");
+                            Alert.alert("Something went wrong!!Please try again");
                         }
                         }
                     )
@@ -286,6 +288,7 @@ class EditProfile extends Component {
 
 
     render() {
+        console.log("userToken: ",this.state.userToken);
         const {userProfile} =  this.props;
         // console.log("In editProfile userProfile: ", userProfile);
         const {first_name, last_name, email, phone_no} = this.state.user;

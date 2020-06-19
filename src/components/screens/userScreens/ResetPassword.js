@@ -110,7 +110,7 @@ class ResetPassword extends Component {
             newPass: this.state.newPass,
             confirmPass: this.state.confirmPass,
         }
-        const errorFlag = this.handleValidation('oldPass') && this.handleValidation('newPass') && this.handleValidation('confirmPass');
+        const errorFlag = this.handleValidation('oldPass') || this.handleValidation('newPass') || this.handleValidation('confirmPass');
         // console.log("EF----",errorFlag);
         
         if(errorFlag === false){

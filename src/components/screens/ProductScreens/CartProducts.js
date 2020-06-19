@@ -155,7 +155,7 @@ class CartProducts extends Component {
                     <FlatList
                     data={cartData}
                     renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={item.product_id.toString()} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
+                        <TouchableOpacity key={index} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
                             <View style={styles.productListView}>
                                 <View style={{paddingRight:5,}}>
                                     <Image
@@ -199,7 +199,7 @@ class CartProducts extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={(item) => {item.product_id.toString()}}
+                    keyExtractor={(item) => {return item.product_id.toString()}}
                     ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
                     />
                 </ScrollView>)

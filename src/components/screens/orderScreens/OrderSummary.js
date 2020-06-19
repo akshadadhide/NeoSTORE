@@ -39,12 +39,6 @@ class OrderSummary extends Component {
         for(let i=0; i<productDetails.length; i++){
             // console.log("i: ",i);
             arr[i]=1;
-            // this.setState(state => ({
-            //     productCount: {
-            //         ...state.productCount,
-            //         [state.productCount[i].val]:1,
-            //     },
-            // }))
         }
         this.setState({productCount:arr})
 
@@ -161,7 +155,7 @@ class OrderSummary extends Component {
                 data={productDetails}
                 renderItem={ ({item,index}) => (
                     <View style={styles.orderSummaryView}>
-                        <View style={styles.rowSpaceBetween}>
+                        <View key={index} style={styles.rowSpaceBetween}>
                             <Text style={[styles.productDetailTitle, {width:WINDOW_WIDTH/2.5, } ]}>{item.product_name} </Text>
                             <Image source={{uri: BASE_URL+item.product_image}} style={[styles.productDetailSubImage, {borderWidth:0, alignSelf:'flex-end', width:85, marginTop:0,}]} />
                         </View>
@@ -178,7 +172,7 @@ class OrderSummary extends Component {
                         </Picker> 
                     </View> 
                 )}
-                keyExtractor={(item) => item._id}
+                keyExtractor={(item) => {return item._id}}
                 />
 
                 <View style={styles.orderSummaryView}>

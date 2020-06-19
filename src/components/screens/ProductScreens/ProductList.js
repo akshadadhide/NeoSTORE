@@ -112,7 +112,7 @@ class ProductList extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={(item,index) => item.product_id}
+                    keyExtractor={(item,index) => { return item._id.toString()}}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
                     onEndReachedThreshold={0}
                     onEndReached={this.handleLoadMore.bind(this)}
