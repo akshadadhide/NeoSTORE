@@ -60,7 +60,7 @@ export const apiCall = async(data, methodType, urlType) => {
             })
             .then((response) => response.json())   
             .then((responseJson) => {
-                console.log("res" , responseJson);
+                // console.log("res" , responseJson);
                 resolve(responseJson);
             })
             .catch((error) => {

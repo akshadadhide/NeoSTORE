@@ -13,7 +13,7 @@ import {NAME_REGEX, customErrors, EMAIL_REGEX, MOBILE_REGEX} from '../../../util
 import {GET_USER_PROFILE_URLTYPE, BASE_URL} from '../../../API/apiConstants';
 import ImagePicker from 'react-native-image-picker';
 import Loader from '../../Common/Loader';
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 
 
 class EditProfile extends Component {
@@ -46,7 +46,7 @@ class EditProfile extends Component {
 
     uploadProfilePhoto = () =>{
         const {user} = this.state;
-        console.log("In upload profile photo");
+        // console.log("In upload profile photo");
         const options = {
             title: 'Select image',
             storageOptions: {
@@ -56,7 +56,7 @@ class EditProfile extends Component {
         };
 
         ImagePicker.showImagePicker(options, (response)=>{
-            console.log("Res of ImagePicker: ", response);
+            // console.log("Res of ImagePicker: ", response);
             if(response.didCancel){
                 console.log("User cancelled image picker");
             }
@@ -70,7 +70,7 @@ class EditProfile extends Component {
             }
             
         });
-        console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);   
+        // console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);   
         
     }
 
@@ -170,7 +170,7 @@ class EditProfile extends Component {
         .then( (response) => response.json())
         .then( (responseJson) => {
             this.hideLoader();
-            console.log("Response:=",responseJson);
+            // console.log("Response:=",responseJson);
             (responseJson.status_code === 200) ?
             (
                 this.props.updateUserData(responseJson.customer_details),
@@ -182,7 +182,7 @@ class EditProfile extends Component {
         })
         .catch((err) => {
             this.hideLoader();
-            console.log("error=+= ",err);
+            // console.log("error=+= ",err);
             Alert.alert("Something went wrong!!Please try again");
         })
     }
@@ -190,13 +190,12 @@ class EditProfile extends Component {
 
     submitHandler = async () => {
         this.showLoader();
-        console.log("userData after edit: ", this.state.user);
+        // console.log("userData after edit: ", this.state.user);
         const {user,selectedImage} = this.state;
         const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') 
                             || this.handleValidation('email') || this.handleValidation('phone_no')
                             || this.handleValidation('dob')
                         );
-        console.log("EF---",errorFlag);
         let data;
         if(user.profile_img !== null){
             if(selectedImage !== null && selectedImage !== '' && selectedImage !== undefined){
@@ -237,7 +236,6 @@ class EditProfile extends Component {
                     setTimeout(()=> {
                         this.hideLoader();
                         const {editProfileRes} = this.props;
-                        console.log("In subHandler of EditProf, res:",editProfileRes); 
                         if(editProfileRes !== undefined){
                             if(editProfileRes.status_code === 200){
                                 Alert.alert(editProfileRes.message);
@@ -262,17 +260,13 @@ class EditProfile extends Component {
 
 
     render() {
-        console.log("userToken: ",this.state.userToken);
         const {userProfile} =  this.props;
         // console.log("In editProfile userProfile: ", userProfile);
         const {first_name, last_name, email, phone_no} = this.state.user;
         const {user,errors} = this.state;
-        console.log("user render: ",user);
-        console.log("userProfile render: ",userProfile);
 
         
         const today = new Date();
-        console.log("flag: ", (JSON.stringify(user) !== JSON.stringify(userProfile)));
 
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>

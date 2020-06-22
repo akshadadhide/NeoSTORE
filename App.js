@@ -14,19 +14,11 @@ console.disableYellowBox = true;
 
 YellowBox.ignoreWarnings([
   'VirtualizedLists should never be nested', // TODO: Remove when fixed
+  'Possible Unhandled Promise Rejection',
 ])
 
 
 export default class App extends Component {
-
-  // async componentDidMount(){
-  //   try {
-  //     await AsyncStorage.clear()
-  //   } catch(e) {
-  //     // clear error
-  //   }
-  // }
-
   render() {
     return (
       <Provider store={store}>

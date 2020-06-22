@@ -33,9 +33,7 @@ class UserProfile extends Component {
     }
 
     componentDidUpdate(prevProps){
-        console.log("ifghg");
         if(this.props.userProfile !== prevProps.userProfile){
-            console.log("in if---");
             this.setState({userProfile:this.props.userProfile});
         }   
     }
@@ -44,7 +42,6 @@ class UserProfile extends Component {
 
     render() {
         const {userProfile} = this.state;
-        console.log("userProfile: ",userProfile);
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>

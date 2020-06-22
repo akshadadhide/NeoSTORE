@@ -38,7 +38,9 @@ const OnShare = (url, title, message) => {
     
     return (
         Share.open(options)
-        .then((res) => { console.log("Result----: ",res) })
+        .then((res) => { 
+            // console.log("Result----: ",res) 
+        })
         .catch((err) => { err && console.log("Error-----: ",err); })
     );
    

@@ -13,7 +13,7 @@ import {BASE_URL, ADD_DATA_TO_CART,RATE_TO_PRODUCT_URLTYPE} from '../../../API/a
 import CustomHeader from '../../Common/Header';
 import OnShare from '../../Common/OnShare';
 import StarRating from 'react-native-star-rating';
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 import {productActions} from '../../../redux/actions/productActions';
 import {store} from '../../../redux/store';
 import Loader from '../../Common/Loader';
@@ -172,13 +172,13 @@ class ProductDetail extends Component{
 			})
 			.then(async base64Data => {
 				base64Data = `data:${type};base64,` + base64Data;
-				console.log("base64Data: ", base64Data);
+				// console.log("base64Data: ", base64Data);
 				this.setState({base64Data:base64Data});
 				await OnShare(base64Data, 'Check this product', msg);
 				await RNFS.unlink(filePath);
 			})
 			.catch( error =>{
-				console.log("Error----", error);
+				// console.log("Error----", error);
 				
 			});
 	}
@@ -190,29 +190,18 @@ class ProductDetail extends Component{
 
 	render() {
 		const {productId} = this.props.route.params;
-		// console.log("render productId: ",productId);
-		
-        // const {productDetails, isLoading} = this.props;
         const {productDetails} = this.props;
 		const {product_rating} = this.state.ratingData
 		const userToken = (this.state.userToken !== null) ? this.state.userToken : '' ;
-		// let flag = userToken !== null && userToken !== ''
-		// console.log("token: ",userToken, "Flag: ", flag);
-		
-		// console.log("Product details render ", productDetails, "isload", isLoading);
-		// console.log("details===>",productDetails);
-	
 		let productD, subImages, mainImage;
 		
 		if(productDetails){
 			productD = productDetails[0];
-			// console.log(productDetails[0].product_name);
-			// console.log(productD.product_name);
 			subImages = productDetails[0].subImages_id.product_subImages.map((value) => {return value} );
 			subImages = subImages.map((value) => {return BASE_URL.concat(value)});
 			mainImage = this.state.showSubImage ? this.state.mainImageName : BASE_URL+productD.product_image;
 		}
-		
+		const flag = (userToken !== null && userToken !== '');
 
 		return (
 			(productD === undefined) ? 
@@ -298,15 +287,15 @@ class ProductDetail extends Component{
 
 				{/* add cart button */}
 				<TouchableHighlight 
-					style={styles.addToCartButton} 
-					onPress={this.handleAddToCart.bind(this) }
+					style={[styles.addToCartButton, flag ? {opacity:1} : {opacity:0.6}]} 
+					onPress={() => {(userToken !== null && userToken !== '') ? this.handleAddToCart.bind(this) : (alert('Please Login first'))} }
 				>
 					<Icon name="shopping-cart" color={StyleConstants.COLOR_FFFFFF} size={30} />
 				</TouchableHighlight>
 
 				{/* buy and rate button view starts */}
 				<View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF}]}>
-					<TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
+					<TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,}, flag ? {opacity:1} : {opacity:0.6} ]} 
 						onPress={ () =>  (userToken !== null && userToken !== '') ?
 							(this.props.navigation.navigate('OrderSummary',{productDetails:[{product_name:productD.product_name, product_id: productD.product_id, product_material:productD.product_material, 
 								product_image:productD.product_image, product_cost:productD.product_cost}]})):
@@ -314,7 +303,7 @@ class ProductDetail extends Component{
 						<Text style={styles.TabNavButtonText}> BUY NOW </Text>
 					</TouchableOpacity>
 					<TouchableOpacity 
-							style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,} ]} 
+							style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,}, flag ? {opacity:1} : {opacity:0.6} ]} 
                             onPress={() => {
                                 (userToken !== null && userToken !== '') ? this.setModalVisible(true) : (alert('Please Login first'))
 						

@@ -19,12 +19,10 @@ function login(logData, type) {
 
     await apiCall(logData, 'POST', type)
       .then((result) => {
-        console.log("res in login dis: ", result);
         const userD = JSON.stringify(result);
         AsyncStorage.setItem('userData', userD);
         const token = result.token;
         AsyncStorage.setItem('userToken', token);
-        console.log("Token-----", token);
         
         dispatch(userLoginSuccess(result));
       })
@@ -97,18 +95,14 @@ function register(userData, type) {
 }
 
 function handleForgotPassword(data, type) {
-  console.log("In handleForgotPwd");
 
   return dispatch => {
-    console.log("In dispatch");
 
     apiCall(data, 'POST', type)
       .then((result) => {
-        console.log("res: ", result);
         dispatch(ForgotPasswordSuccess(result));
       })
       .catch((error) => {
-        console.log("Error: ", error);
         dispatch(ForgotPasswordFailure(error));
       })
   }
@@ -133,11 +127,9 @@ function handleRecoverPassword(data, type) {
   return dispatch => {
     apiCall(data, 'POST', type)
       .then((result) => {
-        console.log("recover pass res:", result);
         dispatch(recoverPasswordSuccess(result));
       })
       .catch((error) => {
-        console.log("Recover Password error:", error);
         dispatch(recoverPasswordFailure(error));
       })
   }

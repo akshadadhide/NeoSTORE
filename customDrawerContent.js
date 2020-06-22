@@ -88,7 +88,8 @@ handleLogout = async() => {
     // console.log("customerInfo: ",customerInfo);
     
     // console.log("user D", userData);
-    const customerDetails = (customerInfo === undefined) ? userData.customer_details : customerInfo;
+    const customerDetails = (customerInfo !== undefined && customerInfo !== null && customerInfo !== '') ? customerInfo : userData.customer_details;
+    // const customerDetails = userData.customer_details;
     const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
     
     
@@ -122,7 +123,7 @@ handleLogout = async() => {
             <View style={styles.rowSpaceBetween}>
                 <DrawerItem 
                 icon={() => <Icon name="shopping-cart" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
-                label={() => <Text style={styles.sidebarLink}>My Carts</Text> } 
+                label={() => <Text style={styles.sidebarLink}>My Cart</Text> } 
                 onPress={() => {props.navigation.navigate('CartProducts')}}  />
                 <View  style={styles.cartCount}>
                     <Text style={styles.sidebarLink}> {cartCount} </Text>

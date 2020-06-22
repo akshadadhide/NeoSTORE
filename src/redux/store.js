@@ -4,9 +4,6 @@ import thunk from 'redux-thunk';
 import AsyncStorage from '@react-native-community/async-storage';
 import {persistStore, persistReducer} from 'redux-persist';
 
-
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
-
 //middleware: redux persist config
 const persistConfig = {
     key: 'root',
