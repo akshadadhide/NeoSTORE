@@ -19,6 +19,7 @@ class ProductList extends Component {
             offset: 0, 
             limit: 8,
             isLoading: false,
+            isRefreshing: false,
         };
     }
     
@@ -65,6 +66,13 @@ class ProductList extends Component {
             this.fetchResult(this.page);
         }
     }
+
+    onRefresh() {
+        this.setState({ isRefreshing: true }); //for enable pull to refresh 
+        this.page = 1;
+        this.fetchResult(this.page);
+        this.setState({ isRefreshing: false });
+      }
     
 
     goBack = () => this.props.navigation.goBack();
@@ -90,7 +98,8 @@ class ProductList extends Component {
                     data={productListArray}
                     // data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
                     extraData={this.state}
-                    // initialNumToRender={3}
+                    onRefresh={this.onRefresh.bind(this)}
+                    refreshing={this.state.isRefreshing}
                     renderItem={ ({item,index}) => (
                         <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
                             <View style={styles.productListView}> 
@@ -112,7 +121,7 @@ class ProductList extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={(item,index) => { return item._id.toString()}}
+                    keyExtractor={(item,index) => String(index)}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
                     onEndReachedThreshold={0}
                     onEndReached={this.handleLoadMore.bind(this)}
