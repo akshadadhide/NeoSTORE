@@ -14,7 +14,6 @@ console.disableYellowBox = true;
 
 YellowBox.ignoreWarnings([
   'VirtualizedLists should never be nested', // TODO: Remove when fixed
-  'Possible Unhandled Promise Rejection'
 ])
 
 

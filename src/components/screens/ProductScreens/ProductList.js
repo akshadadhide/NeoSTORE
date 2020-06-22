@@ -72,7 +72,7 @@ class ProductList extends Component {
         this.page = 1;
         this.fetchResult(this.page);
         this.setState({ isRefreshing: false });
-      }
+    }
     
 
     goBack = () => this.props.navigation.goBack();

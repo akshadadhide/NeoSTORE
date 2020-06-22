@@ -44,26 +44,21 @@ class CartProducts extends Component {
         this.setCartData(cartData); 
     }
     setCartData = async(cartData) => {
-        console.log("***cartData= ",cartData);
         
         try {
             const myArray = await AsyncStorage.getItem('cartProducts');
             // console.log("myArray: ===",myArray);
             // console.log("f==",myArray !== null && cartData !== '');
-            console.log("f: ",(cartData !== undefined && cartData !== ''));
             
             if (myArray !== null && (cartData !== undefined && cartData !== '')) {
-                console.log("1st");
                 let cartProducts = cartData.concat(JSON.parse(myArray));
                 this.setState({cartData: cartProducts})
                 // console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
             } 
             if(myArray !== null && (cartData === undefined || cartData === '')){
-                console.log("2nd");
                 this.setState({cartData:JSON.parse(myArray)})
             }
             if(myArray === null && (cartData !== undefined && cartData !== '')){
-                console.log("3rd");
                 this.setState({cartData: cartData})
             }
         }
