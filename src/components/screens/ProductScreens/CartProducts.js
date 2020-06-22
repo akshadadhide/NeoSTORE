@@ -32,15 +32,17 @@ class CartProducts extends Component {
     //     this.setState({ productCount: [...productCount] });
     // }
 
-    async componentDidMount(){
+    componentDidMount(){
+        this.getCart();
+    }
+
+    getCart = async() =>{
         const type = GET_CART_DATA_URLTYPE;
         await this.props.getCartData(type);
         const {cartData} = await this.props;
         console.log("cartData:----",cartData);
         this.setCartData(cartData); 
-       
     }
-
     setCartData = async(cartData) => {
         console.log("***cartData= ",cartData);
         
@@ -75,7 +77,6 @@ class CartProducts extends Component {
             const {cartData} = this.props;
             this.setCartData(cartData);
         }
-
     }
 
     handleDeleteProduct = async(product_id) => {
@@ -94,18 +95,18 @@ class CartProducts extends Component {
                     if(productArray !== null){
                         let newProductArray = JSON.parse(productArray);
                         console.log("newProductArray: ==",newProductArray);
-                        let modifiedArray;
-                        newProductArray.map((value,index) => {
-                            if(value.product_id !== product_id){
-                                modifiedArray.push(value);
-                            }
-                        });
+                        let modifiedArray = newProductArray.filter((value)=>{
+                            return value.product_id !== product_id;
+                        });                        
                         console.log("modifiedArray: **",modifiedArray);
+                        AsyncStorage.setItem('cartProducts',JSON.stringify(modifiedArray));
+                        this.getCart();
                     }
                
                 }
                 else{
                     Alert.alert(deleteCartResult.message);
+                    this.getCart();
                 }
             }
             else{

@@ -18,7 +18,7 @@ export const apiCall = async(data, methodType, urlType) => {
     let secureRequest;
 
     const userToken = await AsyncStorage.getItem('userToken');
-    console.log("user token", userToken);
+    // console.log("user token", userToken);
 
     if (userToken == null) {
         // console.log('no token')
@@ -51,7 +51,7 @@ export const apiCall = async(data, methodType, urlType) => {
 
     if(methodType === "POST" || methodType === "PUT"){
         return new Promise( (resolve, reject) => {
-            console.log("In post or put: ", methodType, "urltype: ", urlType, "data: ", JSON.stringify(data));
+            // console.log("In post or put: ", methodType, "urltype: ", urlType, "data: ", JSON.stringify(data));
             
             fetch(BASE_URL+urlType, {
                 method: methodType,

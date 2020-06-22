@@ -9,7 +9,8 @@ const initialState = {
     addressList:{},
     saveAddressResponse:{},
     changePasswordRes:{},
-    deleteAddrRes:{}
+    deleteAddrRes:{},
+    customerInfo: {},
 }
 
 export function loggedInUserReducer(state =  initialState, action){
@@ -63,6 +64,12 @@ export function loggedInUserReducer(state =  initialState, action){
         case ActionTypes.DELETE_ADDRESS_SUCCESS:
             return {...state, deleteAddrRes: action.payload}
         /*delete address*/
+
+        /*updateUserData*/
+        case ActionTypes.UPADATE_USER_DATA_SUCCESS:
+            return {...state, customerInfo: action.payload}
+        /*updateUserData*/
+
 
         default:
             return {state};

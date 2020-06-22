@@ -125,7 +125,7 @@ class AddressList extends Component {
                 <FlatList
                     data={customer_address}
                     renderItem={ ({item}) =>(
-                        <View style={{flexDirection:'row', alignItems:'center', padding:StyleConstants.PADDING}}>
+                        <View key={item.address_id.toString()} style={{flexDirection:'row', alignItems:'center', padding:StyleConstants.PADDING}}>
                             <View style={styles.rowSpaceBetween}>
                                 <View>
                                     <Radio 
@@ -171,7 +171,7 @@ class AddressList extends Component {
                             </View>
                         </View>
                     )}
-                    keyExtractor={item => {item.address_id}}
+                    keyExtractor={item => {return item.address_id.toString()}}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: StyleConstants.MARGIN_15}}/> }
                 />
                 

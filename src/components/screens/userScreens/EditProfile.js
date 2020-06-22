@@ -13,24 +13,15 @@ import {NAME_REGEX, customErrors, EMAIL_REGEX, MOBILE_REGEX} from '../../../util
 import {GET_USER_PROFILE_URLTYPE, BASE_URL} from '../../../API/apiConstants';
 import ImagePicker from 'react-native-image-picker';
 import Loader from '../../Common/Loader';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 
 class EditProfile extends Component {
 
     constructor(props){
         super(props);
-        const {userProfile} =  this.props;
-
         this.state={
-            user:{
-                profile_img: userProfile.profile_img,
-                first_name: userProfile.first_name,
-                last_name: userProfile.last_name,
-                email: userProfile.email,
-                dob: userProfile.dob,
-                phone_no: userProfile.phone_no,
-                gender:userProfile.gender,
-            },
+            user: '',
             errors:{},
             changedImage:'',
             selectedImage:'',
@@ -38,11 +29,12 @@ class EditProfile extends Component {
             showLoader:false,
             userToken:'',
         }
-        this.upload = this.upload.bind(this);
     }
 
     async componentDidMount(){
         await this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
+        const {userProfile} =  this.props;
+        this.setState({user:userProfile});
         const token = await AsyncStorage.getItem('userToken');
         // console.log("token: ",token);
         this.setState({userToken:token});
@@ -74,20 +66,11 @@ class EditProfile extends Component {
             else{
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
                 let source = {uri: response.uri}
-                var photo = {
-                    uri: response.uri,
-                    type: response.type,
-                    name: response.fileName,
-                };
-                this.setState({user:{...user, profile_img:photo},changedImage:source,selectedImage:response});
-                console.log("In upload profile photo, profile_img: ", this.state.user.profile_img, "\n response: ",this.state.selectedImage,"changedImage:==",this.state.changedImage);
-
+                this.setState({user:{...user,profile_img:source},changedImage:source,selectedImage:response});
             }
             
         });
-
-        console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);
-        
+        console.log("In upload profile photo, profile_img: ", this.state.user.profile_img);   
         
     }
 
@@ -167,39 +150,43 @@ class EditProfile extends Component {
 
     }
 
-    //**image upload/
-    upload(url, data) {
-        let options = {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${this.state.userToken}` 
-          },
-          method: 'POST'
-        };
-      
-        options.body = new FormData();
-        for (let key in data) {
-          options.body.append(key, data[key]);
-        }
-        console.log("data: ==",options.body);
-        
-      
-        return fetch(url, options)
-            .then(response => {
-              return response.json()
-                .then(responseJson => {
-                  //You put some checks here
-                  console.log("upload res== ",responseJson);
-                  
-                  return responseJson;
-                });
-            })
-            .catch(error => {
-                console.log("Err=== ",error);
-                
-            })
-    }
+  
     //**image upload */
+    upload = () => {
+        const {user,selectedImage} = this.state;
+        RNFetchBlob.fetch('PUT', BASE_URL+'profile', {
+            Authorization : "Bearer "+this.state.userToken,
+            otherHeader : "foo",
+            'Content-Type' : 'multipart/form-data',
+        }, [
+            { name : 'profile_img', filename : selectedImage.fileName, type:selectedImage.type, data: RNFetchBlob.wrap(selectedImage.path)},
+            { name : 'first_name', data : user.first_name},
+            { name : 'last_name', data : user.last_name},
+            { name : 'email', data : user.email},
+            { name : 'dob', data : user.dob},
+            { name : 'phone_no', data : user.phone_no},
+            { name : 'gender', data : user.gender},
+        ])
+        .then( (response) => response.json())
+        .then( (responseJson) => {
+            this.hideLoader();
+            console.log("Response:=",responseJson);
+            (responseJson.status_code === 200) ?
+            (
+                this.props.updateUserData(responseJson.customer_details),
+                Alert.alert(responseJson.message),
+                this.props.navigation.navigate('UserProfile')
+            ):
+            (Alert.alert("Something went wrong!!Please try again"))
+            
+        })
+        .catch((err) => {
+            this.hideLoader();
+            console.log("error=+= ",err);
+            Alert.alert("Something went wrong!!Please try again");
+        })
+    }
+
 
     submitHandler = async () => {
         this.showLoader();
@@ -211,79 +198,66 @@ class EditProfile extends Component {
                         );
         console.log("EF---",errorFlag);
         let data;
-        if(user.profile_img === null){
-            data = {
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                dob: user.dob,
-                phone_no: user.phone_no,
-                gender: user.gender,
-            };
+        if(user.profile_img !== null){
+            if(selectedImage !== null && selectedImage !== '' && selectedImage !== undefined){
+                if(errorFlag === false){
+                    await this.upload();
+                }
+                else{
+                    this.hideLoader();
+                    Alert.alert("Please check all information is correctly filled");
+                }
+            }else{
+                this.hideLoader();
+                Alert.alert("Please select profile image");
+            }
         }
         else{
-            if(errorFlag === false){
-                await this.upload('http://180.149.241.208:3022/profile', {
-                    profile_img: {
-                        uri: selectedImage.uri, //selectedImage.uri.replace('content:/', ''),
-                        type: selectedImage.type,
-                        name: selectedImage.fileName,
-                    },
+            if(selectedImage !== null && selectedImage !== '' && selectedImage !== undefined){
+                if(errorFlag === false){
+                    await this.upload();
+                }
+                else{
+                    this.hideLoader();
+                    Alert.alert("Please check all information is correctly filled");
+                }
+            }else{
+                data = {
+                    // profile_img: user.profile_img,
                     first_name: user.first_name,
                     last_name: user.last_name,
                     email: user.email,
                     dob: user.dob,
                     phone_no: user.phone_no,
                     gender: user.gender,
-
-                    }).then(response => {
-                        //do something with `r`
+                };
+                if(errorFlag === false){
+                    this.props.editProfile(data,'profile');
+                        
+                    setTimeout(()=> {
                         this.hideLoader();
-                        console.log("In submit r== ", response);
-                        if(response === undefined){
-                            Alert.alert("Something went wrong!!Please try again");
-                        }
-                        }
-                    )
-                    .catch(error => {
-                        this.hideLoader();
-                        console.log("error in call: ", error);
-                    }
-                    );
-            }
-            else{
-                this.hideLoader();
-                Alert.alert("Please check all information is correctly filled");
-            }
-        }
-
-        if(user.profile_img === null){
-            if(errorFlag === false){
-                this.props.editProfile(data,'profile');
-                const {editProfileRes} = this.props;
-                console.log("In subHandler of EditProf, res:",editProfileRes);     
-                setTimeout(()=> {
-                    this.hideLoader();
-                    if(editProfileRes !== undefined){
-                        if(editProfileRes.status_code === 200){
-                            Alert.alert(editProfileRes.message);
-                            this.props.navigation.navigate('UserProfile');
+                        const {editProfileRes} = this.props;
+                        console.log("In subHandler of EditProf, res:",editProfileRes); 
+                        if(editProfileRes !== undefined){
+                            if(editProfileRes.status_code === 200){
+                                Alert.alert(editProfileRes.message);
+                                this.props.navigation.navigate('UserProfile');
+                            }
+                            else{
+                                Alert.alert("Something went wrong!!Please try again");
+                            }
                         }
                         else{
                             Alert.alert("Something went wrong!!Please try again");
                         }
-                    }
-                    else{
-                        Alert.alert("Something went wrong!!Please try again");
-                    }
-                },5000);
-            }
-            else{
-                this.hideLoader();
-                Alert.alert("Please check all information is correctly filled");
+                    },6000);
+                }
+                else{
+                    this.hideLoader();
+                    Alert.alert("Please check all information is correctly filled");
+                }
             }
         }
-    //    await this.hideLoader(); 
     }
 
 
@@ -293,12 +267,12 @@ class EditProfile extends Component {
         // console.log("In editProfile userProfile: ", userProfile);
         const {first_name, last_name, email, phone_no} = this.state.user;
         const {user,errors} = this.state;
-        console.log("user info: ",user);
-        
+        console.log("user render: ",user);
+        console.log("userProfile render: ",userProfile);
 
-        const today = new Date();
-        // console.log("today: ", today);
         
+        const today = new Date();
+        console.log("flag: ", (JSON.stringify(user) !== JSON.stringify(userProfile)));
 
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
@@ -308,13 +282,19 @@ class EditProfile extends Component {
 
                     {(userProfile === undefined) ? (<ActivityIndicator color={StyleConstants.COLOR_FFFFFF} size="large" />):
                     ((userProfile.profile_img !== null)?
-                        (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
-                            <Image source={{uri: BASE_URL+userProfile.profile_img}} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,width:150, height:150 }]}/>
-                         </TouchableOpacity>
-                        )
-                        :( (this.state.user.profile_img !== null)? 
+                        ((this.state.changedImage === undefined || this.state.changedImage === '')?
                             (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
-                                <Image source={this.state.changedImage} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,width:150, height:150 }]}/>
+                                <Image source={{uri: BASE_URL+userProfile.profile_img}} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,}]}/>
+                             </TouchableOpacity>
+                            ):
+                            (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
+                                <Image source={this.state.changedImage} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,}]}/>
+                             </TouchableOpacity>
+                            )
+                        )
+                        :( (this.state.changedImage !== undefined && this.state.changedImage !== '')? 
+                            (<TouchableOpacity onPress={ () => this.uploadProfilePhoto()}>
+                                <Image source={this.state.changedImage} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,}]}/>
                             </TouchableOpacity>
                             ): 
                             (<TouchableOpacity style={[styles.sidebarUserLogo, {marginBottom: StyleConstants.PADDING,}]} onPress={ () => this.uploadProfilePhoto()}>
@@ -326,7 +306,7 @@ class EditProfile extends Component {
                 
                     {(userProfile !== undefined) &&
                         (<View>
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle, {marginBottom:0}]}>
                                 <Icon active name='user-alt' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
                                     value={first_name} 
@@ -338,7 +318,7 @@ class EditProfile extends Component {
                             <Text style={styles.errorText}> {errors.first_name}</Text>
                             
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle, {marginBottom:0}]}>
                                 <Icon active name='user-alt' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
                                     value={last_name} 
@@ -352,7 +332,7 @@ class EditProfile extends Component {
                                                     last_name: text
                                                     }
                                                 };
-                                                })
+                                    })
                                     }
                                     onBlur={() => this.handleValidation('last_name')}
                                 />
@@ -360,7 +340,7 @@ class EditProfile extends Component {
                             <Text style={styles.errorText}> {errors.last_name}</Text>
 
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle, {marginBottom:0}]}>
                                 <Icon active name='envelope' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
                                     value={email} 
@@ -374,7 +354,7 @@ class EditProfile extends Component {
                                                     email: text
                                                     }
                                                 };
-                                                })
+                                    })
                                     } 
                                     onBlur={() => this.handleValidation('email')}
                                 />
@@ -382,7 +362,7 @@ class EditProfile extends Component {
                             <Text style={styles.errorText}> {errors.email}</Text>
 
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle, {marginBottom:0}]}>
                                 <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
                                     value={phone_no} 
@@ -396,7 +376,7 @@ class EditProfile extends Component {
                                                     phone_no: text
                                                     }
                                                 };
-                                                })
+                                    })
                                     }
                                     onBlur={() => this.handleValidation('phone_no')}
                                 />
@@ -436,24 +416,28 @@ class EditProfile extends Component {
                                           }
                                     }}
                                     onDateChange={ dob => this.setState(state =>{
-                                                                return {
-                                                                    ...state,
-                                                                    user: {
-                                                                        ...state.user,
-                                                                        dob: dob
-                                                                    }
-                                                                };
-                                                        })
+                                                        return {
+                                                            ...state,
+                                                            user: {
+                                                                ...state.user,
+                                                                dob: dob
+                                                            }
+                                                        };
+                                    })
                                                     
                                     }
                                     
 
                                 />
                             </Item>
-
-                            <TouchableHighlight style={styles.button} onPress={() => this.submitHandler()} >
-                                <Text style={styles.buttonText}> SUBMIT </Text>
-                            </TouchableHighlight>
+                            
+                            {/* {(JSON.stringify(user) !== JSON.stringify(userProfile)) && */}
+                            {/* ( */}
+                                <TouchableHighlight style={styles.button} disabled={JSON.stringify(user) === JSON.stringify(userProfile)} onPress={() => this.submitHandler()} >
+                                    <Text style={styles.buttonText}> SUBMIT </Text>
+                                </TouchableHighlight>
+                            {/* ) */}
+                            {/* } */}
 
                            
 
@@ -475,6 +459,7 @@ function mapState(state) {
 const actionCreators = {
     getUserProfile: loggedInUserActions.getUserProfile,
     editProfile: loggedInUserActions.editProfile,
+    updateUserData: loggedInUserActions.updateUserData,
 }
 
 export default connect(mapState,actionCreators)(EditProfile);

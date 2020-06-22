@@ -18,6 +18,7 @@ const persistConfig = {
     whitelist: [
         'authReducer', 
         'cartReducer',
+        'loggedInUserReducer',
     ],
 
     //ignore specific reducers

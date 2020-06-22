@@ -1,5 +1,6 @@
 import {ActionTypes} from '../actions/ActionTypes';
 import {apiCall} from '../../API/apiCall';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export const loggedInUserActions ={
@@ -10,6 +11,7 @@ export const loggedInUserActions ={
     saveAddress,
     changePassword,
     deleteAddress,
+    updateUserData,
 };
 
 
@@ -27,7 +29,7 @@ function getUserProfile(type){
                     // console.log("inaction after", customer_proile);
                 })
                 .catch((error) => {
-                    console.log('Error: ', error);
+                    // console.log('Error: ', error);
                     dispatch(getUserProfileFailure(error));
                 })
 
@@ -53,11 +55,11 @@ function editProfile(data,type){
 
     return dispatch =>{
 
-        console.log("In edit prof action");
+        // console.log("In edit prof action");
 
         apiCall(data,'PUT',type)
             .then((result) => {
-                console.log("In dispatch");
+                // console.log("In dispatch");
                 dispatch(editProfileSuccess(result));
             })
             .catch((error) => {
@@ -104,15 +106,13 @@ function addAddress(data, type){
 }
 
 function getAddress(type){
-    console.log("In getAddr");
-    
+   
     return dispatch => {
-        console.log("In getAddr dis");
-
+        
         dispatch(getAddressRequest());
         apiCall(null, 'GET', type)
             .then((result) =>{
-                console.log("res", result);
+                // console.log("res", result);
                 dispatch(getAddressSuccess(result));
             })
             .catch((error) =>{
@@ -143,14 +143,12 @@ function getAddress(type){
 }
 
 function saveAddress(data, type){
-    console.log("In svaAddr");
-
+    
     return dispatch =>{
-        console.log("In saveArr dis");
-
+        
         apiCall(data, 'PUT', type)
             .then((result) => {
-                console.log("In svaAddr res:", result);
+                // console.log("In svaAddr res:", result);
                 dispatch(saveAddressSuccess(result));
             })
             .catch((error) =>{
@@ -179,7 +177,7 @@ function changePassword(data, type){
     return dispatch => {
         apiCall(data, 'POST', type)
             .then((result) => {
-                console.log("res: ",result);
+                // console.log("res: ",result);
                 dispatch(changePasswordSuccess(result));
             })
             .catch((error) =>{
@@ -199,7 +197,7 @@ function deleteAddress(type){
     return dispatch => {
         apiCall(null, 'DELETE', type)
         .then((result) => {
-            console.log("res----",result);
+            // console.log("res----",result);
             dispatch(deleteAddrSuccess(result));
         })
         .catch((error) => {
@@ -213,6 +211,22 @@ function deleteAddress(type){
             payload: result
         }
     }
+ 
+}
 
-   
+function updateUserData(data){
+
+    return dispatch => {
+        const customer = JSON.stringify(data);
+        AsyncStorage.setItem('customerInfo',customer);
+        dispatch(updateUserDataSuccess(data));
+        
+    }
+
+    function updateUserDataSuccess(data){
+        return {
+            type: ActionTypes.UPADATE_USER_DATA_SUCCESS,
+            payload: data
+        }
+    }
 }

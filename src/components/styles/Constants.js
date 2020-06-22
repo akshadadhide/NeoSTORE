@@ -49,6 +49,7 @@ export const StyleConstants = {
     TEXTBOX_WIDTH: 293,
     TEXTBOX_HEIGHT: 55,
     TEXTBOX_MARGIN_BOTTOM: 13,
+    MARGIN_25:25,
 
     /* button style */
     BUTTON_WIDTH: 293,

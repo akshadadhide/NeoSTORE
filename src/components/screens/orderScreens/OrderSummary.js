@@ -65,7 +65,8 @@ class OrderSummary extends Component {
         return totalCost;
     }
 
-    goBack = () => this.props.navigation.goBack();
+    // goBack = () => this.props.navigation.goBack();
+    goBack = () => this.props.navigation.navigate('DrawerNav');
 
     handleAddress = (address) =>{
         let addrArr = Object.values(address);
@@ -138,7 +139,7 @@ class OrderSummary extends Component {
     // console.log("total cost: ",totalCost);
     
     return (
-      <View style={{flex:1,}}>
+        <View style={{flex:1,}}>
             <Header iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Order Summary"  />
             <ScrollView>
                 <View style={styles.orderSummaryView}>
@@ -154,8 +155,8 @@ class OrderSummary extends Component {
                 <FlatList 
                 data={productDetails}
                 renderItem={ ({item,index}) => (
-                    <View style={styles.orderSummaryView}>
-                        <View key={index} style={styles.rowSpaceBetween}>
+                    <View key={index} style={styles.orderSummaryView}>
+                        <View  style={styles.rowSpaceBetween}>
                             <Text style={[styles.productDetailTitle, {width:WINDOW_WIDTH/2.5, } ]}>{item.product_name} </Text>
                             <Image source={{uri: BASE_URL+item.product_image}} style={[styles.productDetailSubImage, {borderWidth:0, alignSelf:'flex-end', width:85, marginTop:0,}]} />
                         </View>
@@ -172,7 +173,7 @@ class OrderSummary extends Component {
                         </Picker> 
                     </View> 
                 )}
-                keyExtractor={(item) => {return item._id}}
+                keyExtractor={(item) => {return item.product_id}}
                 />
 
                 <View style={styles.orderSummaryView}>

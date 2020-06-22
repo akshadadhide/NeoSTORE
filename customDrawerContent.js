@@ -9,11 +9,13 @@ import {BASE_URL} from './src/API/apiConstants';
 import {store} from './src/redux/store';
 import { apiCall } from './src/API/apiCall';
 
-let userToken, cartData, cartCount=0;
+let userToken,customerInfo, cartCount=0;
 
 const getUserToken = async() =>{
     userToken = await AsyncStorage.getItem('userToken');
     // console.log("getUserToken: ", userToken);
+    customer = await AsyncStorage.getItem('customerInfo');
+    customerInfo = JSON.parse(customer);
     return userToken;
 }
 
@@ -22,7 +24,9 @@ const getCartCount = async() => {
 
     const cartData = store.getState().cartReducer.cartData;
     // console.log("cartData in sidebar:",cartData);
-    const userData = store.getState().authReducer.userData;
+    // const userData = store.getState().authReducer.userData;
+    const userD = await AsyncStorage.getItem('userData');
+    const userData = JSON.parse(userD);
     // console.log("userData in getCOunt: ",userData);
     
     let count1=0, count2=0;
@@ -79,11 +83,12 @@ handleLogout = async() => {
  CustomDrawerContent = (props) => {
     getUserToken();
     getCartCount();
-    // console.log("user Token sidebar", userToken);
-    
+       
     const userData = store.getState().authReducer.userData;
+    // console.log("customerInfo: ",customerInfo);
+    
     // console.log("user D", userData);
-    const customerDetails = userData.customer_details;
+    const customerDetails = (customerInfo === undefined) ? userData.customer_details : customerInfo;
     const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
     
     
@@ -91,7 +96,7 @@ handleLogout = async() => {
         <DrawerContentScrollView {...props}>
             <DrawerItemList {...props}/>
             
-            {(b) ? //(userData.status_code === 200) && (typeof userToken !== 'object')
+            {(b) ? 
                 (   (customerDetails.profile_img !== null)?
                     (<Image source={{uri: BASE_URL+customerDetails.profile_img}} height={10} width={10} style={styles.sidebarUserImage}/>)
                     :(  <TouchableOpacity style={styles.sidebarUserLogo}>

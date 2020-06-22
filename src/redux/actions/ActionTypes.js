@@ -97,4 +97,7 @@ export const ActionTypes = {
     GET_ORDER_IN_DETAIL_SUCCESS: 'GET_ORDER_IN_DETAIL_SUCCESS',
     /*getCustomerOrderInDetail*/
     
+    /*updateUserData*/
+    UPADATE_USER_DATA_SUCCESS: 'UPADATE_USER_DATA_SUCCESS',
+    /*updateUserData*/
 }

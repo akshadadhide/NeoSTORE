@@ -19,20 +19,23 @@ class UserProfile extends Component {
         }
     }
     
-
     componentDidMount(){
-        this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
-        const {userProfile} =  this.props;
-        // console.log("In userProfile: ", userProfile);
-        this.setState({userProfile:userProfile});
+        this._unsubscribe = this.props.navigation.addListener('focus', async() => {
+            await this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
+            const {userProfile} =  this.props;
+            // console.log("In userProfile: ", userProfile);
+            this.setState({userProfile:userProfile});
+        });
+    }
+
+    componentWillUnmount() {
+        this._unsubscribe();
     }
 
     componentDidUpdate(prevProps){
-        // console.log("ifghg");
-        
+        console.log("ifghg");
         if(this.props.userProfile !== prevProps.userProfile){
-            // console.log("in if---");
-            
+            console.log("in if---");
             this.setState({userProfile:this.props.userProfile});
         }   
     }
@@ -41,7 +44,7 @@ class UserProfile extends Component {
 
     render() {
         const {userProfile} = this.state;
-        // console.log("userProfile: ",userProfile);
+        console.log("userProfile: ",userProfile);
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
@@ -52,37 +55,37 @@ class UserProfile extends Component {
 
                     {(userProfile === undefined) ? (<ActivityIndicator color={StyleConstants.COLOR_FFFFFF} size="large" />):
                     ((userProfile.profile_img !== null)?
-                        (<Image source={{uri: BASE_URL+userProfile.profile_img}} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING, }]}/>)
-                        :(  <TouchableOpacity style={[styles.sidebarUserLogo, {marginBottom: StyleConstants.PADDING,}]}>
+                        (<Image source={{uri: BASE_URL+userProfile.profile_img}} height={10} width={10} style={[styles.sidebarUserImage, {marginBottom: StyleConstants.PADDING,}]}/>)
+                        :(  <View style={[styles.sidebarUserLogo, {marginBottom: StyleConstants.PADDING,}]}>
                                 <Icon name="user-alt" color={StyleConstants.COLOR_000000} size={80} />
-                            </TouchableOpacity>
+                            </View>
                         )
                     )
                     }
                 
                     {(userProfile !== undefined) &&
                         (<View>
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle,{marginBottom:StyleConstants.MARGIN_25}]}>
                                 <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input disabled style={styles.inputBoxText} placeholder={userProfile.first_name} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             </Item>
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle,{marginBottom:StyleConstants.MARGIN_25}]}>
                                 <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input disabled style={styles.inputBoxText}  placeholder={userProfile.last_name} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             </Item>
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle,{marginBottom:StyleConstants.MARGIN_25}]}>
                                 <Icon active name='envelope' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input disabled style={styles.inputBoxText} placeholder={userProfile.email} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             </Item>
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle,{marginBottom:StyleConstants.MARGIN_25}]}>
                                 <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input disabled style={styles.inputBoxText} placeholder={userProfile.phone_no} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             </Item>
 
-                            <Item regular style={styles.textboxStyle}>
+                            <Item regular style={[styles.textboxStyle,{marginBottom:StyleConstants.MARGIN_25}]}>
                                 <Icon active name='calendar' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input disabled style={styles.inputBoxText} placeholder={(userProfile.dob === null)? 'Birth date' :userProfile.dob} placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             </Item>

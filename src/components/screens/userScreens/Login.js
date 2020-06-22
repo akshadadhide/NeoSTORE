@@ -16,8 +16,8 @@ class Login extends Component {
     constructor(){
         super();
         this.state = {
-            email:'akshadadhide26@gmail.com',
-            pass:'Test@123',
+            email:'',
+            pass:'',
             errorMsg:'',
             errors:{},
 
@@ -44,7 +44,7 @@ class Login extends Component {
         this.setState({passwordHide: !this.state.passwordHide });
     }
 
-    handleValidation = () => {
+    handleValidation = (field_name) => {
         const {email, pass} = this.state;
         let {errors} = this.state;
     
@@ -53,29 +53,33 @@ class Login extends Component {
         // console.log("e: ",email, "pass: ",pass);
         
         //email validation
-        if(email.length === 0 || EMAIL_REGEX.test(email) === false){
-          errorFlag = true;
-          const {valueMissing, wrongPattern} = customErrors.email;
-          errors.email = email === '' ? valueMissing : wrongPattern;
-        }
-        else{
-          delete errors.email;
+        if(field_name === 'email'){
+            if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+            errorFlag = true;
+            const {valueMissing, wrongPattern} = customErrors.email;
+            errors.email = email === '' ? valueMissing : wrongPattern;
+            }
+            else{
+            delete errors.email;
+            }
         }
         
         //password validation
-        if(pass.length < 8 || pass.length > 12){
-            errorFlag = true;
-            const {valueMissing, minLength} = customErrors.pass;
-            errors.pass = pass === '' ? valueMissing : minLength;
-        }
-        else{
-            delete errors.pass
+        if(field_name === 'pass'){
+            if(pass.length < 8 || pass.length > 12){
+                errorFlag = true;
+                const {valueMissing, minLength} = customErrors.pass;
+                errors.pass = pass === '' ? valueMissing : minLength;
+            }
+            else{
+                delete errors.pass
+            }
         }
 
         this.setState({errors}); 
         return errorFlag;
           
-      }
+    }
 
     async handleLogin(){
         this.showLoader();
@@ -86,7 +90,7 @@ class Login extends Component {
             pass: this.state.pass,
         };
 
-        const errorFlag = this.handleValidation();
+        const errorFlag = this.handleValidation('email') || this.handleValidation('pass');
        
         if(errorFlag === false){
             await this.props.login(logData, 'login');
@@ -126,14 +130,14 @@ class Login extends Component {
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={email.trim()} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={this.handleValidation} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input value={email.trim()} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={ () => this.handleValidation('email')} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                         </Item>
                         <Text style={styles.errorText}> {errors.email}</Text>
 
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => this.setState({pass}) } onBlur={this.handleValidation} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => this.setState({pass}) } onBlur={() => this.handleValidation('pass')} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
                             <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
                         </Item>
                         <Text style={styles.errorText}> {errors.pass}</Text>

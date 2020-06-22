@@ -186,6 +186,8 @@ export const styles = StyleSheet.create({
         borderRadius:100, 
         borderWidth:3, 
         borderColor:StyleConstants.COLOR_FFFFFF,
+        width:150, 
+        height:150
     },
     cartCount:{
         backgroundColor: StyleConstants.COLOR_FE3F3F, 
