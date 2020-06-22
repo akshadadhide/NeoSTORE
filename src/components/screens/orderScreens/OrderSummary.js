@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, Image,Alert, ScrollView, FlatList, TouchableOpacity, TouchableHighlight} from 'react-native';
+import {View, Text, Image,Alert, ScrollView, FlatList, TouchableOpacity, TouchableHighlight, BackHandler} from 'react-native';
 // import {Picker} from '@react-native-community/picker';
 import {Picker} from 'native-base';
 import {BASE_URL} from '../../../API/apiConstants';
@@ -26,24 +26,38 @@ class OrderSummary extends Component {
         this.handleOrderNow = this.handleOrderNow.bind(this);
     }
     componentDidMount(){
+        BackHandler.addEventListener(
+            'hardwareBackPress',
+            this.handleBackButtonPressAndroid
+        );
+
         apiCall(null,'GET','getCustAddress')
         .then((result)=> {
-            // console.log("In compDidM, Addr:",result.customer_address), 
             this.setState({custAddress:result.customer_address})}
         )
         .catch(error => console.log("In compDidM, Addr error:",error))
 
         const {productDetails} = this.props.route.params;
-        // console.log("len--- : ",productDetails.length);
         let arr=[productDetails.length];
         for(let i=0; i<productDetails.length; i++){
-            // console.log("i: ",i);
             arr[i]=1;
         }
         this.setState({productCount:arr})
-
-        // console.log("hjhbj: ",arr,"pdn fodksl: ",this.state.productCount);   
     }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener(
+          'hardwareBackPress',
+          this.handleBackButtonPressAndroid
+        );
+    }
+
+    handleBackButtonPressAndroid = () => {
+        if (this.props.navigation.isFocused()) {
+            this.props.navigation.navigate('DrawerNav');
+            return false;
+        }
+    };
 
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
@@ -119,24 +133,12 @@ class OrderSummary extends Component {
     }
 
   render() {
-    // console.log("render loader",this.state.showLoader);
-
     const userData = store.getState().authReducer.userData;
     const customerDetails = userData.customer_details;
     const {custAddress} = this.state;
-    // const {product_name,product_id, product_material, product_image, product_cost} = this.props.route.params;
     const {productDetails} = this.props.route.params;
-    // console.log("productDetails: ",productDetails);
-    // product_id = productDetails[0].product_id;
-    
-    
-    
     const address = custAddress !== undefined ? this.handleAddress(custAddress) : null
-    // console.log("In render deliver add: ", address);
-    // console.log("c---------: ",this.state.productCount, "len: ",productDetails.length);
-    
     let totalCost = this.calculateTotalCost();
-    // console.log("total cost: ",totalCost);
     
     return (
         <View style={{flex:1,}}>

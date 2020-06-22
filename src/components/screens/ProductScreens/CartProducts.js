@@ -40,7 +40,7 @@ class CartProducts extends Component {
         const type = GET_CART_DATA_URLTYPE;
         await this.props.getCartData(type);
         const {cartData} = await this.props;
-        console.log("cartData:----",cartData);
+        // console.log("cartData:----",cartData);
         this.setCartData(cartData); 
     }
     setCartData = async(cartData) => {
@@ -91,14 +91,11 @@ class CartProducts extends Component {
             this.hideLoader();
             if(deleteCartResult !== undefined){
                 if(deleteCartResult.message === "Product not in the cart"){
-                    console.log("in if");
                     if(productArray !== null){
                         let newProductArray = JSON.parse(productArray);
-                        console.log("newProductArray: ==",newProductArray);
                         let modifiedArray = newProductArray.filter((value)=>{
                             return value.product_id !== product_id;
                         });                        
-                        console.log("modifiedArray: **",modifiedArray);
                         AsyncStorage.setItem('cartProducts',JSON.stringify(modifiedArray));
                         this.getCart();
                     }
@@ -136,7 +133,6 @@ class CartProducts extends Component {
 
     render() {
         const{cartData} = this.state;
-        console.log("in component render cartD---", cartData);
 
         let totalCost;
         totalCost =this.calculateTotalCost(cartData);
