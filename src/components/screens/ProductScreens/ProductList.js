@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, ActivityIndicator, FlatList, Text, Image, ScrollView,TouchableOpacity } from 'react-native';
-import { styles } from '../../styles/Styles';
+import { View, ActivityIndicator, FlatList, SafeAreaView, Text, Image, ScrollView,TouchableOpacity } from 'react-native';
+import { styles, WINDOW_WIDTH } from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import CustomHeader from '../../Common/Header';
 import StarRating from 'react-native-star-rating';
@@ -88,35 +88,40 @@ class ProductList extends Component {
     // console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
     
         return (
+            <SafeAreaView>
             <View>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
                 {(productList === undefined && this.state.isLoading) ?
                 (<ActivityIndicator />) :
                 (
-                <View  style={{paddingBottom: 150}}>
+                <View  style={{padding: StyleConstants.PADDING_10,}}>
                     <FlatList
                     data={productListArray}
-                    // data={(productListArray.length <= 0 && productList !== undefined)?(productList):(productListArray)}
                     extraData={this.state}
                     onRefresh={this.onRefresh.bind(this)}
                     refreshing={this.state.isRefreshing}
                     renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
+                        <TouchableOpacity key={index} style={{paddingRight:20}} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
                             <View style={styles.productListView}> 
-                                <View style={{marginRight:10,}}>
-                                <Image
-                                    style={{width: 80, height: 80}}
-                                    source={{uri: BASE_URL+item.product_image}}
-                                />
+                                <View style={{paddingRight:10,}}>
+                                    <Image
+                                        style={{width: 80, height: 80}}
+                                        source={{uri: BASE_URL+item.product_image}}
+                                    />
                                 </View>
 
                                 <View>
-                                    <Text numberOfLines={2} style={styles.productListName}> {item.product_name} </Text>
-                                    <Text numberOfLines={2} style={styles.productListMaterial}> {item.product_material} </Text>
-                                    <View style={{justifyContent:'flex-end', alignItems:'flex-end', }}>
+                                    <View style={{width: WINDOW_WIDTH/2}}>
+                                        <Text numberOfLines={2} style={styles.productListName}> {item.product_name} </Text>
+                                        <Text numberOfLines={3} style={styles.productListMaterial}> {item.product_material} </Text>
+                                    </View>
+                                    
+                                    <View style={{flex: 1, alignItems: 'flex-end',}}>
                                         <StarRating maxStars={5} rating={Number(item.product_rating)} starSize={15} fullStarColor={StyleConstants.COLOR_FFBA00} />
                                     </View>
-                                    <Text style={styles.productListCost}> Rs. {item.product_cost} </Text>
+                                    {/* <View> */}
+                                        <Text style={styles.productListCost}> Rs. {item.product_cost} </Text>
+                                    {/* </View> */}
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -130,6 +135,7 @@ class ProductList extends Component {
                 )
             }
             </View>
+            </SafeAreaView>
         );
   }
 }

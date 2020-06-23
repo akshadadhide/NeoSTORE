@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import { View, Text, ActivityIndicator, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { styles } from '../../styles/Styles';
+import { styles, WINDOW_WIDTH } from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {WINDOW_HEIGHT} from '../../styles/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -241,9 +241,11 @@ class ProductDetail extends Component{
 					<View style={styles.productDetailView1}>
 						<Text style={styles.productDetailTitle}> {productD.product_name} </Text>
 						<Text style={styles.productDetailCategory}> Category - {productD.category_id.category_name} </Text>
-						<View style={styles. rowSpaceBetween}>
-                            <Text style={styles.productDetailMaterial}> {productD.product_material} </Text>
-                            <StarRating maxStars={5} rating={Number(productD.product_rating)} starSize={20} fullStarColor={StyleConstants.COLOR_FFBA00}/>
+						<View style={[styles. rowSpaceBetween, {width: WINDOW_WIDTH - 130}]}>
+                            <Text numberOfLines={4} style={styles.productDetailMaterial}> {productD.product_material} </Text>
+							<View style={{justifyContent:'flex-end'}}>
+                            	<StarRating maxStars={5} rating={Number(productD.product_rating)} starSize={20} fullStarColor={StyleConstants.COLOR_FFBA00}/>
+							</View>
 						</View>
 					</View>
 

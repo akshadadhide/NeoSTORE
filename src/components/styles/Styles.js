@@ -22,6 +22,10 @@ export const styles = StyleSheet.create({
         // backgroundColor: StyleConstants.COLOR_E91C1A,
         padding: StyleConstants.PADDING,
     },
+    pageContainer: {
+        flex: 1,
+        padding: StyleConstants.PADDING_10,
+    },
 
     whiteText: {
         color: StyleConstants.COLOR_FFFFFF,
