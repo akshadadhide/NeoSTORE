@@ -22,7 +22,7 @@ class OrderList extends Component {
         this.props.getOrderDetails('getOrderDetails');
         const {orderDetails} = this.props;
         (orderDetails !== undefined) && this.setState({orderList:orderDetails});
-        // console.log("orderDetails: ", orderDetails);
+        console.log("orderDetails: ", orderDetails);
     }
 
     //to update the state with current redux state

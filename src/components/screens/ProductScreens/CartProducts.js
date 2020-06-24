@@ -136,66 +136,61 @@ class CartProducts extends Component {
             <View style={{flex:1, }}>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts"  rightIconName="search"/>
                 {
-                //  (cartData === undefined) ? 
-                //  (  <ScrollView>
-                //         <Text style={[styles.productListCost,{textAlign:'center'}]}> Your cart is empty!! </Text>
-                //     </ScrollView>):
-                // (
+                 (cartData !== undefined && cartData !== '') ? 
+                 
+                (
                     (cartData === '') ? 
                     (<ActivityIndicator size='large' />) :
-                (<ScrollView>
-                    <FlatList
-                    data={cartData}
-                    renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={index} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
-                            <View style={styles.productListView}>
-                                <View style={{paddingRight:5,}}>
-                                    <Image
-                                        style={{width: 80, height: 80}}
-                                        source={{uri: BASE_URL+item.product_image}}
-                                    />
+                    (<ScrollView>
+                        <FlatList
+                        data={cartData}
+                        renderItem={ ({item,index}) => (
+                            <TouchableOpacity key={index} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
+                                <View style={styles.productListView}>
+                                    <View style={{paddingRight:5,}}>
+                                        <Image
+                                            style={{width: 80, height: 80}}
+                                            source={{uri: BASE_URL+item.product_image}}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text numberOfLines={1} style={[styles.productDetailTitle, {marginBottom:0,}]}> {item.product_name} </Text>
+                                        <Text style={styles.productDetailMaterial}> ({item.product_material}) </Text>
+                                        <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text>
+                                    </View>
                                 </View>
-                                <View>
-                                    <Text numberOfLines={1} style={[styles.productDetailTitle, {marginBottom:0,}]}> {item.product_name} </Text>
-                                    <Text style={styles.productDetailMaterial}> ({item.product_material}) </Text>
-                                    <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text>
-                                </View>
-                            </View>
-                            <View style={{flexDirection:'row',marginLeft:90}}>
-                                {/* <Picker selectedValue={this.state.productCount[index]} mode='dropdown' style={{width:100, height:50}} onValueChange={ (itemValue) => this.handlePickerChange(index,itemValue)}>
-                                    <Picker.Item label='1' value={1} />
-                                    <Picker.Item label='2' value={2} />
-                                    <Picker.Item label='3' value={3} />
-                                    <Picker.Item label='4' value={4} />
-                                    <Picker.Item label='5' value={5} />
-                                </Picker> */}
+                                <View style={{flexDirection:'row',marginLeft:90}}>
 
-                                <TouchableOpacity 
-                                    style={[styles.TabNavButton, {width:70,height:35,backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
-                                    onPress={() => 
-                                        Alert.alert(
-                                            'Delete Product',
-                                            'Do you want to delete product from cart?',
-                                            [
-                                            {text: 'Cancel', onPress: () => {return null}},
-                                            {text: 'Confirm', onPress: () =>{ 
-                                                this.handleDeleteProduct(item.product_id);
-                                            }},
-                                            ],
-                                            { cancelable: false }
-                                        ) 
-                                    } 
-                                >
-                                    <Text style={[styles.TabNavButtonText,{fontSize: StyleConstants.FONT_16}]}> Delete </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                    keyExtractor={(item) => {return item.product_id.toString()}}
-                    ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
-                    />
-                </ScrollView>)
-                // )
+                                    <TouchableOpacity 
+                                        style={[styles.TabNavButton, {width:70,height:35,backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
+                                        onPress={() => 
+                                            Alert.alert(
+                                                'Delete Product',
+                                                'Do you want to delete product from cart?',
+                                                [
+                                                {text: 'Cancel', onPress: () => {return null}},
+                                                {text: 'Confirm', onPress: () =>{ 
+                                                    this.handleDeleteProduct(item.product_id);
+                                                }},
+                                                ],
+                                                { cancelable: false }
+                                            ) 
+                                        } 
+                                    >
+                                        <Text style={[styles.TabNavButtonText,{fontSize: StyleConstants.FONT_16}]}> Delete </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={(item) => {return item.product_id.toString()}}
+                        ItemSeparatorComponent={() => <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>}
+                        />
+                    </ScrollView>)
+                ) : 
+                (   <ScrollView>
+                        <Text style={[styles.productListCost,{textAlign:'center'}]}> Your cart is empty!! </Text>
+                    </ScrollView>
+                )
                 }
                 
 

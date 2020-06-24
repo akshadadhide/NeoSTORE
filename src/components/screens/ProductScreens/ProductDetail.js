@@ -75,50 +75,53 @@ class ProductDetail extends Component{
 
 
 	async handleAddToCart(){
-			await this.showLoader();
-			let productInfo;
-			const {productDetails} = this.props;
-			const {cartProductsArr} = this.state;
-			// console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
+		console.log("In this");
+		
+		this.showLoader();
+		let productInfo;
+		const {productDetails} = this.props;
+		const {cartProductsArr} = this.state;
+		// console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
+		
+
+		try {
+			const myArray = await AsyncStorage.getItem('cartProducts');
+			// console.log("myArray: ",JSON.parse(myArray));
+			let newProduct, flag=false;
+
+			if(myArray !== null){ 
+					
+					newProduct =  JSON.parse(myArray);
+
+					newProduct.map( val =>{
+							if(val.product_id === productDetails[0].product_id){
+									flag = true;
+							}
+					});
+
+					setTimeout(async() => {
+							this.hideLoader();
+							if(flag === false){
+							newProduct.push(productDetails[0]);
+							Alert.alert("Added to cart");
+							// console.log("Modified myArray newProduct: ",newProduct);
+							}
+							else{
+							Alert.alert('Already in cart');
+							}
+							await AsyncStorage.setItem('cartProducts', JSON.stringify(newProduct));
+					},5000);
+			}
+			else{
+					this.hideLoader();
+					await AsyncStorage.setItem('cartProducts', JSON.stringify(productDetails));
+			}
 			
-
-			try {
-						const myArray = await AsyncStorage.getItem('cartProducts');
-						// console.log("myArray: ",JSON.parse(myArray));
-						let newProduct, flag=false;
-
-						if(myArray !== null){ 
-								
-								newProduct =  JSON.parse(myArray);
-
-								newProduct.map( val =>{
-										if(val.product_id === productDetails[0].product_id){
-												flag = true;
-										}
-								});
-
-								setTimeout(async() => {
-										this.hideLoader();
-										if(flag === false){
-										newProduct.push(productDetails[0]);
-										Alert.alert("Added to cart");
-										// console.log("Modified myArray newProduct: ",newProduct);
-										}
-										else{
-										Alert.alert('Already in cart');
-										}
-										await AsyncStorage.setItem('cartProducts', JSON.stringify(newProduct));
-								},5000);
-						}
-						else{
-								this.hideLoader();
-								await AsyncStorage.setItem('cartProducts', JSON.stringify(productDetails));
-						}
-				
-				}catch (error) {
-						this.hideLoader();
-						// console.log("Error saving data in asyncstorage cart: ",error);
-				}
+		}catch (error) {
+				this.hideLoader();
+				console.log("Error saving data in asyncstorage cart: ",error);
+				Alert.alert('Something went wrong!!Please try again');
+		}
 
 	}
 
@@ -145,14 +148,15 @@ class ProductDetail extends Component{
 	async onSubmitRating(visible){
 		await this.showLoader();
 		await this.props.updateProductRating(this.state.ratingData, RATE_TO_PRODUCT_URLTYPE);
-		const {productRatingRes} = await this.props;
-		console.log("productRatingRes", productRatingRes);
+		
 		setTimeout(()=>{
 				this.hideLoader();
+				const {productRatingRes} = this.props;
+				console.log("productRatingRes", productRatingRes);
 				(productRatingRes !== undefined) ?
 				(Alert.alert(productRatingRes.message)) : 
 				(Alert.alert("Something went wrong!!!try again"));
-		},3000);
+		},4000);
 		this.setState({modalVisible: visible});
 
 	}
@@ -201,7 +205,11 @@ class ProductDetail extends Component{
 			subImages = subImages.map((value) => {return BASE_URL.concat(value)});
 			mainImage = this.state.showSubImage ? this.state.mainImageName : BASE_URL+productD.product_image;
 		}
+		console.log("userToken: ",userToken);
+		
 		const flag = (userToken !== null && userToken !== '');
+		console.log("flag: ",flag);
+		
 
 		return (
 			(productD === undefined) ? 
@@ -290,22 +298,25 @@ class ProductDetail extends Component{
 				{/* add cart button */}
 				<TouchableHighlight 
 					style={[styles.addToCartButton, flag ? {opacity:1} : {opacity:0.6}]} 
-					onPress={() => {(userToken !== null && userToken !== '') ? this.handleAddToCart.bind(this) : (alert('Please Login first'))} }
+					onPress={(userToken !== null && userToken !== '') ? this.handleAddToCart.bind(this) : (alert('Please Login first'))} 
 				>
 					<Icon name="shopping-cart" color={StyleConstants.COLOR_FFFFFF} size={30} />
 				</TouchableHighlight>
 
 				{/* buy and rate button view starts */}
 				<View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF}]}>
-					<TouchableOpacity style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F,}, flag ? {opacity:1} : {opacity:0.6} ]} 
+					{/* buy now button */}
+					<TouchableOpacity style={[styles.TabNavButton,!flag && {opacity:0.6} , {backgroundColor:StyleConstants.COLOR_FE3F3F,}, ]} 
 						onPress={ () =>  (userToken !== null && userToken !== '') ?
 							(this.props.navigation.navigate('OrderSummary',{productDetails:[{product_name:productD.product_name, product_id: productD.product_id, product_material:productD.product_material, 
 								product_image:productD.product_image, product_cost:productD.product_cost}]})):
 							(alert('Please Login first')) } >
 						<Text style={styles.TabNavButtonText}> BUY NOW </Text>
 					</TouchableOpacity>
+
+					{/* Rating button */}
 					<TouchableOpacity 
-							style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_8E8E8E,}, flag ? {opacity:1} : {opacity:0.6} ]} 
+							style={[styles.TabNavButton, !flag && {opacity:0.6}, {backgroundColor:StyleConstants.COLOR_8E8E8E,} ]} 
                             onPress={() => {
                                 (userToken !== null && userToken !== '') ? this.setModalVisible(true) : (alert('Please Login first'))
 						

@@ -91,8 +91,8 @@ class ProductList extends Component {
             <SafeAreaView>
             <View>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
-                {(productList === undefined && this.state.isLoading) ?
-                (<ActivityIndicator />) :
+                {(productListArray === undefined || productListArray === '') ?
+                (<ActivityIndicator size='large' />) :
                 (
                 <View  style={{padding: StyleConstants.PADDING_10,}}>
                     <FlatList
