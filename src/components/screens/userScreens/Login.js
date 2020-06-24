@@ -55,21 +55,21 @@ class Login extends Component {
         //email validation
         if(field_name === 'email'){
             if(email.length === 0 || EMAIL_REGEX.test(email) === false){
-            errorFlag = true;
-            const {valueMissing, wrongPattern} = customErrors.email;
-            errors.email = email === '' ? valueMissing : wrongPattern;
+                errorFlag = true;
+                const {valueMissing, wrongPattern} = customErrors.email;
+                errors.email = email === '' ? valueMissing : wrongPattern;
             }
             else{
-            delete errors.email;
+                delete errors.email;
             }
         }
         
         //password validation
         if(field_name === 'pass'){
-            if(pass.length < 8 || pass.length > 12){
+            if(pass.length === 0){
                 errorFlag = true;
-                const {valueMissing, minLength} = customErrors.pass;
-                errors.pass = pass === '' ? valueMissing : minLength;
+                const {valueMissing} = customErrors.pass;
+                errors.pass = valueMissing;
             }
             else{
                 delete errors.pass
@@ -118,7 +118,6 @@ class Login extends Component {
         const {passIcon, passwordHide} =  this.state;
         const {errors} = this.state;
 
-
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
             <ScrollView contentContainerStyle={{flexGrow:1}}>
@@ -130,14 +129,31 @@ class Login extends Component {
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={email.trim()} style={styles.inputBoxText} onChangeText={email => this.setState({email}) } onBlur={ () => this.handleValidation('email')} placeholder='Username' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input 
+                                value={email.trim()} 
+                                style={styles.inputBoxText} 
+                                onChangeText={(email) => {this.setState({email})} } 
+                                onChange={() => this.handleValidation('email')}
+                                onBlur={ () => this.handleValidation('email')} 
+                                placeholder='Username' 
+                                placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                            />
                         </Item>
                         <Text style={styles.errorText}> {errors.email}</Text>
 
 
                         <Item regular style={styles.textboxStyle}>
                             <Icon name='lock' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
-                            <Input value={pass} secureTextEntry={passwordHide} style={styles.inputBoxText} onChangeText={pass => this.setState({pass}) } onBlur={() => this.handleValidation('pass')} placeholder='Password' placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}/>
+                            <Input 
+                                value={pass} 
+                                secureTextEntry={passwordHide} 
+                                style={styles.inputBoxText} 
+                                onChangeText={pass => this.setState({pass}) } 
+                                onChange={() => this.handleValidation('pass')}
+                                onBlur={() => this.handleValidation('pass')} 
+                                placeholder='Password' 
+                                placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                            />
                             <Icon active name={passIcon} style={[styles.textBoxIcon, {alignSelf:'flex-end'}]} size={StyleConstants.ICON_SIZE} onPress={this.setPasswordVisiblility}/>
                         </Item>
                         <Text style={styles.errorText}> {errors.pass}</Text>
@@ -153,17 +169,11 @@ class Login extends Component {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end',padding: 20,}}>
-                    
-                        <View style={{ flex: 4, alignItems: 'space-between', }}>
-                            <Text style={[styles.linkText,{fontSize: StyleConstants.FONT_18}]}> DON'T HAVE AN ACCOUNT?</Text>
-                        </View>
-
-                        <View style={{flex: 1, alignItems: 'space-between',  }}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')} style={{backgroundColor:StyleConstants.COLOR_BB0100, padding:StyleConstants.PADDING}}>
-                                <Icon name="plus" size={35} color={StyleConstants.COLOR_FFFFFF}/>
-                            </TouchableOpacity>
-                        </View>
+                    <View>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')} style={styles.rowSpaceBetween}>
+                            <Text style={[styles.linkText,{fontSize: StyleConstants.FONT_18, paddingRight: StyleConstants.PADDING}]}> DON'T HAVE AN ACCOUNT?</Text>
+                            <Icon name="plus" size={35} color={StyleConstants.COLOR_FFFFFF}/>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 {(this.state.showLoader) && (<Loader />)}

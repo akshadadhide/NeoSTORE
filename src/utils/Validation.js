@@ -1,7 +1,7 @@
 import {Alert} from 'react-native';
 
 export const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
-export const EMAIL_REGEX = /^[A-Za-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
+export const EMAIL_REGEX = /^[A-Za-z0-9._+-]+@[a-z.-]+\.[a-z]{2,3}$/;
 export const NAME_REGEX = /^[a-zA-Z '.-]+$/;
 export const MOBILE_REGEX = /^\d{10}$/;
 

@@ -1,14 +1,16 @@
 import PropTypes from "prop-types";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, ScrollView, Text, ActivityIndicator, TouchableHighlight, TouchableOpacity, Alert, ImageBackground } from 'react-native';
+import { View, ScrollView, Text,RefreshControl, ActivityIndicator, TouchableHighlight, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import {Input, Item, Radio, CheckBox} from 'native-base';
-import { styles } from '../../styles/Styles';
+import { styles, WINDOW_HEIGHT } from '../../styles/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {StyleConstants} from '../../styles/Constants';
 import {validation, NAME_REGEX, customErrors, MOBILE_REGEX, PASSWORD_REGEX, EMAIL_REGEX} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 import Loader from "../../Common/Loader";
+import TermsAndCond from "../../Common/TermsAndCond";
+import Modal from 'react-native-modal';
 
 
 class Register extends Component {
@@ -23,25 +25,36 @@ class Register extends Component {
             confirmPass: '',
             gender: '',
             phone_no: '',
+            isChecked: false,
 
             errors:{},
-            
-            inputProp: 'regular',
-
+            isRefreshing: false,
             passIcon: 'eye',
             passwordHide: true,
             confirmPassIcon: 'eye',
             confirmPasswordHide: true,
-
+            modalVisible: false,
             showLoader:false,
 
         }
         this.handleRegister = this.handleRegister.bind(this);
         // this.validatePassword = this.validatePassword.bind(this);
     }
-
+    
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
+    setModalVisible(visible) {
+		this.setState({modalVisible: visible});
+	}
+    
+    onRefresh = () => {
+        this.setState({isRefreshing: true});
+        setTimeout(() => {
+            this.forceUpdate();
+            this.setState({isRefreshing:false});
+        },2000);
+
+    }
 
     setPasswordVisiblility = (name) => {
 
@@ -99,7 +112,9 @@ class Register extends Component {
 
         //phone number validation
         if(field_name === 'phone_no'){
-            if(phone_no.length === 0 || MOBILE_REGEX.test(phone_no) === false){
+            console.log("len: ", phone_no.length);
+            
+            if(phone_no === '' || MOBILE_REGEX.test(phone_no) === false){
                 errorFlag = true;
                 const {valueMissing, wrongPattern} = customErrors.phone_no;
                 errors.phone_no = phone_no === '' ? valueMissing : wrongPattern;
@@ -160,21 +175,23 @@ class Register extends Component {
         }
 
         //gender validation
-        if(gender === ''){
-            genderErrorFlag = true;
-            const {valueMissing} = customErrors.gender;
-            errors.gender = gender === '' ? valueMissing : '';
-        }
-        else{
-            genderErrorFlag =  false;
-            delete errors.gender;
+        if(field_name === 'gender'){
+            if(gender === ''){
+                errorFlag = true;
+                const {valueMissing} = customErrors.gender;
+                errors.gender = gender === '' ? valueMissing : '';
+            }
+            else{
+                errorFlag =  false;
+                delete errors.gender;
+            }
         }
 
        
       this.setState({errors});
-      console.log("Error: ",errors, " errFlag: ", errorFlag, "genderErrorFlag: ",genderErrorFlag);
-      let flag = (errorFlag || genderErrorFlag)
-      return flag;
+    //   console.log("Error: ",errors, " errFlag: ", errorFlag, "genderErrorFlag: ",genderErrorFlag);
+    //   let flag = (errorFlag || genderErrorFlag)
+      return errorFlag;
       
   
     }
@@ -195,25 +212,34 @@ class Register extends Component {
 
         const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') || this.handleValidation('email')
                             || this.handleValidation('pass') || this.handleValidation('confirmPass') || this.handleValidation('phone_no')
+                            || this.handleValidation('gender')
         );
         // console.log("Err Flag in submit: ", errorFlag);
 
 
             if(errorFlag === false){
-                this.props.register(logData,'register');
-                const {isRegistered, registrationResult} = this.props;
-                // console.log("isReg:",isRegistered, "regRes:",registrationResult);
-                
-                setTimeout(()=>{
+                if(this.state.isChecked === true){
+                    this.props.register(logData,'register');
+                    const {isRegistered, registrationResult} = this.props;
+                    // console.log("isReg:",isRegistered, "regRes:",registrationResult);
+                    
+                    setTimeout(()=>{
+                        this.hideLoader();
+                        if(isRegistered === true && registrationResult.status_code === 200 ){
+                            (registrationResult.message !== undefined && registrationResult.message !== '') && Alert.alert(registrationResult.message);
+                            this.props.navigation.navigate('Login');
+                        }
+                        else{
+                            
+                            (registrationResult.message !== undefined && registrationResult.message !== '') ? 
+                            (Alert.alert(registrationResult.message)) :
+                            (Alert.alert("Something went wrong!!Please try again"));
+                        }
+                    },5000);
+                }else{
                     this.hideLoader();
-                    if(isRegistered === true && registrationResult.status_code === 200 ){
-                        // Alert.alert(registrationResult.message);
-                        this.props.navigation.navigate('Login');
-                    }
-                    else{
-                        Alert.alert(registrationResult.error_message);
-                    }
-                },5000);
+                    Alert.alert('Please select the terms and conditions');
+                }
                
             }
             else{
@@ -231,18 +257,63 @@ class Register extends Component {
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
-            <ScrollView>
+            <ScrollView 
+                refreshControl={
+                    <RefreshControl enabled={true} refreshing={this.state.isRefreshing} onRefresh={this.onRefresh} />
+                }
+            >
                 <View style={styles.container}>
                     <Text style={styles.brandName}>NeoSTORE</Text>
                     {/* <Text style={styles.errorText}>{errors.submitError}</Text> */}
 
+                    {/* modal starts  */}
+                    <Modal
+						animationType={'fade'}
+						transparent={true}
+						visible={this.state.modalVisible}
+						onBackButtonPress={ () => this.setModalVisible(!this.state.modalVisible)}
+						style={{backgroundColor:'white', maxHeight:WINDOW_HEIGHT - 200, justifyContent:'center', alignItems:'center', borderRadius:15, marginTop:WINDOW_HEIGHT/8 }}
+					>
+                        <ScrollView>
+                        <View style={{flex:1, justifyContent:'center', alignItems:'center',padding:20, }}>
+                            <Text>
+                                You acknowledge that you are responsible for any Content you may submit via the
+                                Website, including the legality, reliability, appropriateness, originality and copyright of any
+                                such Content. You may not upload to, distribute or otherwise publish through the Website
+                                any Content that
+                            </Text>
+                            <Text> 
+                                (i),false, fraudulent, libellous, defamatory, obscene, threatening, invasive
+                                of privacy or publicity rights, infringing on intellectual property rights, abusive, illegal or
+                                otherwise objectionable; 
+                            </Text>
+                            <Text>
+                                (ii) may constitute or encourage a criminal offence, violate the
+                                rights of any party or otherwise give rise to liability or violate any law; or 
+                            </Text>
+                            <Text>
+                                (iii) may contain software viruses, chain letters, mass mailings, or any form of "spam." You may not use a
+                                false email address or other identifying information, impersonate any person or entity or
+                                otherwise mislead as to the origin of any content.
+                            </Text>
+                            <TouchableHighlight 
+								style={[styles.TabNavButton, {backgroundColor:StyleConstants.COLOR_FE3F3F, marginTop:50, } ]} 
+								onPress={ () => this.setModalVisible(false)}>
+									<Text style={styles.TabNavButtonText}>OK</Text>
+							</TouchableHighlight>
+                        </View>
+                        </ScrollView>
+                    </Modal>
+                    {/* modal ends  */}
+
                     <Item regular style={[styles.textboxStyle,{marginBottom:0}]}>
                         <Icon active name='user' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                         <Input value={first_name.trim()} style={styles.inputBoxText} 
-                                onChangeText={first_name => {this.setState({ first_name }) }} 
-                                onBlur={() => this.handleValidation('first_name')} 
-                                placeholder='First Name' 
-                                placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                            onChangeText={first_name => {this.setState({ first_name }) }} 
+                            onChange={() => this.handleValidation('first_name')}
+                            onBlur={() => this.handleValidation('first_name')} 
+                            placeholder='First Name' 
+                            placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                         />
                         
                     </Item>
@@ -254,7 +325,8 @@ class Register extends Component {
                         <Input 
                             value={last_name.trim()} 
                             style={styles.inputBoxText} 
-                            onChangeText={last_name => {this.setState({ last_name }) }} 
+                            onChangeText={last_name => {this.setState({ last_name }) }}
+                            onChange={() => this.handleValidation('last_name')} 
                             onBlur={() => this.handleValidation('last_name')} 
                             placeholder='Last name' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
@@ -269,7 +341,8 @@ class Register extends Component {
                             value={email.trim()} 
                             style={styles.inputBoxText} 
                             keyboardType='email-address' 
-                            onChangeText={email => {this.setState({ email }) }} 
+                            onChangeText={email => {this.setState({ email }) }}
+                            onChange={() => this.handleValidation('email')} 
                             onBlur={() => this.handleValidation('email')} 
                             placeholder='Email' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
@@ -284,7 +357,8 @@ class Register extends Component {
                             value={pass} 
                             secureTextEntry={passwordHide} 
                             style={styles.inputBoxText} 
-                            onChangeText={pass => {this.setState({pass}) }}  
+                            onChangeText={pass => {this.setState({pass}) }} 
+                            onChange={() => this.handleValidation('pass')}  
                             onBlur={() => this.handleValidation('pass')} 
                             onKeyPress={() => this.handleValidation('pass')}
                             placeholder='Password' 
@@ -302,6 +376,7 @@ class Register extends Component {
                             secureTextEntry={confirmPasswordHide} 
                             style={styles.inputBoxText} 
                             onChangeText={confirmPass => {this.setState({ confirmPass }) }} 
+                            onChange={() => this.handleValidation('confirmPass')}
                             onBlur={() => this.handleValidation('confirmPass')} 
                             onKeyPress={() => this.handleValidation('confirmPass')} 
                             placeholder='Confirm Password' 
@@ -314,9 +389,9 @@ class Register extends Component {
 
                     <View style={styles.genderContainer}>
                         <Text style={styles.linkText}> Gender </Text>
-                        <Radio color={StyleConstants.COLOR_FFFFFF}  onPress={() => this.setState({ gender: 'M' })} selected={gender == 'M'}/> 
+                        <Radio color={StyleConstants.COLOR_FFFFFF}  onPress={() => {this.setState({ gender: 'M' }), this.handleValidation('gender')}} selected={gender == 'M'}/> 
                         <Text style={styles.linkText}> Male </Text>
-                        <Radio color={StyleConstants.COLOR_FFFFFF} onPress={() => this.setState({ gender: 'F' })} selected={gender == 'F'}/> 
+                        <Radio color={StyleConstants.COLOR_FFFFFF} onPress={() => {this.setState({ gender: 'F' }), this.handleValidation('gender')}} selected={gender == 'F'}/> 
                         <Text style={styles.linkText}> Female </Text>
                     </View>
                     <Text style={styles.errorText}> {errors.gender}</Text>
@@ -328,7 +403,8 @@ class Register extends Component {
                             value={phone_no.trim()} 
                             style={styles.inputBoxText} 
                             keyboardType='phone-pad' 
-                            onChangeText={phone_no => {this.setState({ phone_no }) }} 
+                            onChangeText={phone_no => {this.setState({ phone_no }) }}
+                            onChange={() => this.handleValidation('phone_no')} 
                             onBlur={() => this.handleValidation('phone_no')} 
                             placeholder='Phone Number' 
                             placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
@@ -338,10 +414,11 @@ class Register extends Component {
 
 
                     <View style={{flexDirection:'row'}}>
-                        <CheckBox checked={true}  style={styles.checkboxStyle}/>
+                        <CheckBox checked={this.state.isChecked} color="green" style={styles.checkboxStyle} onPress={ ()=> this.setState({isChecked:!this.state.isChecked})} />
                         <Text style={[styles.linkText,{fontSize:StyleConstants.FONT_13}]}> I agree the </Text>
-                        <TouchableOpacity onPress={() => Alert.alert("Terms and conditions:")}>
+                        <TouchableOpacity onPress={() => this.setModalVisible(true) }>
                                 <Text style={[styles.linkText,{fontSize:StyleConstants.FONT_13, textDecorationLine:'underline'}]}> Terms and Conditions</Text>
+                               
                         </TouchableOpacity>
                     </View>
                     

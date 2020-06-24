@@ -32,10 +32,10 @@ class Routes extends Component {
                 <Stack.Navigator>
 
                     <Stack.Screen name="DrawerNav" component={DrawerNav} options={{headerShown: false}}/>
-                    <Stack.Screen name="Register" component={Register} options={{title: 'Register',  headerTintColor: StyleConstants.COLOR_FFFFFF,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>
-                    <Stack.Screen name="Login" component={Login} options={{headerShown: false}} options={{title: 'Login',  headerTintColor: StyleConstants.COLOR_FFFFFF,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>   
+                    <Stack.Screen name="Register" component={Register} options={{title: 'Register', headerTitleAlign:'center', headerTintColor: StyleConstants.COLOR_FFFFFF,headerTitleStyle: {fontWeight: 'bold',fontSize: StyleConstants.FONT_23,},headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>
+                    <Stack.Screen name="Login" component={Login} options={{headerShown: false}} options={{title: 'Login', headerTitleAlign:'center',  headerTintColor: StyleConstants.COLOR_FFFFFF, headerTitleStyle: {fontWeight: 'bold',fontSize: StyleConstants.FONT_23,} ,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A,},}}/>   
                     
-                    <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{title: 'Forgot Password',  headerTintColor: StyleConstants.COLOR_FFFFFF,headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>  
+                    <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{title: 'Forgot Password', headerTitleAlign:'center',  headerTintColor: StyleConstants.COLOR_FFFFFF, headerTitleStyle: {fontWeight: 'bold',fontSize: StyleConstants.FONT_23,}, headerStyle: { backgroundColor: StyleConstants.COLOR_E91C1A },}}/>  
                     <Stack.Screen name="SetPassword" component={SetPassword} options={{headerShown: false}}/>  
                     
                     <Stack.Screen name="ProductList" component={ProductList} options={{headerShown: false}} />

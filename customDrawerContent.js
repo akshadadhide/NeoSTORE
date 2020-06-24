@@ -122,7 +122,7 @@ handleLogout = async() => {
             (
             <View style={styles.rowSpaceBetween}>
                 <DrawerItem 
-                icon={() => <Icon name="shopping-cart" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
+                icon={() => <Icon name="shopping-cart" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
                 label={() => <Text style={styles.sidebarLink}>My Cart</Text> } 
                 onPress={() => {props.navigation.navigate('CartProducts')}}  />
                 <View  style={styles.cartCount}>
@@ -141,13 +141,13 @@ handleLogout = async() => {
                 </TouchableHighlight>
                 <DrawerItem 
                     style={{alignSelf:'flex-end'}}
-                    icon={() => <Icon name='user-alt' color={ StyleConstants.COLOR_FFFFFF} size={20}/>}
-                    label={() => <Text style={styles.sidebarLink}> User Login </Text>} 
+                    icon={() => <Icon name='user-alt' color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
+                    label={() => <Text style={[styles.sidebarLink, {paddingRight: 27}]}> User Login </Text>} 
                     onPress={() => props.navigation.navigate('Login') }
                 />
                 <DrawerItem 
                     style={{alignSelf:'flex-end'}}
-                    icon={() => <Icon name='user-plus' color={ StyleConstants.COLOR_FFFFFF} size={20}/>}
+                    icon={() => <Icon name='user-plus' color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
                     label={() => <Text style={styles.sidebarLink}> User Register </Text>} 
                     onPress={() => props.navigation.navigate('Register')}
                 />
@@ -158,51 +158,51 @@ handleLogout = async() => {
             
 
             <DrawerItem 
-            icon={() => <Icon name="couch" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
+            icon={() => <Icon name="couch" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
             label={() => <Text style={styles.sidebarLink}> Sofa </Text>} 
             onPress={() => props.navigation.navigate('ProductList',{category:"Sofa", category_id:'5cfe3c5aea821930af69281e'})}  />
 
             <DrawerItem 
-            icon={() => <Icon name="bed" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
+            icon={() => <Icon name="bed" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
             label={ () => <Text style={styles.sidebarLink}> Bed </Text>} 
             onPress={() => props.navigation.navigate('ProductList',{category:"Bed", category_id:'5cfe3c65ea821930af69281f'})}   />
 
             <DrawerItem 
-            icon={() => <Icon name="chair" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
-            label={() => <Text style={styles.sidebarLink}> Chair </Text>} 
+            icon={() => <Icon name="chair" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
+            label={() => <Text style={[styles.sidebarLink, {paddingLeft: 5}]}> Chair </Text>} 
             onPress={() => props.navigation.navigate('ProductList',{category:'Chair', category_id:'5cfe3c6fea821930af692820'})}   />
 
             <DrawerItem 
-            icon={() => <Icon name="table" color={ StyleConstants.COLOR_FFFFFF} size={30} />}
+            icon={() => <Icon name="table" color={ StyleConstants.COLOR_FFFFFF} size={25} />}
             label={() => <Text style={styles.sidebarLink}> Table </Text>} 
             onPress={() => props.navigation.navigate('ProductList',{category:'Table', category_id:'5cfe3c79ea821930af692821'})}   />
 
             <DrawerItem 
-            icon={() => <Icon name="dungeon" color={ StyleConstants.COLOR_FFFFFF} size={30} />}
+            icon={() => <Icon name="dungeon" color={ StyleConstants.COLOR_FFFFFF} size={25} />}
             label={() => <Text style={styles.sidebarLink}> Almirah </Text>} 
             onPress={() => props.navigation.navigate('ProductList',{category:'Almirah', category_id:'5d14c15101ae103e6e94fbe0'})}   />
 
             {(b) ?
                 (<DrawerItem 
-                icon={() => <Icon name="user-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
+                icon={() => <Icon name="user-alt" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
                 label={() => <Text style={styles.sidebarLink}> My Account </Text>} 
                 onPress={() => {props.navigation.navigate('UserProfile')}}  />):null}
 
 
             <DrawerItem 
-            icon={() => <Icon name="map-marker-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
-            label={() => <Text style={styles.sidebarLink}> Store Locator </Text>} 
+            icon={() => <Icon name="map-marker-alt" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
+            label={() => <Text style={[styles.sidebarLink, {paddingLeft: 5}]}> Store Locator </Text>} 
             onPress={() => props.navigation.navigate('StoreLocator')}  />
 
             {(b) ?
             (<View style={{paddingBottom: StyleConstants.PADDING}}>
             <DrawerItem 
-            icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
+            icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
             label={() => <Text style={styles.sidebarLink}> My Orders </Text>} 
             onPress={() => { props.navigation.navigate('OrderList')}}  />
 
             <DrawerItem 
-                icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={30}/>}
+                icon={() => <Icon name="sign-out-alt" color={ StyleConstants.COLOR_FFFFFF} size={25}/>}
                 label={() => <Text style={styles.sidebarLink}> Logout </Text>} 
                 onPress={() => 
                     Alert.alert(

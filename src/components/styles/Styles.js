@@ -84,8 +84,8 @@ export const styles = StyleSheet.create({
         fontSize: StyleConstants.FONT_18,
         fontWeight:StyleConstants.FONT_BOLD,
         color: StyleConstants.COLOR_FFFF00,
-        paddingBottom: StyleConstants.PADDING_10
-        
+        paddingBottom: StyleConstants.PADDING_10,
+        width: StyleConstants.TEXTBOX_WIDTH,
     },
     //Error
 
@@ -126,7 +126,11 @@ export const styles = StyleSheet.create({
 
     checkboxStyle:{
         marginRight:12,
-        color:StyleConstants.COLOR_FFFFFF,
+        color:StyleConstants.COLOR_E91C1A,
+        padding: 5,
+        paddingLeft:5,
+        height: 30,
+        width: 30,
     },
 
     genderContainer:{
