@@ -101,7 +101,7 @@ class ProductList extends Component {
                     onRefresh={this.onRefresh.bind(this)}
                     refreshing={this.state.isRefreshing}
                     renderItem={ ({item,index}) => (
-                        <TouchableOpacity key={index} style={{paddingRight:20}} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
+                        <TouchableOpacity key={index} style={{paddingRight:20}} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id, productName: item.product_name})}>
                             <View style={styles.productListView}> 
                                 <View style={{paddingRight:10,}}>
                                     <Image

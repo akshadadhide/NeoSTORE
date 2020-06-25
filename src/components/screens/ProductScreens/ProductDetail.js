@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import {connect} from 'react-redux';
 import { View, Text, ActivityIndicator, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -37,25 +37,27 @@ class ProductDetail extends Component{
 
             showLoader:false,
 		}
+        const {productId} = this.props.route.params;
+
+		console.log("prod id", productId);
+		
 	}
 	
 	componentDidMount(){
-		// this.focusListener = this.props.navigation.addListener('didFocus', () => {
+		// this.unsubscribe = this.props.navigation.addListener('focus', () => {
 			this.getData();
 		// });
 	}
 
-	// componentWillUnmount() {
-	// 	// Remove the event listener before removing the screen from the stack
-	// 	this.focusListener();
-	// 	clearTimeout(this.t);
+	// componentWillUnmount () {
+	// 	this.unsubscribe()
 	// }
 
-	// componentDidUpdate(prevProps){
-	// 	if(this.props.productDetails !== prevProps.productDetails){
-            
-    //     }
-    // }
+	componentDidUpdate(prevProps){
+		if(this.props.productDetails !== prevProps.productDetails){
+        	this.setState({productDetails:this.props.productDetails});
+        }
+    }
     
     getData = async() => {
         token = await AsyncStorage.getItem('userToken');
@@ -64,8 +66,10 @@ class ProductDetail extends Component{
 
         const {productId} = this.props.route.params;
         const type = 'getProductByProdId/'+productId;
-        this.props.getProductDetails(type);
-        const {productDetails} = this.props;
+        await this.props.getProductDetails(type);
+		const {productDetails} = await this.props;
+		// console.log("In getData, productDetails: ",productDetails);
+		
         this.setState({productDetails:productDetails});
     }
 
@@ -75,8 +79,6 @@ class ProductDetail extends Component{
 
 
 	async handleAddToCart(){
-		console.log("In this");
-		
 		this.showLoader();
 		let productInfo;
 		const {productDetails} = this.props;
@@ -118,9 +120,9 @@ class ProductDetail extends Component{
 			}
 			
 		}catch (error) {
-				this.hideLoader();
-				console.log("Error saving data in asyncstorage cart: ",error);
-				Alert.alert('Something went wrong!!Please try again');
+			this.hideLoader();
+			// console.log("Error saving data in asyncstorage cart: ",error);
+			Alert.alert('Something went wrong!!Please try again');
 		}
 
 	}
@@ -152,7 +154,7 @@ class ProductDetail extends Component{
 		setTimeout(()=>{
 				this.hideLoader();
 				const {productRatingRes} = this.props;
-				console.log("productRatingRes", productRatingRes);
+				// console.log("productRatingRes", productRatingRes);
 				(productRatingRes !== undefined) ?
 				(Alert.alert(productRatingRes.message)) : 
 				(Alert.alert("Something went wrong!!!try again"));
@@ -161,7 +163,6 @@ class ProductDetail extends Component{
 
 	}
 
- 
 	shareHandler = (productD,fileUrl, type)=> {
 		let msg = 'Check this - '+productD.product_name +' : url';
 
@@ -191,29 +192,34 @@ class ProductDetail extends Component{
 		this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
 	}
 
-
 	render() {
-		const {productId} = this.props.route.params;
-        const {productDetails} = this.props;
+		const {productId,productName} = this.props.route.params;
+        const {productDetails} = this.state;
 		const {product_rating} = this.state.ratingData
 		const userToken = (this.state.userToken !== null) ? this.state.userToken : '' ;
 		let productD, subImages, mainImage;
+		// console.log("productDetails:== ",productDetails);
 		
-		if(productDetails){
+		
+		if(productDetails !== undefined && productDetails !== ''){
+			// console.log("In if productDetails:*= ",productDetails);
+			
 			productD = productDetails[0];
 			subImages = productDetails[0].subImages_id.product_subImages.map((value) => {return value} );
 			subImages = subImages.map((value) => {return BASE_URL.concat(value)});
 			mainImage = this.state.showSubImage ? this.state.mainImageName : BASE_URL+productD.product_image;
 		}
-		console.log("userToken: ",userToken);
+		// console.log("userToken: ",userToken , "\n productId: ", productId);
+		// console.log("**productD** ",productD);
+		
 		
 		const flag = (userToken !== null && userToken !== '');
-		console.log("flag: ",flag);
+		// console.log("flag: ",flag);
 		
 
 		return (
 			(productD === undefined) ? 
-			(<ActivityIndicator />):
+			(<ActivityIndicator size="large" />) :
 			(<View style={{flex:1,}}>
 				
 				{/* modal starts */}
@@ -243,7 +249,7 @@ class ProductDetail extends Component{
 					</Modal>
 				{/* modal ends */}
 
-				<CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={productD.product_name} rightIconName="search" handleRightIconClick={this.searchHandler} />
+				<CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={productName} rightIconName="search" handleRightIconClick={this.searchHandler} />
 				{/* Product detail section */}
 				<ScrollView style={{flex:1,}}>
 					<View style={styles.productDetailView1}>
@@ -273,17 +279,18 @@ class ProductDetail extends Component{
 							</View>
 							<Image source={{uri: mainImage}} style={styles.productDetailImage}/>
 							<FlatList
-									data = {subImages}
-									horizontal={true}
-									renderItem = { ({item}) => (
-										<TouchableHighlight key={item.toString()}
-											style={{flexDirection:"row", justifyContent:'space-evenly', padding:10,}}
-											onPress={ () => this.setState({showSubImage: !this.state.showSubImage, mainImageName:item}) }
-										>
-												<Image source={{uri: item}} style={styles.productDetailSubImage} />
-										</TouchableHighlight>
-									)}
-									keyExtractor={(item) => item.toString()}
+								data = {subImages}
+								horizontal={true}
+								style={{alignSelf: 'center'}}
+								renderItem = { ({item}) => (
+									<TouchableOpacity key={item.toString()}
+										style={{flexDirection:"row", justifyContent:'space-evenly', padding:10,}}
+										onPress={ () => this.setState({showSubImage: !this.state.showSubImage, mainImageName:item}) }
+									>
+											<Image source={{uri: item}} style={[styles.productDetailSubImage, (mainImage === item) && {borderWidth: 5, borderColor:StyleConstants.COLOR_E91C1A,} ]} />
+									</TouchableOpacity>
+								)}
+								keyExtractor={(item) => item.toString()}
 							/>
 						</View>
 
@@ -298,7 +305,7 @@ class ProductDetail extends Component{
 				{/* add cart button */}
 				<TouchableHighlight 
 					style={[styles.addToCartButton, flag ? {opacity:1} : {opacity:0.6}]} 
-					onPress={(userToken !== null && userToken !== '') ? this.handleAddToCart.bind(this) : (alert('Please Login first'))} 
+					onPress={(userToken !== null && userToken !== '') ? this.handleAddToCart.bind(this) : () => (alert('Please Login first'))} 
 				>
 					<Icon name="shopping-cart" color={StyleConstants.COLOR_FFFFFF} size={30} />
 				</TouchableHighlight>

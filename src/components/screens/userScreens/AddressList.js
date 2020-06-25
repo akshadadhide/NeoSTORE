@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, ScrollView, Alert, FlatList, TouchableHighlight} from 'react-native';
+import {View, Text, ScrollView, Alert, FlatList, TouchableHighlight, RefreshControl} from 'react-native';
 import {Radio} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
@@ -27,6 +27,7 @@ class AddressList extends Component {
             addressListArr:'',
             addr: '',
             showLoader:false,
+            isRefreshing: false,
         }
     }
     
@@ -46,6 +47,15 @@ class AddressList extends Component {
         }
     }
 
+    onRefresh = () => {
+        this.setState({isRefreshing: true});
+        setTimeout(() => {
+            this.forceUpdate();
+            this.setState({isRefreshing:false});
+        },2000);
+
+    }
+
     goBack = () => this.props.navigation.goBack();
 
     addAddress = () => { 
@@ -53,26 +63,33 @@ class AddressList extends Component {
      this.props.navigation.navigate('AddAddress');}
 
     handleSaveAddress = async() =>{
-        await this.showLoader();
+        this.showLoader();
         // console.log("loader: ",this.state.showLoader);
         
-        // console.log("Sel customer add: ", this.state.custmorAddress);
-        await this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
-        const {saveAddressResponse} = this.props;
-        setTimeout(()=>{
-            this.hideLoader();
-            if(saveAddressResponse !== undefined){
-                if(saveAddressResponse.status_code === 200){
-                    this.props.navigation.navigate('OrderSummary')
+        console.log("Sel customer add: ", this.state.custmorAddress);
+        if(this.state.custmorAddress.address_id !== '' && this.state.custmorAddress.address_id !== undefined){
+            await this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
+            
+            setTimeout(()=>{
+                const {saveAddressResponse} = this.props;
+                this.hideLoader();
+                if(saveAddressResponse !== undefined){
+                    if(saveAddressResponse.status_code === 200){
+                        this.props.navigation.navigate('OrderSummary')
+                    }
+                    else{
+                        Alert.alert(saveAddressResponse.message);
+                    }
                 }
                 else{
-                    Alert.alert(saveAddressResponse.message);
+                    this.hideLoader();
+                    Alert.alert("something went wrong!! try again")
                 }
-            }
-            // else{
-            //     Alert.alert("something went wrong!! try again")
-            // }
-        },6000);
+            },6000);
+        }else{
+            this.hideLoader();
+            Alert.alert("Please select the address. To add new address click on plus icon");
+        }
     }
 
     handleDeleteAddress = (address_id) => {
@@ -81,18 +98,18 @@ class AddressList extends Component {
 
         if(address_id !== undefined){
             this.props.deleteAddress(type);
-            const {deleteAddrRes} = this.props;
             // console.log("deleteAddrRes: ",deleteAddrRes);
 
             setTimeout(()=>{
+                const {deleteAddrRes} = this.props;
                 this.hideLoader();
                 if(deleteAddrRes !== undefined){
                     Alert.alert(deleteAddrRes.message);
                     this.props.getAddress(GET_ADDR_URLTYPE);
                 }
-                // else{
-                //     Alert.alert("Something went wrong!!!Please try again");
-                // }
+                else{
+                    Alert.alert("Something went wrong!!!Please try again");
+                }
             },5000);
         }
         else{
@@ -111,13 +128,17 @@ class AddressList extends Component {
       const {addressList} = this.props;
     //   console.log("addr  List: ", addressList);
       let customer_address;
-      (this.state.addressListArr !== undefined)&&(customer_address = this.state.addressListArr.customer_address);
+      (this.state.addressListArr !== undefined && this.state.addressListArr !== '')&&(customer_address = this.state.addressListArr.customer_address);
      
     return (
         <View style={{flex:1}}>
             <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Address List" handleAddAddr={this.addAddress} rightIconName="plus"/>
 
-            <ScrollView>
+            <ScrollView 
+                refreshControl = {
+                    <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => this.onRefresh()} />
+                }
+            >
                 <Text style={[styles.productDetailCategory, {marginBottom: StyleConstants.MARGIN_15,}]}> Shipping Address </Text>
                 <Text style={[styles.productDetailTitle, {paddingLeft:StyleConstants.PADDING_10,}]}> {custName} </Text>
                 <View style={{height: 5, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: StyleConstants.MARGIN_15}}/>

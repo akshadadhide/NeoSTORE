@@ -35,7 +35,7 @@ class AddAddress extends Component {
         let errorFlag = true;
 
         if(field_name === 'address'){
-            if(address === ''){
+            if(address.length === 0){
                 errorFlag = true;
                 errors.address = 'Required';
 
@@ -118,16 +118,20 @@ class AddAddress extends Component {
                 this.hideLoader();
                 if(addAddrResponse !== undefined){
                     if(addAddrResponse.status_code === 200){
-                        Alert.alert(addAddrResponse.message);
-                        this.props.navigation.navigate('OrderSummary');
+                        (addAddrResponse.message !== undefined && addAddrResponse.message !== '') ?
+                        (Alert.alert(addAddrResponse.message)) :
+                        (Alert.alert("Address saved successfully!!"))
+                        this.props.navigation.navigate('AddressList');
                     }
                     else{
-                        Alert.alert(addAddrResponse.error_message)
+                        (addAddrResponse.error_message !== undefined && addAddrResponse.error_message !== '') ?
+                        (Alert.alert(addAddrResponse.error_message)) :
+                        (Alert.alert('Something went wrong!!!Please try again'))
                     }
                 }
-                // else{
-                //     Alert.alert('Something went wrong!!!Please try again');
-                // }
+                else{
+                    Alert.alert('Something went wrong!!!Please try again');
+                }
             },7000);
             
         }
@@ -148,78 +152,84 @@ class AddAddress extends Component {
             <View style={{flex:1}}>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Add Address"/>
 
-                <ScrollView style={{flex:1,  backgroundColor:StyleConstants.COLOR_EDEDED}}>
+                <ScrollView contentContainerStyle={{backgroundColor:StyleConstants.COLOR_EDEDED, padding: StyleConstants.PADDING,}}>
 
-                    <View style={{padding: StyleConstants.PADDING,}}>
+                    {/* <View style={{padding: StyleConstants.PADDING,}}> */}
                         <View>
                             <Text style={styles.productDetailCategory}> Address </Text>
                             <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.address}</Text>
                         </View>
                         <TextInput 
-                            value={address.trim()}
+                            value={address.trimLeft()}
                             style={[styles.addressInput, {height: 150, marginTop:5}]}
                             onChangeText = {address => {this.setState({address})}}
+                            onKeyPress ={() => this.handleValidation('address')}
                             onBlur ={() => this.handleValidation('address')}
                         />
 
 
                         <View style={styles.rowSpaceBetween}>
-                            <View>
+                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
                                 <View>
                                     <Text style={styles.productDetailCategory}> City </Text>
-                                    <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.city}</Text>
+                                    <Text style={styles.addrsErrorText}> {errors.city}</Text>
                                 </View> 
                                 <TextInput 
                                     value={city.trim()}
                                     onChangeText = {city => {this.setState({city})}}
+                                    onChange ={() => this.handleValidation('city')}
                                     onBlur ={() => this.handleValidation('city')}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
+                                    style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
 
-                            <View>
+                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
                                 <View>
                                     <Text style={styles.productDetailCategory}> State </Text>
-                                    <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.state}</Text>
+                                    <Text style={styles.addrsErrorText}> {errors.state}</Text>
                                 </View>
                                 <TextInput 
                                     value={state.trim()}
                                     onChangeText = {state => {this.setState({state})}}
+                                    onChange ={() => this.handleValidation('state')}
                                     onBlur ={() => this.handleValidation('state')}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
+                                    style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
                         </View>
 
                         <View style={styles.rowSpaceBetween}>
-                            <View>
-                            <View>
-                                <Text style={styles.productDetailCategory}> ZIP CODE </Text>
-                                <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.pincode}</Text>
-                            </View>
+                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
+                                <View>
+                                    <Text style={styles.productDetailCategory}> ZIP CODE </Text>
+                                    <Text style={styles.addrsErrorText}> {errors.pincode}</Text>
+                                </View>
                                 <TextInput
                                     value={pincode.trim()}
                                     onChangeText = {pincode => {this.setState({pincode})}}
                                     keyboardType='number-pad'
+                                    maxLength={6}
+                                    onChange ={() => this.handleValidation('pincode')}
                                     onBlur ={() => this.handleValidation('pincode')}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
+                                    style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
 
-                            <View>
-                            <View>
-                                <Text style={styles.productDetailCategory}> COUNTRY  </Text>
-                                <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.country}</Text>
-                            </View>
+                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
+                                <View>
+                                    <Text style={styles.productDetailCategory}> COUNTRY  </Text>
+                                    <Text style={styles.addrsErrorText}> {errors.country}</Text>
+                                </View>
                                 <TextInput 
                                     value={country.trim()}
                                     onChangeText = {country => {this.setState({country})}}
+                                    onChange ={() => this.handleValidation('country')}
                                     onBlur ={() => this.handleValidation('country')}
-                                    style={[styles.addressInput, {width: WINDOW_WIDTH/2.5, marginTop:5}]}        
+                                    style={[styles.addressInput, {width:(WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
                         </View>
-                    </View>
+                    {/* </View> */}
 
                 </ScrollView>
 

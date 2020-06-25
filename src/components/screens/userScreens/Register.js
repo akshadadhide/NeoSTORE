@@ -403,6 +403,7 @@ class Register extends Component {
                             value={phone_no.trim()} 
                             style={styles.inputBoxText} 
                             keyboardType='phone-pad' 
+                            maxLength={10}
                             onChangeText={phone_no => {this.setState({ phone_no }) }}
                             onChange={() => this.handleValidation('phone_no')} 
                             onBlur={() => this.handleValidation('phone_no')} 

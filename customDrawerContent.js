@@ -80,7 +80,7 @@ handleLogout = async() => {
     await AsyncStorage.removeItem('userToken');
 }
 
- CustomDrawerContent = (props) => {
+CustomDrawerContent = (props) => {
     getUserToken();
     getCartCount();
        
@@ -212,6 +212,7 @@ handleLogout = async() => {
                           {text: 'Cancel', onPress: () => {return null}},
                           {text: 'Confirm', onPress: () =>{ 
                               handleLogout(),
+                              props.navigation.closeDrawer();
                               props.navigation.navigate('Home');
                           }},
                         ],

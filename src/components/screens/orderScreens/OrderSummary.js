@@ -26,10 +26,10 @@ class OrderSummary extends Component {
         this.handleOrderNow = this.handleOrderNow.bind(this);
     }
     componentDidMount(){
-        BackHandler.addEventListener(
-            'hardwareBackPress',
-            this.handleBackButtonPressAndroid
-        );
+        // BackHandler.addEventListener(
+        //     'hardwareBackPress',
+        //     this.handleBackButtonPressAndroid
+        // );
 
         apiCall(null,'GET','getCustAddress')
         .then((result)=> {
@@ -45,19 +45,19 @@ class OrderSummary extends Component {
         this.setState({productCount:arr})
     }
 
-    componentWillUnmount() {
-        BackHandler.removeEventListener(
-          'hardwareBackPress',
-          this.handleBackButtonPressAndroid
-        );
-    }
+    // componentWillUnmount() {
+    //     BackHandler.removeEventListener(
+    //       'hardwareBackPress',
+    //       this.handleBackButtonPressAndroid
+    //     );
+    // }
 
-    handleBackButtonPressAndroid = () => {
-        if (this.props.navigation.isFocused()) {
-            this.props.navigation.navigate('DrawerNav');
-            return false;
-        }
-    };
+    // handleBackButtonPressAndroid = () => {
+    //     if (this.props.navigation.isFocused()) {
+    //         this.props.navigation.navigate('DrawerNav');
+    //         return false;
+    //     }
+    // };
 
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
@@ -79,8 +79,22 @@ class OrderSummary extends Component {
         return totalCost;
     }
 
-    // goBack = () => this.props.navigation.goBack();
-    goBack = () => this.props.navigation.navigate('DrawerNav');
+    goBack = () => {
+        const {productDetails} = this.props.route.params;
+        this.props.navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'ProductDetail',
+                params: { productId: productDetails[0].product_id },
+              },
+            ],
+        });
+        console.log("productDetails[0].product_id= ",productDetails[0].product_id);
+        
+        this.props.navigation.goBack();
+    }
+    // goBack = () => this.props.navigation.navigate('DrawerNav');
 
     handleAddress = (address) =>{
         let addrArr = Object.values(address);
@@ -117,17 +131,27 @@ class OrderSummary extends Component {
             if(data !== undefined){
                 this.props.placeOrder(data, type);
                 const {res} = this.props;
+                console.log("res== ",res);
 
                 setTimeout(()=>{
+                    const {res} = this.props;
+                    console.log("res== ",res);
                     this.hideLoader();
-                    (res !== undefined) ? 
-                    (Alert.alert(res.message)): 
-                    Alert.alert("Something went wrong!!!try again");
-                },5000);
+                    if(res !== undefined){
+                        if(res.status_code === 200){
+                            Alert.alert(res.message);
+                        }else{
+                            Alert.alert("Something went wrong!!!Please try again");
+                        }
+                    }
+                    else{
+                        Alert.alert("Something went wrong!!!try again");
+                    }
+                },7000);
             }
             else{
                 this.hideLoader();
-                Alert.alert("Something went wrong!!!Please try again")
+                Alert.alert("Something went wrong!!Please try again")
             }
         });
     }

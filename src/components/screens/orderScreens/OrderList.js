@@ -22,7 +22,7 @@ class OrderList extends Component {
         this.props.getOrderDetails('getOrderDetails');
         const {orderDetails} = this.props;
         (orderDetails !== undefined) && this.setState({orderList:orderDetails});
-        console.log("orderDetails: ", orderDetails);
+        // console.log("orderDetails: ", orderDetails);
     }
 
     //to update the state with current redux state
@@ -68,7 +68,7 @@ class OrderList extends Component {
                 {(orderDetails == undefined) ? 
                 (<ActivityIndicator size='large' />):
                 (
-                <View style={{padding: StyleConstants.PADDING}}>
+                <View style={{padding: StyleConstants.PADDING, marginBottom:70}}>
                     <FlatList
                     data={(orderList.length <= 0 && orderDetails !== undefined)?(orderDetails):(orderList)}
                     renderItem={ ({item}) => (

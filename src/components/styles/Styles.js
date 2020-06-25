@@ -87,6 +87,11 @@ export const styles = StyleSheet.create({
         paddingBottom: StyleConstants.PADDING_10,
         width: StyleConstants.TEXTBOX_WIDTH,
     },
+    addrsErrorText: {
+        fontSize: StyleConstants.FONT_18,
+        color: StyleConstants.COLOR_FE3F3F,
+        width: (WINDOW_WIDTH/2)-30, 
+    },
     //Error
 
     searchInputBox:{
@@ -341,7 +346,7 @@ export const styles = StyleSheet.create({
 
     /*Add Address*/
         addressInput:{
-            height: 40, 
+            height: StyleConstants.TEXTBOX_HEIGHT, 
             backgroundColor: StyleConstants.COLOR_FFFFFF,
             marginTop: StyleConstants.MARGIN_15,
             marginBottom: StyleConstants.MARGIN_15,

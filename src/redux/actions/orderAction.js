@@ -8,15 +8,13 @@ export const orderActions = {
 }
 
 function placeOrder(data, type){
-    console.log("In POrder action");
-    
 
     return dispatch =>{
-        console.log("In POrder disp");
 
         apiCall(data, 'POST', type)
             .then((response) => {
-                console.log("place Order action dis res", response);
+                console.log("response== ",response);
+                
                 dispatch(placeOrderSuccess(response));
             })
             .catch((error) =>{
@@ -42,7 +40,6 @@ function getOrderDetails(type){
     return dispatch =>{
         apiCall(null,'GET',type)
         .then((result) => {
-            console.log("res: ",result);
             dispatch(getOrderDetailsSuccess(result.product_details));
         })
         .catch((error) =>{
@@ -65,7 +62,6 @@ function getCustomerOrderInDetail(type){
     return dispatch => {
         apiCall(null,'GET',type)
         .then((result)=>{
-            console.log("Result of getCustomerOrderInDetail: ",result);
             dispatch(getOrderInDetailSuccess(result));
             
         })
