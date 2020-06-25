@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {View, Text, Alert, ScrollView, FlatList, TouchableOpacity, ActivityIndicator, Image} from 'react-native';
 import {Picker} from 'native-base';
+import { DrawerActions } from '@react-navigation/native';
 import {connect} from 'react-redux';
 import {cartAction} from '../../../redux/actions/cartAction';
 import {GET_CART_DATA_URLTYPE, BASE_URL} from '../../../API/apiConstants';
@@ -22,7 +23,11 @@ class CartProducts extends Component {
         }
     }
 
-    goBack = () => this.props.navigation.goBack();
+    goBack = () => {
+        this.props.navigation.goBack();
+        this.props.navigation.dispatch(DrawerActions.closeDrawer());
+
+    }
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
 
@@ -43,6 +48,7 @@ class CartProducts extends Component {
         // console.log("cartData:----",cartData);
         this.setCartData(cartData); 
     }
+
     setCartData = async(cartData) => {
         
         try {
@@ -92,6 +98,7 @@ class CartProducts extends Component {
                             return value.product_id !== product_id;
                         });                        
                         AsyncStorage.setItem('cartProducts',JSON.stringify(modifiedArray));
+                        Alert.alert("Product deleted Successfully!!");
                         this.getCart();
                     }
                
@@ -105,7 +112,6 @@ class CartProducts extends Component {
                 Alert.alert("Something went wrong!!Please try again");
             }
         },6000);
-        
     }
 
     calculateTotalCost = (cartData) => {
@@ -159,7 +165,7 @@ class CartProducts extends Component {
                                         {/* <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text> */}
                                     </View>
                                 </View>
-                                <View style={styles.rowSpaceBetween}>
+                                <View style={[styles.rowSpaceBetween, {padding: StyleConstants.PADDING}]}>
                                     <TouchableOpacity 
                                         style={[styles.TabNavButton, {width:70,height:35,backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
                                         onPress={() => 

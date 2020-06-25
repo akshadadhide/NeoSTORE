@@ -8,7 +8,7 @@ import {styles} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import {loggedInUserActions} from '../../../redux/actions/LoggedInUserActions';
 import {GET_USER_PROFILE_URLTYPE,BASE_URL} from '../../../API/apiConstants';
-
+import { DrawerActions } from '@react-navigation/native';
 
 class UserProfile extends Component {
 
@@ -38,7 +38,10 @@ class UserProfile extends Component {
         }   
     }
 
-    goBack = () => this.props.navigation.goBack();
+    goBack = () => {
+        this.props.navigation.dispatch(DrawerActions.closeDrawer());
+        this.props.navigation.goBack();
+    }
 
     render() {
         const {userProfile} = this.state;

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, ActivityIndicator, FlatList, SafeAreaView, Text, Image, ScrollView,TouchableOpacity } from 'react-native';
+import { View, ActivityIndicator, FlatList, SafeAreaView, Text, Image, ScrollView,TouchableOpacity, RefreshControl } from 'react-native';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import CustomHeader from '../../Common/Header';
 import StarRating from 'react-native-star-rating';
 import {BASE_URL} from '../../../API/apiConstants';
 import {getProductList} from '../../../redux/actions/productActions';
+import { DrawerActions } from '@react-navigation/native';
 
 
 class ProductList extends Component {
@@ -75,7 +76,11 @@ class ProductList extends Component {
     }
     
 
-    goBack = () => this.props.navigation.goBack();
+    goBack = () => {
+        this.props.navigation.goBack();
+        this.props.navigation.dispatch(DrawerActions.closeDrawer());
+
+    }
 
     searchHandler = (searchText) =>{
         this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
@@ -98,8 +103,12 @@ class ProductList extends Component {
                     <FlatList
                     data={productListArray}
                     extraData={this.state}
-                    onRefresh={this.onRefresh.bind(this)}
-                    refreshing={this.state.isRefreshing}
+                    refreshControl={
+                        <RefreshControl 
+                            onRefresh={this.onRefresh.bind(this)}
+                            refreshing={this.state.isRefreshing}
+                        />
+                    }
                     renderItem={ ({item,index}) => (
                         <TouchableOpacity key={index} style={{paddingRight:20}} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id, productName: item.product_name})}>
                             <View style={styles.productListView}> 

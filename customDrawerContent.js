@@ -8,12 +8,13 @@ import  { styles } from './src/components/styles/Styles';
 import {BASE_URL} from './src/API/apiConstants';
 import {store} from './src/redux/store';
 import { apiCall } from './src/API/apiCall';
+import { DrawerActions } from '@react-navigation/native';
 
 let userToken,customerInfo, cartCount=0;
 
 const getUserToken = async() =>{
     userToken = await AsyncStorage.getItem('userToken');
-    // console.log("getUserToken: ", userToken);
+    console.log("getUserToken: ", userToken);
     customer = await AsyncStorage.getItem('customerInfo');
     customerInfo = JSON.parse(customer);
     return userToken;
@@ -22,21 +23,39 @@ const getUserToken = async() =>{
 const getCartCount = async() => {
     const myArray = await AsyncStorage.getItem('cartProducts');
 
-    const cartData = store.getState().cartReducer.cartData;
-    // console.log("cartData in sidebar:",cartData);
+    // const cartData = store.getState().cartReducer.cartData;
+    let cartData;
+
+    console.log("cartData in sidebar:",cartData);
     // const userData = store.getState().authReducer.userData;
     const userD = await AsyncStorage.getItem('userData');
     const userData = JSON.parse(userD);
     // console.log("userData in getCOunt: ",userData);
+
+    await apiCall(null,'GET','getCartData')
+    .then(result => {
+        let data
+        if(result.product_details !== undefined){
+            data = result.product_details
+            data = data.map((value) => value.product_id);
+            console.log("data== ", data);
+            
+        }
+        cartData = data;
+    })
+    console.log("===cartData=== ",cartData);
     
     let count1=0, count2=0;
-    if(cartData === undefined || cartData === null){
-        count1 = userData.cart_count
-    }
-    else if(cartData !== undefined || cartData !== null){
+    // if(cartData === undefined || cartData === null){
+    //     count1 = userData.cart_count
+    // }
+    if(cartData !== undefined && cartData !== null){
         count1 = cartData.length;
     }
-    // console.log("count1 outside: ",count1);
+    else{
+        count1 = userData.cart_count
+    }
+    console.log("count1 outside: ",count1);
     
     if(myArray !== null){
         count2 = JSON.parse(myArray).length;
@@ -44,9 +63,9 @@ const getCartCount = async() => {
     else{
         count2=0;
     }
-    // console.log("count2 outside: ",count2);
+    console.log("count2 outside: ",count2);
     cartCount = count1 + count2;
-    // console.log("final cartCount: ",cartCount);
+    console.log("final cartCount: ",cartCount);
     
     return cartCount;
 }
@@ -83,14 +102,24 @@ handleLogout = async() => {
 CustomDrawerContent = (props) => {
     getUserToken();
     getCartCount();
+
+    React.useEffect(()=> {
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            getUserToken();
+            getCartCount();
+        });
+        return unsubscribe;
+    },[props.navigation]);
        
     const userData = store.getState().authReducer.userData;
     // console.log("customerInfo: ",customerInfo);
     
-    // console.log("user D", userData);
+    console.log("user D", userData);
     const customerDetails = (customerInfo !== undefined && customerInfo !== null && customerInfo !== '') ? customerInfo : userData.customer_details;
     // const customerDetails = userData.customer_details;
     const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
+    console.log("b= ",b);
+    console.log("getUserToken: ", userToken);
     
     
     return (
@@ -212,8 +241,10 @@ CustomDrawerContent = (props) => {
                           {text: 'Cancel', onPress: () => {return null}},
                           {text: 'Confirm', onPress: () =>{ 
                               handleLogout(),
-                              props.navigation.closeDrawer();
+                            //   props.navigation.closeDrawer();
+                              AsyncStorage.removeItem('userToken');
                               props.navigation.navigate('Home');
+
                           }},
                         ],
                         { cancelable: false }

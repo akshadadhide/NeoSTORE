@@ -9,7 +9,7 @@ import {validation, EMAIL_REGEX, customErrors} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 import { connect } from 'react-redux';
 import Loader from "../../Common/Loader";
-
+import { DrawerActions } from '@react-navigation/native';
 
 
 class Login extends Component {
@@ -97,6 +97,7 @@ class Login extends Component {
             const { isLogin, userData } = this.props;
             
             if(isLogin == true && userData.status_code === 200){
+                // this.props.navigation.dispatch(DrawerActions.closeDrawer());
                 this.props.navigation.navigate('Home');
             }
             else{

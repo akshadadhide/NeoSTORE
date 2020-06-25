@@ -145,7 +145,7 @@ class EditProfile extends Component {
         }
 
         this.setState({errors});
-        console.log("Error: ",errors, " errFlag: ", errorFlag);
+        // console.log("Error: ",errors, " errFlag: ", errorFlag);
         return errorFlag;
 
     }
@@ -174,7 +174,7 @@ class EditProfile extends Component {
             (responseJson.status_code === 200) ?
             (
                 this.props.updateUserData(responseJson.customer_details),
-                Alert.alert(responseJson.message),
+                Alert.alert("Profile updated successfully!!!"),
                 this.props.navigation.navigate('UserProfile')
             ):
             (Alert.alert("Something went wrong!!Please try again"))
@@ -238,7 +238,7 @@ class EditProfile extends Component {
                         const {editProfileRes} = this.props;
                         if(editProfileRes !== undefined){
                             if(editProfileRes.status_code === 200){
-                                Alert.alert(editProfileRes.message);
+                                Alert.alert("Profile updated successfully!!!");
                                 this.props.navigation.navigate('UserProfile');
                             }
                             else{
