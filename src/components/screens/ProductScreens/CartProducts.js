@@ -141,26 +141,25 @@ class CartProducts extends Component {
                 (
                     (cartData === '') ? 
                     (<ActivityIndicator size='large' />) :
-                    (<ScrollView>
+                    (<ScrollView contentContainerStyle={{flex:1, padding: StyleConstants.PADDING}}>
                         <FlatList
                         data={cartData}
                         renderItem={ ({item,index}) => (
                             <TouchableOpacity key={index} onPress={() => {this.props.navigation.navigate('OrderSummary',{productDetails:[cartData[index]]})}}>
-                                <View style={styles.productListView}>
-                                    <View style={{paddingRight:5,}}>
+                                <View style={[styles.productListView, {padding:0}]}>
+                                    <View style={{paddingRight:10,}}>
                                         <Image
                                             style={{width: 80, height: 80}}
                                             source={{uri: BASE_URL+item.product_image}}
                                         />
                                     </View>
-                                    <View>
-                                        <Text numberOfLines={1} style={[styles.productDetailTitle, {marginBottom:0,}]}> {item.product_name} </Text>
+                                    <View style={{width: (WINDOW_WIDTH - 120)}}>
+                                        <Text style={[styles.productDetailTitle, {marginBottom:0,}]}> {item.product_name} </Text>
                                         <Text style={styles.productDetailMaterial}> ({item.product_material}) </Text>
-                                        <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text>
+                                        {/* <Text style={[styles.productDetailMaterial, {marginLeft:WINDOW_WIDTH/2.5}]}> Rs.{item.product_cost} </Text> */}
                                     </View>
                                 </View>
-                                <View style={{flexDirection:'row',marginLeft:90}}>
-
+                                <View style={styles.rowSpaceBetween}>
                                     <TouchableOpacity 
                                         style={[styles.TabNavButton, {width:70,height:35,backgroundColor:StyleConstants.COLOR_FE3F3F,} ]} 
                                         onPress={() => 
@@ -179,6 +178,7 @@ class CartProducts extends Component {
                                     >
                                         <Text style={[styles.TabNavButtonText,{fontSize: StyleConstants.FONT_16}]}> Delete </Text>
                                     </TouchableOpacity>
+                                    <Text style={[styles.productDetailMaterial,]}> Rs.{item.product_cost} </Text> 
                                 </View>
                             </TouchableOpacity>
                         )}

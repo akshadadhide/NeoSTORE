@@ -110,8 +110,8 @@ class ProductList extends Component {
                                     />
                                 </View>
 
-                                <View>
-                                    <View style={{width: WINDOW_WIDTH/2}}>
+                                <View style={{width: WINDOW_WIDTH-150}}>
+                                    <View>
                                         <Text numberOfLines={2} style={styles.productListName}> {item.product_name} </Text>
                                         <Text numberOfLines={3} style={styles.productListMaterial}> {item.product_material} </Text>
                                     </View>
