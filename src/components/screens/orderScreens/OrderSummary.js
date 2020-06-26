@@ -84,22 +84,23 @@ class OrderSummary extends Component {
         return totalCost;
     }
 
-    goBack = () => {
-        const {productDetails} = this.props.route.params;
-        this.props.navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'ProductDetail',
-                params: { productId: productDetails[0].product_id },
-              },
-            ],
-        });
-        console.log("productDetails[0].product_id= ",productDetails[0].product_id);
+    // goBack = () => {
+    //     const {productDetails} = this.props.route.params;
+    //     this.props.navigation.reset({
+    //         index: 0,
+    //         routes: [
+    //           {
+    //             name: 'ProductDetail',
+    //             params: { productId: productDetails[0].product_id },
+    //           },
+    //         ],
+    //     });
+    //     console.log("productDetails[0].product_id= ",productDetails[0].product_id);
         
-        this.props.navigation.goBack();
-    }
-    // goBack = () => this.props.navigation.navigate('DrawerNav');
+    //     this.props.navigation.goBack();
+    // }
+    
+    goBack = () => this.props.navigation.goBack();
 
     onRefresh = () => {
         this.setState({isRefreshing: true});

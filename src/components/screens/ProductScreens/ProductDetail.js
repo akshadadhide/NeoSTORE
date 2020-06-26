@@ -1,6 +1,6 @@
-import React, { Component, } from 'react';
+import React, { Component,PureComponent } from 'react';
 import {connect} from 'react-redux';
-import { View, Text, ActivityIndicator, ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
+import { View, Text, ActivityIndicator,RefreshControl,ScrollView, Image, Alert, FlatList, Button, TouchableOpacity,TouchableHighlight,} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
@@ -18,7 +18,7 @@ import {productActions} from '../../../redux/actions/productActions';
 import {store} from '../../../redux/store';
 import Loader from '../../Common/Loader';
 
-class ProductDetail extends Component{
+class ProductDetail extends PureComponent{
 
 	constructor(props) {
 		super(props);
@@ -35,48 +35,49 @@ class ProductDetail extends Component{
             cartProductsArr:[],
             userToken:'',
 
-            showLoader:false,
+			showLoader:false,
+			isRefreshing: false,
 		}
         const {productId} = this.props.route.params;
-
-		console.log("prod id", productId);
-		
 	}
 	
 	componentDidMount(){
-		// this.unsubscribe = this.props.navigation.addListener('focus', () => {
-			this.getData();
-		// });
+		this.getData();
 	}
 
 	// componentWillUnmount () {
 	// 	this.unsubscribe()
 	// }
 
-	componentDidUpdate(prevProps){
-		if(this.props.productDetails !== prevProps.productDetails){
-        	this.setState({productDetails:this.props.productDetails});
-        }
-    }
+	// componentDidUpdate(prevProps){
+	// 	if(this.props.productDetails !== prevProps.productDetails){
+    //     	this.setState({productDetails:this.props.productDetails});
+    //     }
+    // }
     
     getData = async() => {
         token = await AsyncStorage.getItem('userToken');
         this.setState({userToken:token});
-        // console.log("getUserToken: ", this.state.userToken);
 
         const {productId} = this.props.route.params;
         const type = 'getProductByProdId/'+productId;
         await this.props.getProductDetails(type);
-		const {productDetails} = await this.props;
-		// console.log("In getData, productDetails: ",productDetails);
-		
-        this.setState({productDetails:productDetails});
+		const {productDetails} = this.props;
+        await this.setState({productDetails:productDetails});
     }
 
 	showLoader = () => { this.setState({ showLoader:true }); };
 	hideLoader = () => { this.setState({ showLoader:false }); };
 	goBack = () => this.props.navigation.goBack();
 
+	onRefresh = () => {
+		this.setState({isRefreshing: true});
+		this.getData();
+        setTimeout(() => {
+            this.setState({isRefreshing:false});
+        },3000);
+
+    }
 
 	async handleAddToCart(){
 		this.showLoader();
@@ -198,24 +199,15 @@ class ProductDetail extends Component{
 		const {product_rating} = this.state.ratingData
 		const userToken = (this.state.userToken !== null) ? this.state.userToken : '' ;
 		let productD, subImages, mainImage;
-		// console.log("productDetails:== ",productDetails);
-		
 		
 		if(productDetails !== undefined && productDetails !== ''){
 			// console.log("In if productDetails:*= ",productDetails);
-			
 			productD = productDetails[0];
 			subImages = productDetails[0].subImages_id.product_subImages.map((value) => {return value} );
 			subImages = subImages.map((value) => {return BASE_URL.concat(value)});
 			mainImage = this.state.showSubImage ? this.state.mainImageName : BASE_URL+productD.product_image;
 		}
-		// console.log("userToken: ",userToken , "\n productId: ", productId);
-		// console.log("**productD** ",productD);
-		
-		
 		const flag = (userToken !== null && userToken !== '');
-		// console.log("flag: ",flag);
-		
 
 		return (
 			(productD === undefined) ? 
@@ -251,7 +243,12 @@ class ProductDetail extends Component{
 
 				<CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={productName} rightIconName="search" handleRightIconClick={this.searchHandler} />
 				{/* Product detail section */}
-				<ScrollView style={{flex:1,}}>
+				<ScrollView 
+					style={{flex:1,}}
+					refreshControl = {
+						<RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => this.onRefresh()} />
+					}
+				>
 					<View style={styles.productDetailView1}>
 						<Text style={styles.productDetailTitle}> {productD.product_name} </Text>
 						<Text style={styles.productDetailCategory}> Category - {productD.category_id.category_name} </Text>

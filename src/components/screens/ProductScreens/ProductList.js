@@ -30,11 +30,11 @@ class ProductList extends Component {
     }
 
     //to update the state with current redux state
-    componentDidUpdate(prevProps) {
-        if (this.props.productList !== prevProps.productList) {
-            this.setState({productListArray: this.props.productList});
-        }
-    }
+    // componentDidUpdate(prevProps) {
+    //     if (this.props.productList !== prevProps.productList) {
+    //         this.setState({productListArray: this.props.productList});
+    //     }
+    // }
 
     fetchResult = async(page) => {
         const {category_id} = this.props.route.params;
