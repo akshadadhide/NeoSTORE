@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, Image,Alert, ScrollView, FlatList, TouchableOpacity, TouchableHighlight, BackHandler} from 'react-native';
+import {View, Text, Image,Alert, ScrollView, FlatList,RefreshControl, TouchableOpacity, TouchableHighlight, BackHandler} from 'react-native';
 // import {Picker} from '@react-native-community/picker';
 import {Picker} from 'native-base';
 import {BASE_URL} from '../../../API/apiConstants';
@@ -21,6 +21,7 @@ class OrderSummary extends Component {
             productCount:new Array(5),
             custAddress:'',
             showLoader:false,
+            isRefreshing: false,
         }
 
         this.handleOrderNow = this.handleOrderNow.bind(this);
@@ -31,11 +32,7 @@ class OrderSummary extends Component {
         //     this.handleBackButtonPressAndroid
         // );
 
-        apiCall(null,'GET','getCustAddress')
-        .then((result)=> {
-            this.setState({custAddress:result.customer_address})}
-        )
-        .catch(error => console.log("In compDidM, Addr error:",error))
+        this.getAddress();
 
         const {productDetails} = this.props.route.params;
         let arr=[productDetails.length];
@@ -43,6 +40,14 @@ class OrderSummary extends Component {
             arr[i]=1;
         }
         this.setState({productCount:arr})
+    }
+
+    getAddress = () => {
+        apiCall(null,'GET','getCustAddress')
+        .then((result)=> {
+            this.setState({custAddress:result.customer_address})}
+        )
+        .catch(error => console.log("In compDidM, Addr error:",error))
     }
 
     // componentWillUnmount() {
@@ -96,6 +101,15 @@ class OrderSummary extends Component {
     }
     // goBack = () => this.props.navigation.navigate('DrawerNav');
 
+    onRefresh = () => {
+        this.setState({isRefreshing: true});
+        this.getAddress();
+        setTimeout(() => {
+            this.setState({isRefreshing:false});
+        },3000);
+
+    }
+
     handleAddress = (address) =>{
         let addrArr = Object.values(address);
         // console.log("In handleAddr of OrderSummary, addArr: ", addrArr);
@@ -141,7 +155,7 @@ class OrderSummary extends Component {
                         if(res.status_code === 200){
                             Alert.alert(res.message);
                         }else{
-                            Alert.alert("Something went wrong!!!Please try again");
+                            alert("Please try again...If you did not added address please add address");
                         }
                     }
                     else{
@@ -167,7 +181,11 @@ class OrderSummary extends Component {
     return (
         <View style={{flex:1,}}>
             <Header iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="Order Summary"  />
-            <ScrollView>
+            <ScrollView
+                refreshControl = {
+                    <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => this.onRefresh()} />
+                }
+            >
                 <View style={styles.orderSummaryView}>
                     <Text style={styles.productDetailTitle}> {customerDetails.first_name} {customerDetails.last_name} </Text>
                     <Text style={[styles.productDetailMaterial, {color:StyleConstants.COLOR_000000,}]}> {address} </Text>

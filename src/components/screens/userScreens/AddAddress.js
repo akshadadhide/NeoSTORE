@@ -28,14 +28,14 @@ class AddAddress extends Component {
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
 
-    handleValidation = (field_name) =>{
+    handleValidation = (field_name, value) =>{
 
         const {address,pincode,city,state,country} = this.state;
         const {errors} =  this.state;
         let errorFlag = true;
 
         if(field_name === 'address'){
-            if(address.length === 0){
+            if(value.trimRight() === ''){
                 errorFlag = true;
                 errors.address = 'Required';
 
@@ -47,10 +47,10 @@ class AddAddress extends Component {
         }
     
         if(field_name === 'pincode'){
-            if(pincode === '' || (!PINCODE_REGEX.test(pincode)) ){
+            if(value === '' || (!PINCODE_REGEX.test(value)) ){
                 errorFlag = true;
                 const {valueMissing,wrongPattern} = customErrors.pincode;
-                errors.pincode = pincode === '' ? valueMissing : wrongPattern;
+                errors.pincode = value === '' ? valueMissing : wrongPattern;
             }
             else{
                 errorFlag = false;
@@ -59,7 +59,7 @@ class AddAddress extends Component {
         }
     
         if(field_name === 'city'){
-            if(city === ''){
+            if(value === ''){
                 errorFlag = true;
                 errors.city = 'Required';
 
@@ -71,7 +71,7 @@ class AddAddress extends Component {
         }
     
         if(field_name === 'state'){
-            if(state === ''){
+            if(value === ''){
                 errorFlag = true;
                 errors.state =  'Required';
 
@@ -83,7 +83,7 @@ class AddAddress extends Component {
         }
     
         if(field_name === 'country'){
-            if(country === ''){
+            if(value === ''){
                 errorFlag = true;
                 errors.country = 'Required';
 
@@ -108,13 +108,20 @@ class AddAddress extends Component {
             state: this.state.state,
             country: this.state.country,
         }
-        const errorFlag = (this.handleValidation('address') || this.handleValidation('city') || this.handleValidation('state') || this.handleValidation('pincode') || this.handleValidation('country'));
+        const errorFlag = (this.handleValidation('address',this.state.address) 
+                            || this.handleValidation('city',this.state.city) || 
+                            this.handleValidation('state',this.state.state) || 
+                            this.handleValidation('pincode',this.state.pincode) 
+                            || this.handleValidation('country',this.state.country)
+        );
 
         if(errorFlag === false && JSON.stringify(this.state.errors).length <= 2){
             await this.props.addAddress(address,'address');
-            const {addAddrResponse} = this.props;
 
             setTimeout(()=> {
+                const {addAddrResponse} = this.props;
+                console.log("addAddrResponse: ",addAddrResponse);
+                
                 this.hideLoader();
                 if(addAddrResponse !== undefined){
                     if(addAddrResponse.status_code === 200){
@@ -163,8 +170,9 @@ class AddAddress extends Component {
                             value={address.trimLeft()}
                             style={[styles.addressInput, {height: 150, marginTop:5}]}
                             onChangeText = {address => {this.setState({address})}}
-                            onKeyPress ={() => this.handleValidation('address')}
-                            onBlur ={() => this.handleValidation('address')}
+                            // onKeyPress ={() => this.handleValidation('address')}
+                            onChange ={(event) => this.handleValidation('address',event.nativeEvent.text)}
+                            onBlur ={() => this.handleValidation('address',this.state.address)}
                         />
 
 
@@ -177,8 +185,8 @@ class AddAddress extends Component {
                                 <TextInput 
                                     value={city.trim()}
                                     onChangeText = {city => {this.setState({city})}}
-                                    onChange ={() => this.handleValidation('city')}
-                                    onBlur ={() => this.handleValidation('city')}
+                                    onChange ={(event) => this.handleValidation('city',event.nativeEvent.text)}
+                                    onBlur ={() => this.handleValidation('city', this.state.city)}
                                     style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
@@ -191,8 +199,8 @@ class AddAddress extends Component {
                                 <TextInput 
                                     value={state.trim()}
                                     onChangeText = {state => {this.setState({state})}}
-                                    onChange ={() => this.handleValidation('state')}
-                                    onBlur ={() => this.handleValidation('state')}
+                                    onChange ={(event) => this.handleValidation('state',event.nativeEvent.text)}
+                                    onBlur ={() => this.handleValidation('state', this.state.state)}
                                     style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
@@ -209,8 +217,8 @@ class AddAddress extends Component {
                                     onChangeText = {pincode => {this.setState({pincode})}}
                                     keyboardType='number-pad'
                                     maxLength={6}
-                                    onChange ={() => this.handleValidation('pincode')}
-                                    onBlur ={() => this.handleValidation('pincode')}
+                                    onChange ={(event) => this.handleValidation('pincode', event.nativeEvent.text)}
+                                    onBlur ={() => this.handleValidation('pincode',this.state.pincode)}
                                     style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>
@@ -223,8 +231,8 @@ class AddAddress extends Component {
                                 <TextInput 
                                     value={country.trim()}
                                     onChangeText = {country => {this.setState({country})}}
-                                    onChange ={() => this.handleValidation('country')}
-                                    onBlur ={() => this.handleValidation('country')}
+                                    onChange ={(event) => this.handleValidation('country',event.nativeEvent.text)}
+                                    onBlur ={() => this.handleValidation('country',this.state.country)}
                                     style={[styles.addressInput, {width:(WINDOW_WIDTH/2)-30, marginTop:5}]}        
                                 />
                             </View>

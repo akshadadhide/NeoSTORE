@@ -49,10 +49,12 @@ class AddressList extends Component {
 
     onRefresh = () => {
         this.setState({isRefreshing: true});
+        this.props.getAddress(GET_ADDR_URLTYPE);
         setTimeout(() => {
             this.forceUpdate();
+            this.setState({addressListArr:this.props.addressList});
             this.setState({isRefreshing:false});
-        },2000);
+        },3000);
 
     }
 
@@ -76,6 +78,8 @@ class AddressList extends Component {
                 if(saveAddressResponse !== undefined){
                     if(saveAddressResponse.status_code === 200){
                         this.props.navigation.navigate('OrderSummary')
+                        console.log("Address saved successfully");
+                        
                     }
                     else{
                         Alert.alert(saveAddressResponse.message);
@@ -146,7 +150,7 @@ class AddressList extends Component {
                 <FlatList
                     data={customer_address}
                     renderItem={ ({item}) =>(
-                        <View key={item.address_id.toString()} style={{flexDirection:'row', alignItems:'center', padding:StyleConstants.PADDING}}>
+                        <View key={item.address_id.toString()} style={{flexDirection:'row', alignItems:'center', padding:StyleConstants.PADDING, width: WINDOW_WIDTH - 30}}>
                             <View style={styles.rowSpaceBetween}>
                                 <View>
                                     <Radio 
