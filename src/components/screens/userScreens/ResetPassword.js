@@ -49,14 +49,14 @@ class ResetPassword extends Component {
         this.setState({passwordHide: [...passwordHide]});
     }
     
-    handleValidation = (field_name) => {
+    handleValidation = (field_name, value) => {
         const {oldPass,newPass,confirmPass} = this.state;
         let {errors} = this.state;
         let errorFlag = true;
 
         //old password
         if(field_name === 'oldPass'){
-            if(oldPass === ''){
+            if(value === ''){
                 errorFlag = true;
                 const {valueMissing} = customErrors.pass;
                 errors.oldPass = valueMissing
@@ -69,28 +69,33 @@ class ResetPassword extends Component {
 
         //new password
         if(field_name === 'newPass'){
-            if(newPass.length < 8 || newPass.length > 12){
+            if(value.length < 8 || value.length > 12){
                 errorFlag = true;
                 const {valueMissing, minLength} = customErrors.pass;
-                errors.newPass = newPass === '' ? valueMissing : minLength;
+                errors.newPass = value === '' ? valueMissing : minLength;
             }
-            if(confirmPass.length !== 0 && newPass !== confirmPass){
+            else{
+                errorFlag = false;
+                delete errors.newPass;
+            }
+            if(confirmPass.length !== 0 && value !== confirmPass){
                 errorFlag = true;
                 const {diffPassword} = customErrors.confirmPass;
                 errors.confirmPass = diffPassword;
             }
             else{
                 errorFlag = false;
-                delete errors.newPass;
+                delete errors.confirmPass
             }
+            
         }
 
         //confirm new password
         if(field_name === 'confirmPass'){
-            if(confirmPass.length === 0 || newPass !== confirmPass){
+            if(value === '' || newPass !== value){
                 errorFlag = true;
                 const {valueMissing, diffPassword} = customErrors.confirmPass;
-                errors.confirmPass = confirmPass === '' ? valueMissing : diffPassword;
+                errors.confirmPass = value === '' ? valueMissing : diffPassword;
             }
             else{
                 errorFlag =  false;
@@ -110,7 +115,7 @@ class ResetPassword extends Component {
             newPass: this.state.newPass,
             confirmPass: this.state.confirmPass,
         }
-        const errorFlag = this.handleValidation('oldPass') || this.handleValidation('newPass') || this.handleValidation('confirmPass');
+        const errorFlag = this.handleValidation('oldPass',this.state.oldPass) || this.handleValidation('newPass',this.state.newPass) || this.handleValidation('confirmPass',this.state.confirmPass);
         // console.log("EF----",errorFlag);
         
         if(errorFlag === false){
@@ -159,7 +164,8 @@ class ResetPassword extends Component {
                                 style={styles.inputBoxText} 
                                 secureTextEntry={passwordHide[0]} 
                                 onChangeText={oldPass => {this.setState({oldPass})}}
-                                onBlur={() => this.handleValidation("oldPass")} 
+                                onBlur={() => this.handleValidation("oldPass",this.state.oldPass)} 
+                                onChange={ event => this.handleValidation('oldPass',event.nativeEvent.text)}
                                 placeholder='Current Password' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                             />
@@ -173,8 +179,9 @@ class ResetPassword extends Component {
                                 value={newPass} 
                                 secureTextEntry={passwordHide[1]} 
                                 onChangeText={newPass => {this.setState({newPass})} }
-                                onBlur={() => this.handleValidation("newPass")}
-                                onKeyPress={() => this.handleValidation("newPass")} 
+                                onBlur={() => this.handleValidation("newPass",this.state.newPass)}
+                                onKeyPress={() => this.handleValidation("newPass",this.state.newPass)}
+                                onChange={event => this.handleValidation("newPass",event.nativeEvent.text)}
                                 style={styles.inputBoxText} 
                                 placeholder='New Password' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
@@ -189,8 +196,9 @@ class ResetPassword extends Component {
                                 value={confirmPass} 
                                 secureTextEntry={passwordHide[2]} 
                                 onChangeText={confirmPass => {this.setState({confirmPass})} } 
-                                onBlur={() => this.handleValidation("confirmPass")} 
-                                onKeyPress={() => this.handleValidation("confirmPass")} 
+                                onBlur={() => this.handleValidation("confirmPass",this.state.confirmPass)} 
+                                onKeyPress={() => this.handleValidation("confirmPass",this.state.confirmPass)}
+                                onChange={event => this.handleValidation("confirmPass",event.nativeEvent.text)} 
                                 style={styles.inputBoxText} 
                                 placeholder='Confirm Password' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}

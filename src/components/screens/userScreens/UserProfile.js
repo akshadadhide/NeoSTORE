@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, TouchableOpacity,ImageBackground, ScrollView, ActivityIndicator, Text, TouchableHighlight, Image} from 'react-native';
+import {View, TouchableOpacity,ImageBackground, RefreshControl, ScrollView, ActivityIndicator, Text, TouchableHighlight, Image} from 'react-native';
 import {Input, Item} from 'native-base';
 import CustomHeader from '../../Common/Header';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -16,6 +16,7 @@ class UserProfile extends Component {
         super(props);
         this.state = {
             userProfile:'',
+            isRefreshing: false,
         }
     }
     
@@ -43,12 +44,29 @@ class UserProfile extends Component {
         this.props.navigation.goBack();
     }
 
+    onRefresh = () => {
+        this.setState({isRefreshing: true});
+        this.props.getUserProfile(GET_USER_PROFILE_URLTYPE);
+        const {userProfile} =  this.props;
+        this.setState({userProfile:userProfile});
+        setTimeout(()=>{
+            this.setState({isRefreshing:false});
+        },3000);
+    }
+
     render() {
         const {userProfile} = this.state;
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.isRefreshing}
+                        onRefresh={() => this.onRefresh()}
+                    />
+                }
+            >
     
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack}  headerTitle="My Account" />
                 <View style={styles.container}>

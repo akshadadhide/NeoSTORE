@@ -79,10 +79,10 @@ class OrderList extends Component {
                         </TouchableOpacity>
                     )}
                     keyExtractor={(item,index) => item._id}
-                    ItemSeparatorComponent={() => <View style={{height: 0.5, backgroundColor:StyleConstants.COLOR_9E0100,margin: 10}}/>}
+                    ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100,margin: 10}}/>}
                     />
 
-                    <View style={{height: 0.5, backgroundColor:StyleConstants.COLOR_9E0100,margin: 10}}/>
+                    <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100,margin: 10}}/>
                 </View>
                 )}
             </View>

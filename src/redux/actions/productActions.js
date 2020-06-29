@@ -46,8 +46,8 @@ export  function getCarouselImages(){
 }
 
 export function getProductList(type){
-    return dispatch => {
-        apiCall(null, 'GET', type)
+    return async dispatch => {
+        await apiCall(null, 'GET', type)
         .then((result) => {
             let productList =  [...result.product_details];
             dispatch(getProductListSuccess(productList));
@@ -69,7 +69,7 @@ function updateProductRating(data, type){
     return dispatch =>{
         apiCall(data, 'PUT', type)
             .then((result) => {
-                console.log("in PR action", result);
+                // console.log("in PR action", result);
                 dispatch(rateToProduct(result));
                 
             })
@@ -88,9 +88,9 @@ function updateProductRating(data, type){
 }
 
 export function getProductDetails(type){
-    return dispatch => {
+    return async dispatch => {
         // console.log("In dispatch");
-        apiCall(null, 'GET', type)
+        await apiCall(null, 'GET', type)
         .then((result) => {
             let productDetails = [...result.product_details];
             // console.log("prod details in action",productDetails);
@@ -125,7 +125,7 @@ export function getAllProducts(type){
             dispatch(getProductListSuccess(allProducts));
         })
         .catch((error) => {
-            console.log(error);
+            console.log("Error: ",error);
         });
     }
 

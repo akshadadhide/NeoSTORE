@@ -10,7 +10,6 @@ import DrawerNav from './DrawerNav';
 import {ProductList} from './src/components/screens/ProductScreens/ProductList';
 import {ProductDetail} from './src/components/screens/ProductScreens/ProductDetail';
 import StoreLocator from './src/components/screens/StoreLocator';
-import RateToProduct from './src/components/screens/ProductScreens/RateToProduct';
 import OrderSummary from './src/components/screens/orderScreens/OrderSummary';
 import CartProducts from './src/components/screens/ProductScreens/CartProducts';
 import UserProfile from './src/components/screens/userScreens/UserProfile';
@@ -49,7 +48,6 @@ class Routes extends Component {
                     <Stack.Screen name="AddressList" component={AddressList} options={{headerShown: false}} />
                    
                     <Stack.Screen name="StoreLocator" component={StoreLocator} options={{headerShown: false}} />
-                    <Stack.Screen name="RateToProduct" component={RateToProduct} options={{headerShown: false}}/>
                     <Stack.Screen name="CartProducts" component={CartProducts} options={{headerShown: false}} />
                     
                     <Stack.Screen name="OrderSummary" component={OrderSummary} options={{headerShown: false}}/>

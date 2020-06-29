@@ -20,7 +20,6 @@ class CustomHeader extends Component {
 
     render(){
         const {searchInput} = this.state;
-        // const searchHeaderRef = React.useRef(null);
        
         return (
             <View>
@@ -34,14 +33,11 @@ class CustomHeader extends Component {
                     <Right>
                         <Icon name={this.props.rightIconName} size={25} color={StyleConstants.COLOR_FFFFFF} style={{display:this.state.iconShown}} 
                             onPress={ ()=>{
-                                // (this.props.rightIconName === 'search') && (this.setState({textboxShown:'flex', iconShown:'none'})),
                                 (this.props.rightIconName === 'search') && (this.searchHeaderRef.show()),
                                 (this.props.rightIconName === 'plus') ? this.props.handleAddAddr() : null
                                 }
                             }
-                            // onPress={this.props.handleRightIconClick}
                         />
-                        {/* <TextInput value={searchInput} onChangeText={searchInput => this.setState({searchInput}) } onSubmitEditing={() => this.props.handleRightIconClick(searchInput)} placeholder="Search" placeholderTextColor={StyleConstants.COLOR_FFFFFF} style={[styles.searchInputBox,{display:this.state.textboxShown,}]}/> */}
                     </Right>
                 </Header>
 
@@ -51,11 +47,9 @@ class CustomHeader extends Component {
                     placeholderColor = 'gray'
                     // pinnedSuggestions = {[ `sofa`, `Chair`, `Study table` ]}
                     suggestionHistoryEntryRollOverCount={7}
-                    enableSuggestion={true}
+                    enableSuggestion={false}
+                    autoCorrect={true}
                     entryAnimation='from-right-side'
-                    onClear = {() => {
-                        console.log(`Clearing input!`);
-                    }}
                     // onGetAutocompletions = {async (text) => {
                     //     if (text) {
                     //         const response = await fetch(`http://suggestqueries.google.com/complete/search?client=firefox&q=${text}`, {
@@ -70,12 +64,6 @@ class CustomHeader extends Component {
                     onSearch = {(event) => {
                         // console.log("onS",event.nativeEvent.text);
                         this.props.handleRightIconClick(event.nativeEvent.text)
-                    }}
-                    onFocus =  {(event) => {
-                        console.log("focus",event);
-                    }}
-                    onBlur =  {(event) => {
-                        console.log("blur",event);
                     }}
                     style = {{
                         header: {
@@ -99,47 +87,5 @@ class CustomHeader extends Component {
     }
 };
 
-const pageStyles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        backgroundColor: '#f5fcff'
-    },
-    status: {
-        zIndex: 10,
-        elevation: 2,
-        width: WINDOW_WIDTH,
-        height: 21,
-        backgroundColor: '#0097a7'
-    },
-    header: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: WINDOW_WIDTH,
-        height: 56,
-        marginBottom: 6,
-        backgroundColor: '#00bcd4'
-    },
-    label: {
-        flexGrow: 1,
-        fontSize: 20,
-        fontWeight: `600`,
-        textAlign: `left`,
-        marginVertical: 8,
-        paddingVertical: 3,
-        color: `#f5fcff`,
-        backgroundColor: `transparent`
-    },
-    button: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 130,
-        height: 40,
-        marginTop: 40,
-        borderRadius: 2,
-        backgroundColor: `#ff5722`
-    }
-});
 
 export default CustomHeader;

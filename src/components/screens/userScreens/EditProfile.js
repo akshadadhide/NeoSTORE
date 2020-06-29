@@ -74,17 +74,17 @@ class EditProfile extends Component {
         
     }
 
-    handleValidation = (field_name) => {
+    handleValidation = (field_name,value) => {
         const {first_name, last_name,email,phone_no,dob} = this.state.user;
         let {errors} = this.state;
         let errorFlag = true;
 
         //first name validation
         if(field_name === 'first_name'){
-            if(first_name.length === 0 || NAME_REGEX.test(first_name) === false){
+            if(value === '' || NAME_REGEX.test(value) === false){
                 errorFlag =  true;
                 const {valueMissing, wrongPattern} = customErrors.first_name;
-                errors.first_name = first_name === '' ? valueMissing : wrongPattern;
+                errors.first_name = value === '' ? valueMissing : wrongPattern;
             }
             else{
                 errorFlag =  false;
@@ -94,10 +94,10 @@ class EditProfile extends Component {
 
         //last name validation
         if(field_name === 'last_name'){
-            if(last_name.length === 0 || NAME_REGEX.test(last_name) === false){
+            if(value === '' || NAME_REGEX.test(value) === false){
                 errorFlag =  true;
                 const {valueMissing, wrongPattern} = customErrors.last_name;
-                errors.last_name = last_name === '' ? valueMissing : wrongPattern;
+                errors.last_name = value === '' ? valueMissing : wrongPattern;
             }
             else{
                 errorFlag =  false;
@@ -107,10 +107,10 @@ class EditProfile extends Component {
 
          //email validation
          if(field_name === 'email'){
-            if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+            if(value === '' || EMAIL_REGEX.test(value) === false){
                 errorFlag = true;
                 const {valueMissing, wrongPattern} = customErrors.email;
-                errors.email = email === '' ? valueMissing : wrongPattern;
+                errors.email = value === '' ? valueMissing : wrongPattern;
             }
             else{
                 errorFlag =  false;
@@ -120,10 +120,10 @@ class EditProfile extends Component {
 
         //phone number
         if(field_name === 'phone_no'){
-            if(phone_no.length === 0 || MOBILE_REGEX.test(phone_no) === false){
+            if(value === '' || MOBILE_REGEX.test(value) === false){
                 errorFlag = true;
                 const {valueMissing, wrongPattern} = customErrors.phone_no;
-                errors.phone_no = phone_no === '' ? valueMissing : wrongPattern;
+                errors.phone_no = value === '' ? valueMissing : wrongPattern;
             }
             else{
                 errorFlag =  false;
@@ -156,7 +156,6 @@ class EditProfile extends Component {
         const {user,selectedImage} = this.state;
         RNFetchBlob.fetch('PUT', BASE_URL+'profile', {
             Authorization : "Bearer "+this.state.userToken,
-            otherHeader : "foo",
             'Content-Type' : 'multipart/form-data',
         }, [
             { name : 'profile_img', filename : selectedImage.fileName, type:selectedImage.type, data: RNFetchBlob.wrap(selectedImage.path)},
@@ -192,8 +191,8 @@ class EditProfile extends Component {
         this.showLoader();
         // console.log("userData after edit: ", this.state.user);
         const {user,selectedImage} = this.state;
-        const errorFlag = (this.handleValidation('first_name') || this.handleValidation('last_name') 
-                            || this.handleValidation('email') || this.handleValidation('phone_no')
+        const errorFlag = (this.handleValidation('first_name',this.state.user.first_name) || this.handleValidation('last_name',this.state.user.last_name) 
+                            || this.handleValidation('email',this.state.user.email) || this.handleValidation('phone_no',this.state.user.phone_no)
                             || this.handleValidation('dob')
                         );
         let data;
@@ -305,8 +304,19 @@ class EditProfile extends Component {
                                 <Input
                                     value={first_name} 
                                     style={styles.inputBoxText}  
-                                    onChangeText={ value => this.setState({user:{...user,first_name:value}}) }
-                                    onBlur={() => this.handleValidation('first_name')}
+                                    onChangeText={text =>
+                                        this.setState(state => {
+                                        return {
+                                            ...state,
+                                            user: {
+                                            ...state.user,
+                                            first_name: text
+                                            }
+                                        };
+                                        })
+                                    }
+                                    onBlur={() => this.handleValidation('first_name',first_name)}
+                                    onChange={event => this.handleValidation('first_name',event.nativeEvent.text)}
                                 />
                             </Item>
                             <Text style={styles.errorText}> {errors.first_name}</Text>
@@ -328,7 +338,8 @@ class EditProfile extends Component {
                                                 };
                                     })
                                     }
-                                    onBlur={() => this.handleValidation('last_name')}
+                                    onBlur={() => this.handleValidation('last_name',last_name)}
+                                    onChange={event => this.handleValidation('last_name',event.nativeEvent.text)}
                                 />
                             </Item>
                             <Text style={styles.errorText}> {errors.last_name}</Text>
@@ -350,7 +361,8 @@ class EditProfile extends Component {
                                                 };
                                     })
                                     } 
-                                    onBlur={() => this.handleValidation('email')}
+                                    onBlur={() => this.handleValidation('email',email)}
+                                    onChange={event => this.handleValidation('email',event.nativeEvent.text)}
                                 />
                             </Item>
                             <Text style={styles.errorText}> {errors.email}</Text>
@@ -360,7 +372,9 @@ class EditProfile extends Component {
                                 <Icon active name='mobile' style={styles.textBoxIcon} size={StyleConstants.ICON_SIZE}/>
                                 <Input
                                     value={phone_no} 
-                                    style={styles.inputBoxText}   
+                                    style={styles.inputBoxText}  
+                                    maxLength={10}
+                                    keyboardType='phone-pad' 
                                     onChangeText={text =>
                                                 this.setState(state => {
                                                 return {
@@ -372,7 +386,8 @@ class EditProfile extends Component {
                                                 };
                                     })
                                     }
-                                    onBlur={() => this.handleValidation('phone_no')}
+                                    onBlur={() => this.handleValidation('phone_no',phone_no)}
+                                    onChange={event => this.handleValidation('phone_no',event.nativeEvent.text)}
                                 />
                             </Item>
                             <Text style={styles.errorText}> {errors.phone_no}</Text>

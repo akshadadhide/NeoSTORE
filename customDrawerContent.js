@@ -14,7 +14,7 @@ let userToken,customerInfo, cartCount=0;
 
 const getUserToken = async() =>{
     userToken = await AsyncStorage.getItem('userToken');
-    console.log("getUserToken: ", userToken);
+    // console.log("getUserToken: ", userToken);
     customer = await AsyncStorage.getItem('customerInfo');
     customerInfo = JSON.parse(customer);
     return userToken;
@@ -26,7 +26,7 @@ const getCartCount = async() => {
     // const cartData = store.getState().cartReducer.cartData;
     let cartData;
 
-    console.log("cartData in sidebar:",cartData);
+    // console.log("cartData in sidebar:",cartData);
     // const userData = store.getState().authReducer.userData;
     const userD = await AsyncStorage.getItem('userData');
     const userData = JSON.parse(userD);
@@ -38,12 +38,12 @@ const getCartCount = async() => {
         if(result.product_details !== undefined){
             data = result.product_details
             data = data.map((value) => value.product_id);
-            console.log("data== ", data);
+            // console.log("data== ", data);
             
         }
         cartData = data;
     })
-    console.log("===cartData=== ",cartData);
+    // console.log("===cartData=== ",cartData);
     
     let count1=0, count2=0;
     // if(cartData === undefined || cartData === null){
@@ -55,7 +55,7 @@ const getCartCount = async() => {
     else{
         count1 = userData.cart_count
     }
-    console.log("count1 outside: ",count1);
+    // console.log("count1 outside: ",count1);
     
     if(myArray !== null){
         count2 = JSON.parse(myArray).length;
@@ -63,9 +63,9 @@ const getCartCount = async() => {
     else{
         count2=0;
     }
-    console.log("count2 outside: ",count2);
+    // console.log("count2 outside: ",count2);
     cartCount = count1 + count2;
-    console.log("final cartCount: ",cartCount);
+    // console.log("final cartCount: ",cartCount);
     
     return cartCount;
 }
@@ -96,6 +96,7 @@ handleLogout = async() => {
     } catch (error) {
         console.log("Error: ", error);    
     }
+    await AsyncStorage.removeItem('customerInfo');
     await AsyncStorage.removeItem('userToken');
 }
 
@@ -114,12 +115,12 @@ CustomDrawerContent = (props) => {
     const userData = store.getState().authReducer.userData;
     // console.log("customerInfo: ",customerInfo);
     
-    console.log("user D", userData);
+    // console.log("user D", userData);
     const customerDetails = (customerInfo !== undefined && customerInfo !== null && customerInfo !== '') ? customerInfo : userData.customer_details;
     // const customerDetails = userData.customer_details;
     const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
-    console.log("b= ",b);
-    console.log("getUserToken: ", userToken);
+    // console.log("b= ",b);
+    // console.log("getUserToken: ", userToken);
     
     
     return (

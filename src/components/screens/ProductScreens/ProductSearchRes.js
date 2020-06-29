@@ -63,7 +63,7 @@ class ProductSearchRes extends Component {
         const {searchText} = this.props.route.params;
         // console.log("render all Product list----",this.props.allProducts); 
         const {productListArray} = this.state;
-        console.log("render all Product list array state----",productListArray); 
+        // console.log("render all Product list array state----",productListArray); 
 
 
         return (

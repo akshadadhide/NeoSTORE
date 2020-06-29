@@ -24,132 +24,9 @@ class SetPassword extends Component {
 
             errors:{},
             showLoader:false,
-
-            // errors:{
-            //     otpCodeError:'',
-            //     newPassError:'',
-            //     confirmPassError:'',
-
-            // }
         }
     }
 
-    // handleChange = (name, value) =>{
-    //     const passwordRegex = /^[a-zA-Z0-9]$/;
-    //     const {errors} = this.state;
-        
-    //     if(name == 'otpCode' && value == ''){
-    //         this.setState(state => {
-    //             return {
-    //                 ...state,
-    //                 errors: {
-    //                 ...state.otpCodeError,
-    //                 otpCodeError: '*Required'
-    //                 }
-    //             };
-    //             })
-    //     }
-    //     if(name == 'otpCode' && value !== ''){
-    //         this.setState(state => {
-    //             return {
-    //                 ...state,
-    //                 errors: {
-    //                 ...state.otpCodeError,
-    //                 otpCodeError: ''
-    //                 }
-    //             };
-    //             })
-    //     }
-
-    //     if(name == 'newPass' && value == ''){
-    //         this.setState(state => {
-    //             return {
-    //                 ...state,
-    //                 errors: {
-    //                 ...state.newPassError,
-    //                 newPassError: '*Required'
-    //                 }
-    //             };
-    //             })
-    //     }
-    //     else if(name == 'newPass' && value != ''){
-    //         if(!passwordRegex.test(value)){
-    //             this.setState(state => {
-    //                 return {
-    //                     ...state,
-    //                     errors: {
-    //                     ...state.newPassError,
-    //                     newPassError: '*Password should contain characters and numbers'
-    //                     }
-    //                 };
-    //             }) 
-    //         }
-    //         else if(value.length < 8 || value.length > 12){
-    //             this.setState(state => {
-    //                 return {
-    //                     ...state,
-    //                     errors: {
-    //                     ...state.newPassError,
-    //                     newPassError: '*Password length should be 8 to 12 chars'
-    //                     }
-    //                 };
-    //             })
-    //         }
-    //         else{
-    //             this.setState(state => {
-    //                 return {
-    //                     ...state,
-    //                     errors: {
-    //                     ...state.newPassError,
-    //                     newPassError: ''
-    //                     }
-    //                 };
-    //             })
-    //         }
-    
-    //     }
-        
-
-    //     if(name == 'confirmPass' && value == ''){
-    //         this.setState(state => {
-    //             return {
-    //                 ...state,
-    //                 errors: {
-    //                 ...state.confirmPassError,
-    //                 confirmPassError: '*Required'
-    //                 }
-    //             };
-    //         })
-    //     }
-    //     else if(name == 'confirmPass' && value != ''){
-    //         if(this.state.newPass !== this.state.confirmPass){
-    //             this.setState(state => {
-    //                 return {
-    //                     ...state,
-    //                     errors: {
-    //                     ...state.confirmPassError,
-    //                     confirmPassError: '*Both password should be same'
-    //                     }
-    //                 };
-    //             })
-                
-    //         }
-    //         else{
-    //             this.setState(state => {
-    //                 return {
-    //                     ...state,
-    //                     errors: {
-    //                     ...state.confirmPassError,
-    //                     confirmPassError: ''
-    //                     }
-    //                 };
-    //             })
-    //         }
-    //     }
-       
-
-    //     console.log("Errors: ", errors)
-    // }
     
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
@@ -170,15 +47,15 @@ class SetPassword extends Component {
         this.setState({passwordHide: [...passwordHide]});
     }
 
-    //=============================
-    handleValidation = (field_name) => {
+    //validation
+    handleValidation = (field_name,value) => {
         const {otpCode,newPass,confirmPass} = this.state;
         let {errors} = this.state;
         let errorFlag = true;
 
         //old password
         if(field_name === 'otpCode'){
-            if(otpCode === ''){
+            if(value === ''){
                 errorFlag = true;
                 const {valueMissing} = customErrors.otpCode;
                 errors.otpCode = valueMissing
@@ -191,29 +68,32 @@ class SetPassword extends Component {
 
         //new password
         if(field_name === 'newPass'){
-            if(newPass.length < 8 || newPass.length > 12){
+            if(value.length < 8 || value.length > 12){
                 errorFlag = true;
                 const {valueMissing, minLength} = customErrors.pass;
-                errors.newPass = newPass === '' ? valueMissing : minLength;
+                errors.newPass = value === '' ? valueMissing : minLength;
             }
-            else if(confirmPass.length !== 0 && newPass !== confirmPass){
+            else{
+                errorFlag = false;
+                delete errors.newPass;
+            }
+            if(confirmPass.length !== 0 && value !== confirmPass){
                 errorFlag = true;
                 const {diffPassword} = customErrors.confirmPass;
                 errors.confirmPass = diffPassword;
             }
             else{
                 errorFlag = false;
-                delete errors.newPass;
                 delete errors.confirmPass;
             }
         }
 
         //confirm new password
         if(field_name === 'confirmPass'){
-            if(confirmPass.length === 0 || newPass !== confirmPass){
+            if(value === '' || newPass !== value){
                 errorFlag = true;
                 const {valueMissing, diffPassword} = customErrors.confirmPass;
-                errors.confirmPass = confirmPass === '' ? valueMissing : diffPassword;
+                errors.confirmPass = value === '' ? valueMissing : diffPassword;
             }
             else{
                 errorFlag =  false;
@@ -225,17 +105,6 @@ class SetPassword extends Component {
         // console.log("Error: ",errors, " errFlag: ", errorFlag);
         return errorFlag;
     }
-    //=============================
-
-    // setPasswordVisiblility = () => {
-    //     if(this.state.passIcon === 'eye'){
-    //         this.setState({passIcon: 'eye-slash', })
-    //     }
-    //     else{ 
-    //         this.setState({passIcon: 'eye', })
-    //     }
-    //     this.setState({passwordHide: !this.state.passwordHide });
-    // }
 
     handleSubmit = () =>{
         this.showLoader()
@@ -244,20 +113,19 @@ class SetPassword extends Component {
             newPass: this.state.newPass,
             confirmPass: this.state.confirmPass,
         }
-        const errorFlag = this.handleValidation('otpCode') && this.handleValidation('newPass') && this.handleValidation('confirmPass');
-        // console.log("EF----",errorFlag);
+        const errorFlag = this.handleValidation('otpCode',this.state.otpCode) || this.handleValidation('newPass',this.state.newPass) ||
+                         this.handleValidation('confirmPass',this.state.confirmPass);
 
         if(errorFlag === false){
             this.props.handleRecoverPassword(data, 'recoverPassword');
-            const {recoverPasswordRes} = this.props;
-            // console.log("recoverPasswordRes: ",recoverPasswordRes);
 
-            setTimeout(()=>{
+            setTimeout(() => {
+                const {recoverPasswordRes} = this.props;
                 this.hideLoader();
                 if(recoverPasswordRes !== undefined){
                     (recoverPasswordRes.status_code === 200) ?
                     (
-                        Alert.alert(recoverPasswordRes.message),
+                        alert(recoverPasswordRes.message),
                         this.props.navigation.navigate('Login')
                     ):
                     (
@@ -294,7 +162,8 @@ class SetPassword extends Component {
                                 value={otpCode} 
                                 style={styles.inputBoxText} 
                                 onChangeText={otpCode => {this.setState({otpCode})} } 
-                                onBlur={() => this.handleValidation("otpCode")} 
+                                onBlur={() => this.handleValidation("otpCode",this.state.otpCode)} 
+                                onChange={event => this.handleValidation("otpCode", event.nativeEvent.text)} 
                                 placeholder='Enter OTP' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                             />
@@ -308,8 +177,9 @@ class SetPassword extends Component {
                                 value={newPass} 
                                 secureTextEntry={passwordHide[0]} 
                                 onChangeText={newPass => {this.setState({newPass});} } 
-                                onBlur={() => this.handleValidation("newPass")} 
-                                onKeyPress={() => this.handleValidation("newPass")} 
+                                onBlur={() => this.handleValidation("newPass",this.state.newPass)} 
+                                onKeyPress={() => this.handleValidation("newPass",this.state.newPass)} 
+                                onChange={event => this.handleValidation("newPass",event.nativeEvent.text)} 
                                 style={styles.inputBoxText} 
                                 placeholder='Enter new Password' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
@@ -325,8 +195,9 @@ class SetPassword extends Component {
                                 value={confirmPass} 
                                 secureTextEntry={passwordHide[1]} 
                                 onChangeText={confirmPass => {this.setState({confirmPass});} } 
-                                onBlur={() => this.handleValidation("confirmPass")} 
-                                onKeyPress={() => this.handleValidation("confirmPass")} 
+                                onBlur={() => this.handleValidation("confirmPass",this.state.confirmPass)} 
+                                onKeyPress={() => this.handleValidation("confirmPass",this.state.confirmPass)}
+                                onChange={event => this.handleValidation("confirmPass",event.nativeEvent.text)} 
                                 style={styles.inputBoxText} 
                                 placeholder=' Enter Password again' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}

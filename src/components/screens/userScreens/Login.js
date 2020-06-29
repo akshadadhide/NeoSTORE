@@ -9,7 +9,6 @@ import {validation, EMAIL_REGEX, customErrors} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 import { connect } from 'react-redux';
 import Loader from "../../Common/Loader";
-import { DrawerActions } from '@react-navigation/native';
 
 
 class Login extends Component {
@@ -44,7 +43,7 @@ class Login extends Component {
         this.setState({passwordHide: !this.state.passwordHide });
     }
 
-    handleValidation = (field_name) => {
+    handleValidation = (field_name,value) => {
         const {email, pass} = this.state;
         let {errors} = this.state;
     
@@ -54,10 +53,10 @@ class Login extends Component {
         
         //email validation
         if(field_name === 'email'){
-            if(email.length === 0 || EMAIL_REGEX.test(email) === false){
+            if(value === '' || EMAIL_REGEX.test(value) === false){
                 errorFlag = true;
                 const {valueMissing, wrongPattern} = customErrors.email;
-                errors.email = email === '' ? valueMissing : wrongPattern;
+                errors.email = value === '' ? valueMissing : wrongPattern;
             }
             else{
                 delete errors.email;
@@ -66,7 +65,7 @@ class Login extends Component {
         
         //password validation
         if(field_name === 'pass'){
-            if(pass.length === 0){
+            if(value === ''){
                 errorFlag = true;
                 const {valueMissing} = customErrors.pass;
                 errors.pass = valueMissing;
@@ -90,7 +89,7 @@ class Login extends Component {
             pass: this.state.pass,
         };
 
-        const errorFlag = this.handleValidation('email') || this.handleValidation('pass');
+        const errorFlag = this.handleValidation('email',this.state.email) || this.handleValidation('pass',this.state.pass);
        
         if(errorFlag === false){
             await this.props.login(logData, 'login');
@@ -134,10 +133,11 @@ class Login extends Component {
                                 value={email.trim()} 
                                 style={styles.inputBoxText} 
                                 onChangeText={(email) => {this.setState({email})} } 
-                                onChange={() => this.handleValidation('email')}
-                                onBlur={ () => this.handleValidation('email')} 
+                                onChange={event => this.handleValidation('email',event.nativeEvent.text)}
+                                onBlur={ () => this.handleValidation('email',this.state.email)} 
                                 placeholder='Username' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                                keyboardType="email-address"
                             />
                         </Item>
                         <Text style={styles.errorText}> {errors.email}</Text>
@@ -150,8 +150,8 @@ class Login extends Component {
                                 secureTextEntry={passwordHide} 
                                 style={styles.inputBoxText} 
                                 onChangeText={pass => this.setState({pass}) } 
-                                onChange={() => this.handleValidation('pass')}
-                                onBlur={() => this.handleValidation('pass')} 
+                                onChange={event => this.handleValidation('pass',event.nativeEvent.text)}
+                                onBlur={() => this.handleValidation('pass',this.state.pass)} 
                                 placeholder='Password' 
                                 placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
                             />

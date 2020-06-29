@@ -25,18 +25,15 @@ class ForgotPassword extends Component {
     onSubmit = async() =>{
         this.showLoader();
         const {email} = this.state;
-        // console.log("email ifj",email);
-       // {email:this.state.email}
-       const data={
-           email:this.state.email
-       }
+        const data={
+            email:this.state.email
+        }
         
         if(email !== ''){
             await this.props.handleForgotPassword(data,'forgotPassword');
-            const {forgotPasswordRes} = await this.props;
-            // console.log("In forgot pass compo", forgotPasswordRes);
 
             setTimeout(()=> {
+                const {forgotPasswordRes} = this.props;
                 this.hideLoader();
                 if(forgotPasswordRes !== undefined){
                     if(forgotPasswordRes.status_code === 200){
@@ -45,7 +42,7 @@ class ForgotPassword extends Component {
                         this.props.navigation.navigate('SetPassword');
                     }
                     else{
-                        Alert.alert(forgotPasswordRes.error_message);
+                        Alert.alert("Please enter valid user id");
                     }   
                 }
                 else {
@@ -56,7 +53,7 @@ class ForgotPassword extends Component {
         }
         else{
             this.hideLoader();
-            Alert.alert('Please enter the userid i.e. email');
+            Alert.alert('Please enter the userid(email)');
         }
     }
 
@@ -78,6 +75,7 @@ class ForgotPassword extends Component {
                                     onChangeText={email => this.setState({email}) } 
                                     placeholder='Enter userid' 
                                     placeholderTextColor={StyleConstants.COLOR_RGBA_WHITE}
+                                    keyboardType="email-address"
                                 />
                             </Item>
 

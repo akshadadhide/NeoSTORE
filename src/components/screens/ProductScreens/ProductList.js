@@ -51,7 +51,6 @@ class ProductList extends PureComponent {
         if(productList !== undefined){
             let listData = this.state.productListArray;
             let data = listData.concat(productList);
-            console.log("page: ",page , "data: ",data);
             
             this.setState({productListArray: data, isLoading:false});
         }

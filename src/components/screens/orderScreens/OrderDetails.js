@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {View, Text, ScrollView, Image} from 'react-native';
 import Header from '../../Common/Header';
 import { StyleConstants } from '../../styles/Constants';
-import {styles} from '../../styles/Styles';
+import {styles, WINDOW_WIDTH} from '../../styles/Styles';
 import { BASE_URL } from '../../../API/apiConstants';
 
 
@@ -29,7 +29,7 @@ class OrderDetails extends Component {
                             source={{uri: BASE_URL+productInfo.product_image}}
                         />
                         </View>
-                        <View>
+                        <View style={{width: WINDOW_WIDTH-130}}>
                             <Text style={[styles.productDetailTitle, {marginBottom:0,}]}> {productInfo.product_name} </Text>  
                             <Text style={styles.productDetailMaterial}> {productInfo.product_material} </Text>
                             <View style={styles.rowSpaceBetween}>
@@ -39,7 +39,7 @@ class OrderDetails extends Component {
 
                         </View>
                     </View>
-                    <View style={{height: 0.9, backgroundColor:StyleConstants.COLOR_8E8E8E, margin: 10}}/>
+                    <View style={{height: 1, backgroundColor:StyleConstants.COLOR_8E8E8E, marginTop:5}}/>
 
                 </ScrollView>
 
