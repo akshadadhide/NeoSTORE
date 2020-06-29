@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { View, ActivityIndicator, FlatList, SafeAreaView, Text, Image, ScrollView,TouchableOpacity, RefreshControl } from 'react-native';
 import { styles, WINDOW_WIDTH } from '../../styles/Styles';
@@ -10,7 +10,7 @@ import {getProductList} from '../../../redux/actions/productActions';
 import { DrawerActions } from '@react-navigation/native';
 
 
-class ProductList extends Component {
+class ProductList extends PureComponent {
     
     constructor(props) {
         super(props);
@@ -36,11 +36,11 @@ class ProductList extends Component {
     //     }
     // }
 
-    fetchResult = async(page) => {
+    async fetchResult(page){
         const {category_id} = this.props.route.params;
         let type;
         // type='getProductByCateg/'+category_id;
-        type = `commonProducts?category_id=${category_id}&pageNo=${page}&perPage=6`;
+        type = `commonProducts?category_id=${category_id}&pageNo=${page}&perPage=5`;
         // console.log("Type: ",type);
         
         this.setState({isLoading:true});
@@ -51,6 +51,8 @@ class ProductList extends Component {
         if(productList !== undefined){
             let listData = this.state.productListArray;
             let data = listData.concat(productList);
+            console.log("page: ",page , "data: ",data);
+            
             this.setState({productListArray: data, isLoading:false});
         }
         else{
@@ -68,13 +70,23 @@ class ProductList extends Component {
         }
     }
 
-    onRefresh() {
-        this.setState({ isRefreshing: true }); //for enable pull to refresh 
-        this.page = 1;
-        this.fetchResult(this.page);
-        this.setState({ isRefreshing: false });
+    async onRefresh() {
+        const {category_id} = this.props.route.params;
+        let type;
+        type = `commonProducts?category_id=${category_id}&pageNo=1&perPage=6`;
+        
+        await this.props.getProductList(type);
+        const {productList} = this.props;
+        this.setState({ isRefreshing: false, productListArray: productList })
     }
-    
+
+    renderFooter = () => {
+        //it will show indicator at the bottom of the list when data is loading otherwise it returns null
+         if (!this.state.loading) return null;
+         return (
+           <ActivityIndicator size="large" />
+        );
+    };
 
     goBack = () => {
         this.props.navigation.goBack();
@@ -96,13 +108,14 @@ class ProductList extends Component {
             <SafeAreaView>
             <View>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
-                {(productListArray === undefined || productListArray === '') ?
+                {(productListArray === undefined || productListArray === '' || isLoading === true) ?
                 (<ActivityIndicator size='large' />) :
                 (
-                <View  style={{padding: StyleConstants.PADDING_10,}}>
+                <View  style={{padding: StyleConstants.PADDING_10,marginBottom:200}}>
                     <FlatList
                     data={productListArray}
                     extraData={this.state}
+                    initialNumToRender={5}
                     refreshControl={
                         <RefreshControl 
                             onRefresh={this.onRefresh.bind(this)}
@@ -135,9 +148,10 @@ class ProductList extends Component {
                             </View>
                         </TouchableOpacity>
                     )}
-                    keyExtractor={(item,index) => String(index)}
+                    keyExtractor={(item,index) => index.toString()}
                     ItemSeparatorComponent={() => <View style={{height: 1, backgroundColor:StyleConstants.COLOR_9E0100}}/>}
-                    onEndReachedThreshold={0}
+                    ListFooterComponent={this.renderFooter.bind(this)}
+                    onEndReachedThreshold={0.2}
                     onEndReached={this.handleLoadMore.bind(this)}
                     />
                 </View>
