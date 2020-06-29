@@ -50,7 +50,6 @@ class Home extends Component {
                             autoplay={true} 
                             onCurrentImagePressed={ (index) => {
                                     const prodNameArr = ['Sofa','Bed','Chair','Table','Almirah']
-                                    console.log("Index: ", index);
                                     this.props.navigation.navigate('ProductList',{category:prodNameArr[index], category_id:categoryId[index]});
                             }}
                         />
