@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text,View, TextInput, StyleSheet, Button} from 'react-native';
+import {Text,View, TextInput, StyleSheet, Button,StatusBar} from 'react-native';
 import {Header, Left, Body, Right} from 'native-base';
 import {styles, WINDOW_WIDTH} from '../styles/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -12,26 +12,25 @@ class CustomHeader extends Component {
         super(props);
         this.searchHeaderRef = null;
         this.state = {
-            iconShown: 'flex',
-            textboxShown: 'none',
             searchInput: '',
         }
     }
 
     render(){
         const {searchInput} = this.state;
-       
+        
         return (
             <View>
+                <StatusBar barStyle = 'light-content' />
                 <Header style={{backgroundColor:StyleConstants.COLOR_E91C1A}}>
                     <Left>
                         <Icon name={this.props.iconName} size={25} color={StyleConstants.COLOR_FFFFFF} onPress={this.props.handleLeftIconClick}/>
                     </Left>
                     <Body>
-                    <Text numberOfLines={1} style={styles.headerText}>{this.props.headerTitle}</Text>
+                        <Text numberOfLines={1} style={styles.headerText}>{this.props.headerTitle}</Text>
                     </Body>
                     <Right>
-                        <Icon name={this.props.rightIconName} size={25} color={StyleConstants.COLOR_FFFFFF} style={{display:this.state.iconShown}} 
+                        <Icon name={this.props.rightIconName} size={25} color={StyleConstants.COLOR_FFFFFF} 
                             onPress={ ()=>{
                                 (this.props.rightIconName === 'search') && (this.searchHeaderRef.show()),
                                 (this.props.rightIconName === 'plus') ? this.props.handleAddAddr() : null

@@ -78,7 +78,7 @@ class AddressList extends Component {
                 if(saveAddressResponse !== undefined){
                     if(saveAddressResponse.status_code === 200){
                         this.props.navigation.navigate('OrderSummary')
-                        console.log("Address saved successfully");
+                        Alert.alert("Address saved successfully");
                         
                     }
                     else{
