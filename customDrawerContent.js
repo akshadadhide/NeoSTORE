@@ -97,7 +97,7 @@ handleLogout = async() => {
         console.log("Error: ", error);    
     }
     await AsyncStorage.removeItem('customerInfo');
-    await AsyncStorage.removeItem('userToken');
+    // await AsyncStorage.removeItem('userToken');
 }
 
 CustomDrawerContent = (props) => {
@@ -240,10 +240,10 @@ CustomDrawerContent = (props) => {
                         'Do you want to logout?',
                         [
                           {text: 'Cancel', onPress: () => {return null}},
-                          {text: 'Confirm', onPress: () =>{ 
-                              handleLogout(),
+                          {text: 'Confirm', onPress: async() =>{ 
+                              await handleLogout(),
                             //   props.navigation.closeDrawer();
-                              AsyncStorage.removeItem('userToken');
+                            await AsyncStorage.removeItem('userToken');
                               props.navigation.navigate('Home');
 
                           }},

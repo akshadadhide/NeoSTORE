@@ -12,7 +12,6 @@ class Home extends Component {
 
     componentDidMount(){
         this._unsubscribe = this.props.navigation.addListener('focus', () => {
-            // do something
             this.props.getCarouselImages();
           });
     }
@@ -28,8 +27,6 @@ class Home extends Component {
     }
 
     render() {
-        // console.log("In render Home");
-
        const {images} = this.props;
        const {isLoading} = this.props;
        const {categoryId} = this.props;
