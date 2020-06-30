@@ -68,7 +68,7 @@ class AddressList extends Component {
         this.showLoader();
         // console.log("loader: ",this.state.showLoader);
         
-        console.log("Sel customer add: ", this.state.custmorAddress);
+        // console.log("Sel customer add: ", this.state.custmorAddress);
         if(this.state.custmorAddress.address_id !== '' && this.state.custmorAddress.address_id !== undefined){
             await this.props.saveAddress(this.state.custmorAddress, SAVE_ADDR_URLTYPE);
             

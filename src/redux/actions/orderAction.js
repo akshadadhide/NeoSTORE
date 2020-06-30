@@ -13,7 +13,7 @@ function placeOrder(data, type){
 
         apiCall(data, 'POST', type)
             .then((response) => {
-                console.log("response== ",response);
+                // console.log("response== ",response);
                 
                 dispatch(placeOrderSuccess(response));
             })

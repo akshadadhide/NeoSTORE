@@ -120,7 +120,7 @@ class AddAddress extends Component {
 
             setTimeout(()=> {
                 const {addAddrResponse} = this.props;
-                console.log("addAddrResponse: ",addAddrResponse);
+                // console.log("addAddrResponse: ",addAddrResponse);
                 
                 this.hideLoader();
                 if(addAddrResponse !== undefined){

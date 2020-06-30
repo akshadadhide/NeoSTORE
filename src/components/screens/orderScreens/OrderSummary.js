@@ -146,11 +146,11 @@ class OrderSummary extends Component {
             if(data !== undefined){
                 this.props.placeOrder(data, type);
                 const {res} = this.props;
-                console.log("res== ",res);
+                // console.log("res== ",res);
 
                 setTimeout(()=>{
                     const {res} = this.props;
-                    console.log("res== ",res);
+                    // console.log("res== ",res);
                     this.hideLoader();
                     if(res !== undefined){
                         if(res.status_code === 200){
