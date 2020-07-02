@@ -1,15 +1,5 @@
 import {ActionTypes} from '../actions/ActionTypes';
 
-// const getUser = async () =>{
-//     try {
-//         const userData = await AsyncStorage.getItem('User');
-//         return userData
-//     }
-//     catch(error){
-//         console.error();
-//     }
-// }
-
 const initialState = {
     userData:{},
     isLogin: false,
@@ -31,7 +21,6 @@ export function authReducer( state = initialState, action){
         }
 
         case ActionTypes.USER_LOGIN_SUCCESS:{
-            // console.log("In reducer succcess", action.payload);
             return {...state, isLogin:true,  userData: action.payload };
         }
 

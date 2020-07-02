@@ -11,9 +11,6 @@ export const userActions = {
 
 
 function login(logData, type) {
-  // try{
-  // console.log("login details: ", logData);
-
   return async dispatch => {
     dispatch(userLoginRequest());
 
@@ -62,8 +59,6 @@ function register(userData, type) {
     dispatch(userRegistrationRequest());
     apiCall(userData, 'POST', type)
       .then((result) => {
-        // console.log("in reg action result");
-        // let responseJson = result.data;
         dispatch(userRegistrationSuccess(result));
 
       })

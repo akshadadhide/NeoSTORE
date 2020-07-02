@@ -96,7 +96,6 @@ class Login extends Component {
             const { isLogin, userData } = this.props;
             
             if(isLogin == true && userData.status_code === 200){
-                // this.props.navigation.dispatch(DrawerActions.closeDrawer());
                 this.props.navigation.navigate('Home');
             }
             else{
