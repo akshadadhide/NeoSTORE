@@ -99,7 +99,7 @@ class AddAddress extends Component {
         
     }
 
-    async handleSubmit(){
+    handleSubmit(){
         this.showLoader();
         const address = {
             address: this.state.address,
@@ -116,7 +116,7 @@ class AddAddress extends Component {
         );
 
         if(errorFlag === false && JSON.stringify(this.state.errors).length <= 2){
-            await this.props.addAddress(address,'address');
+            this.props.addAddress(address,'address');
 
             setTimeout(()=> {
                 const {addAddrResponse} = this.props;

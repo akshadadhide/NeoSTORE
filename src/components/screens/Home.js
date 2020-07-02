@@ -13,12 +13,13 @@ class Home extends Component {
     componentDidMount(){
         this._unsubscribe = this.props.navigation.addListener('focus', () => {
             this.props.getCarouselImages();
-          });
+        });
     }
 
     componentWillUnmount() {
         this._unsubscribe();
     }
+
 
     handleToggleDrawer = () => this.props.navigation.toggleDrawer();
 
@@ -30,14 +31,12 @@ class Home extends Component {
        const {images} = this.props;
        const {isLoading} = this.props;
        const {categoryId} = this.props;
-    //    console.log("in render images",images, "isloading state:   ", isLoading);
-    //    console.log("category ids in home", categoryId);
        
         return (
             <ScrollView style={{flex: 1,}}>
                 <CustomHeader iconName="bars"  handleLeftIconClick={this.handleToggleDrawer} headerTitle='NeoSTORE' rightIconName="search" handleRightIconClick={this.searchHandler} {...this.props} />
                 
-                {(isLoading === false) ?
+                {(isLoading === false && categoryId !== undefined && images !== undefined) ?
                     (<View>
                         <SliderBox 
                             images={images} 

@@ -23,14 +23,10 @@ const getUserToken = async() =>{
 const getCartCount = async() => {
     const myArray = await AsyncStorage.getItem('cartProducts');
 
-    // const cartData = store.getState().cartReducer.cartData;
     let cartData;
 
-    // console.log("cartData in sidebar:",cartData);
-    // const userData = store.getState().authReducer.userData;
     const userD = await AsyncStorage.getItem('userData');
     const userData = JSON.parse(userD);
-    // console.log("userData in getCOunt: ",userData);
 
     await apiCall(null,'GET','getCartData')
     .then(result => {
@@ -38,24 +34,15 @@ const getCartCount = async() => {
         if(result.product_details !== undefined){
             data = result.product_details
             data = data.map((value) => value.product_id);
-            // console.log("data== ", data);
             
         }
         cartData = data;
     })
-    // console.log("===cartData=== ",cartData);
     
     let count1=0, count2=0;
-    // if(cartData === undefined || cartData === null){
-    //     count1 = userData.cart_count
-    // }
     if(cartData !== undefined && cartData !== null){
         count1 = cartData.length;
     }
-    else{
-        count1 = userData.cart_count
-    }
-    // console.log("count1 outside: ",count1);
     
     if(myArray !== null){
         count2 = JSON.parse(myArray).length;
@@ -63,9 +50,7 @@ const getCartCount = async() => {
     else{
         count2=0;
     }
-    // console.log("count2 outside: ",count2);
     cartCount = count1 + count2;
-    // console.log("final cartCount: ",cartCount);
     
     return cartCount;
 }
@@ -74,12 +59,10 @@ handleLogout = async() => {
     try {
         const myArray = await AsyncStorage.getItem('cartProducts');
         if (myArray !== null) {
-            // console.log("In logout cartData: ",JSON.parse(myArray));
             let cartProducts = JSON.parse(myArray);
             
             cartProducts.map((val) => {
                 let cartItem = [{_id:val.product_id,product_id:val.product_id,quantity:1},{ flag: "logout" }];
-                // console.log("cartItem: ",cartItem);
 
                 apiCall(cartItem,'POST','addProductToCartCheckout')
                 .then(
@@ -97,7 +80,6 @@ handleLogout = async() => {
         console.log("Error: ", error);    
     }
     await AsyncStorage.removeItem('customerInfo');
-    // await AsyncStorage.removeItem('userToken');
 }
 
 CustomDrawerContent = (props) => {
@@ -113,15 +95,8 @@ CustomDrawerContent = (props) => {
     },[props.navigation]);
        
     const userData = store.getState().authReducer.userData;
-    // console.log("customerInfo: ",customerInfo);
-    
-    // console.log("user D", userData);
     const customerDetails = (customerInfo !== undefined && customerInfo !== null && customerInfo !== '') ? customerInfo : userData.customer_details;
-    // const customerDetails = userData.customer_details;
     const b =((userData.status_code === 200) && (userToken !== undefined && userToken !== null));
-    // console.log("b= ",b);
-    // console.log("getUserToken: ", userToken);
-    
     
     return (
         <DrawerContentScrollView {...props}>

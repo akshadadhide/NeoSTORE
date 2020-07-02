@@ -83,7 +83,7 @@ class ProductSearchRes extends Component {
                         <FlatList
                         data={productListArray}
                         renderItem={ ({item}) => (
-                            <TouchableOpacity key={item.product_id} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id})}>
+                            <TouchableOpacity key={item.product_id} onPress={() => this.props.navigation.navigate('ProductDetail',{productId: item.product_id, productName: item.product_name})}>
                                 <View style={styles.productListView}> 
                                     <View style={{marginRight:10,}}>
                                     <Image
