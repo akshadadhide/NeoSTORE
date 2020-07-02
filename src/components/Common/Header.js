@@ -1,14 +1,10 @@
 import React, {Component} from 'react';
-import {Text,View, TextInput, StyleSheet, Button,StatusBar, SafeAreaView} from 'react-native';
+import {Text,View,StatusBar} from 'react-native';
 import {Header, Left, Body, Right} from 'native-base';
 import {styles, WINDOW_WIDTH} from '../styles/Styles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {StyleConstants} from '../styles/Constants';
 import SearchHeader from 'react-native-search-header';
-import {Autocomplete, withKeyboardAwareScrollView} from 'react-native-dropdown-autocomplete';
-import { BASE_URL } from '../../API/apiConstants';
-import shortid from 'shortid';
-// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 class CustomHeader extends Component {
 
@@ -29,14 +25,6 @@ class CustomHeader extends Component {
 
     render(){
         const {searchInput} = this.state;
-        // const autocompletes = [...Array(10).keys()];
-        // const apiUrl =  `${BASE_URL}getAllProductsInAscending`;
-        // console.log("apiUrl: ",apiUrl);
-
-        // const data = ['study table','office chair', 'sofa', 'yoga chair'];
-        
-        // const {scrollToInput, onDropdownClose, onDropdownShow} = this.props;
-
         return (
             <View>
                 <StatusBar barStyle = 'light-content' />
@@ -65,22 +53,10 @@ class CustomHeader extends Component {
                     placeholderColor = 'gray'
                     // pinnedSuggestions = {[ `sofa`, `Chair`, `Study table` ]}
                     suggestionHistoryEntryRollOverCount={7}
-                    enableSuggestion={false}
+                    enableSuggestion={true}
                     autoCorrect={true}
                     entryAnimation='from-right-side'
-                    // onGetAutocompletions = {async (text) => {
-                    //     if (text) {
-                    //         const response = await fetch(`http://suggestqueries.google.com/complete/search?client=firefox&q=${text}`, {
-                    //             method: `get`
-                    //         });
-                    //         const data = await response.json();
-                    //         return data[1];
-                    //     } else {
-                    //         return [];
-                    //     }
-                    // }}
                     onSearch = {(event) => {
-                        // console.log("onS",event.nativeEvent.text);
                         this.props.handleRightIconClick(event.nativeEvent.text)
                     }}
                     style = {{
@@ -100,71 +76,9 @@ class CustomHeader extends Component {
                         }
                     }}
                 />
-
-                {/* *********************** */}
-                {/* <View style={pageStyles.autocompletesContainer}>
-                    <SafeAreaView> */}
-                        {/* {autocompletes.map(() => ( */}
-                            {/* <Autocomplete 
-                                key={shortid.generate()}
-                                style={pageStyles.input}
-                                scrollToInput={(ev) => scrollToInput(ev)}
-                                handleSelectItem={(item,id) => this.handleSelectItem(item,id)}
-                                onDropdownClose={() => onDropdownClose()}
-                                onDropdownShow={() => onDropdownShow()}
-                                // fetchDataUrl={apiUrl}
-                                minimumCharactersCount={2}
-                                highlightText={true}
-                                // valueExtractor={item => item.product_name}
-                                // rightContent={true}
-                                // rightTextExtractor={item => item.product_material}
-                                data={data} 
-                                valueExtractor={item => item}
-                                resetOnSelect={true}
-                            /> */}
-                        {/* ))} */}
-                    {/* </SafeAreaView>
-                </View> */}
-                {/* ************************* */}
-
             </View>
         );
     }
 };
-
-const pageStyles = StyleSheet.create({
-    autocompletesContainer: {
-      paddingTop: 0,
-      zIndex: 1,
-      width: "100%",
-      paddingHorizontal: 8,
-    },
-    input: {maxHeight: 40},
-    inputContainer: {
-      display: "flex",
-      flexShrink: 0,
-      flexGrow: 0,
-      flexDirection: "row",
-      flexWrap: "wrap",
-      alignItems: "center",
-      borderBottomWidth: 1,
-      borderColor: "#c7c6c1",
-      paddingVertical: 13,
-      paddingLeft: 12,
-      paddingRight: "5%",
-      width: "100%",
-      justifyContent: "flex-start",
-    },
-    container: {
-      flex: 1,
-      backgroundColor: "#ffffff",
-    },
-    plus: {
-      position: "absolute",
-      left: 15,
-      top: 10,
-    },
-  });
-
 
 export default CustomHeader;

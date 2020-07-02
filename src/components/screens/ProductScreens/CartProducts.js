@@ -140,7 +140,7 @@ class CartProducts extends Component {
        
         return (
             <View style={{flex:1, }}>
-                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts"  rightIconName="search"/>
+                <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle="My Carts" />
                 {
                  (cartData !== undefined && cartData !== '') ? 
                  
