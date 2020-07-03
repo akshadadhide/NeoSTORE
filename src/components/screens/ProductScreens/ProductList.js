@@ -24,45 +24,30 @@ class ProductList extends PureComponent {
         };
     }
     
-
     componentDidMount(){
         this.fetchResult(this.page);
     }
 
-    //to update the state with current redux state
-    // componentDidUpdate(prevProps) {
-    //     if (this.props.productList !== prevProps.productList) {
-    //         this.setState({productListArray: this.props.productList});
-    //     }
-    // }
-
     async fetchResult(page){
         const {category_id} = this.props.route.params;
         let type;
-        // type='getProductByCateg/'+category_id;
         type = `commonProducts?category_id=${category_id}&pageNo=${page}&perPage=5`;
-        // console.log("Type: ",type);
         
         this.setState({isLoading:true});
         await this.props.getProductList(type);
 
         const {productList} = this.props;
-        // console.log("Product list----",productList); 
         if(productList !== undefined){
             let listData = this.state.productListArray;
             let data = listData.concat(productList);
-            
             this.setState({productListArray: data, isLoading:false});
         }
         else{
             this.setState({isLoading:false});
         }
-        // console.log("Prductlist array: ", this.state.productListArray);
     };
 
     handleLoadMore(){
-        // console.log("In hLM pg: ",this.page,"isload: ",this.state.isLoading);
-        
         if((!this.state.isLoading) && (this.page < 2)){
             this.page = this.page+1;
             this.fetchResult(this.page);
@@ -81,9 +66,9 @@ class ProductList extends PureComponent {
 
     renderFooter = () => {
         //it will show indicator at the bottom of the list when data is loading otherwise it returns null
-         if (!this.state.loading) return null;
+         if (!this.state.isLoading) return null;
          return (
-           <ActivityIndicator size="large" />
+           <ActivityIndicator size="large" color="red" />
         );
     };
 
@@ -101,14 +86,13 @@ class ProductList extends PureComponent {
     const {category} = this.props.route.params;
     const {productList,isLoading} = this.props;
     const {productListArray} = this.state;
-    // console.log("In render, productListArray: ",productListArray , "productList---:",productList);  
     
         return (
             <SafeAreaView>
             <View>
                 <CustomHeader iconName="arrow-left" handleLeftIconClick={this.goBack} headerTitle={category} rightIconName="search" handleRightIconClick={this.searchHandler} />
-                {(productListArray === undefined || productListArray === '' || isLoading === true) ?
-                (<ActivityIndicator size='large' />) :
+                {(productListArray === undefined || productListArray === '' || isLoading === true || productListArray.length === 0) ?
+                (<ActivityIndicator size='large' color="red" />) :
                 (
                 <View  style={{padding: StyleConstants.PADDING_10,marginBottom:200}}>
                     <FlatList
