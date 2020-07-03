@@ -45,15 +45,6 @@ class ProductDetail extends PureComponent{
 		this.getData();
 	}
 
-	// componentWillUnmount () {
-	// 	this.unsubscribe()
-	// }
-
-	// componentDidUpdate(prevProps){
-	// 	if(this.props.productDetails !== prevProps.productDetails){
-    //     	this.setState({productDetails:this.props.productDetails});
-    //     }
-    // }
     
     getData = async() => {
         token = await AsyncStorage.getItem('userToken');
@@ -128,6 +119,7 @@ class ProductDetail extends PureComponent{
 
 	}
 
+	/** @param {number} rating this is the number of stars*/
 	onStarRatingPress(rating) {
 		const {productId} = this.props.route.params;
 		this.setState(state =>{
@@ -144,10 +136,12 @@ class ProductDetail extends PureComponent{
 		// console.log("--onstartpress data", this.state.ratingData);
 	}
 	
+	/** @param {boolean} visible this is the visibility(true or false) value to show the rating modal */
 	setModalVisible(visible) {
 		this.setState({modalVisible: visible});
 	}
 
+	/** @param {boolean} visible this is the visibility(true or false) value to show the rating modal */
 	async onSubmitRating(visible){
 		await this.showLoader();
 		await this.props.updateProductRating(this.state.ratingData, RATE_TO_PRODUCT_URLTYPE);
@@ -164,6 +158,12 @@ class ProductDetail extends PureComponent{
 
 	}
 
+	/** 
+	 * function to handle the product sharing
+	 * @param {object} productD this is the product details
+	 * @param {string} fileUrl url to share
+	 * @param {string} type type of data to share 
+	*/
 	shareHandler = (productD,fileUrl, type)=> {
 		let msg = 'Check this - '+productD.product_name +' : url';
 
