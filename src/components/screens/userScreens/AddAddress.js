@@ -161,84 +161,73 @@ class AddAddress extends Component {
 
                 <ScrollView contentContainerStyle={{backgroundColor:StyleConstants.COLOR_EDEDED, padding: StyleConstants.PADDING,}}>
 
-                    {/* <View style={{padding: StyleConstants.PADDING,}}> */}
-                        <View>
-                            <Text style={styles.productDetailCategory}> Address </Text>
-                            <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal'}]}> {errors.address}</Text>
-                        </View>
-                        <TextInput 
-                            value={address.trimLeft()}
-                            style={[styles.addressInput, {height: 150, marginTop:5}]}
-                            onChangeText = {address => {this.setState({address})}}
-                            // onKeyPress ={() => this.handleValidation('address')}
-                            onChange ={(event) => this.handleValidation('address',event.nativeEvent.text)}
-                            onBlur ={() => this.handleValidation('address',this.state.address)}
-                        />
+                    <View style={{flexDirection: 'row'}}>
+                        <Text style={styles.productDetailCategory}> Address </Text>
+                        <Text style={[styles.errorText,{color:StyleConstants.COLOR_FE3F3F,fontWeight:'normal',paddingBottom:0 }]}> {errors.address}</Text>
+                    </View>
+                    <TextInput 
+                        value={address.trimLeft()}
+                        style={[styles.addressInput, {height: 150, marginTop:5, marginBottom: 20}]}
+                        onChangeText = {address => {this.setState({address})}}
+                        // onKeyPress ={() => this.handleValidation('address')}
+                        onChange ={(event) => this.handleValidation('address',event.nativeEvent.text)}
+                        onBlur ={() => this.handleValidation('address',this.state.address)}
+                    />
 
 
-                        <View style={styles.rowSpaceBetween}>
-                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
-                                <View>
-                                    <Text style={styles.productDetailCategory}> City </Text>
-                                    <Text style={styles.addrsErrorText}> {errors.city}</Text>
-                                </View> 
-                                <TextInput 
-                                    value={city.trim()}
-                                    onChangeText = {city => {this.setState({city})}}
-                                    onChange ={(event) => this.handleValidation('city',event.nativeEvent.text)}
-                                    onBlur ={() => this.handleValidation('city', this.state.city)}
-                                    style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
-                                />
-                            </View>
-
-                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
-                                <View>
-                                    <Text style={styles.productDetailCategory}> State </Text>
-                                    <Text style={styles.addrsErrorText}> {errors.state}</Text>
-                                </View>
-                                <TextInput 
-                                    value={state.trim()}
-                                    onChangeText = {state => {this.setState({state})}}
-                                    onChange ={(event) => this.handleValidation('state',event.nativeEvent.text)}
-                                    onBlur ={() => this.handleValidation('state', this.state.state)}
-                                    style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
-                                />
-                            </View>
+                    <View style={styles.rowSpaceBetween}>
+                        <View style={{width: (WINDOW_WIDTH/2)-30}}>
+                            <Text style={styles.productDetailCategory}> City </Text>
+                            <TextInput 
+                                value={city.trim()}
+                                onChangeText = {city => {this.setState({city})}}
+                                onChange ={(event) => this.handleValidation('city',event.nativeEvent.text)}
+                                onBlur ={() => this.handleValidation('city', this.state.city)}
+                                style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5, marginBottom:0}]}        
+                            />
+                            <Text style={[styles.addrsErrorText,{paddingBottom:15}]}> {errors.city}</Text>
                         </View>
 
-                        <View style={styles.rowSpaceBetween}>
-                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
-                                <View>
-                                    <Text style={styles.productDetailCategory}> ZIP CODE </Text>
-                                    <Text style={styles.addrsErrorText}> {errors.pincode}</Text>
-                                </View>
-                                <TextInput
-                                    value={pincode.trim()}
-                                    onChangeText = {pincode => {this.setState({pincode})}}
-                                    keyboardType='number-pad'
-                                    maxLength={6}
-                                    onChange ={(event) => this.handleValidation('pincode', event.nativeEvent.text)}
-                                    onBlur ={() => this.handleValidation('pincode',this.state.pincode)}
-                                    style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5}]}        
-                                />
-                            </View>
-
-                            <View style={{width: (WINDOW_WIDTH/2)-30}}>
-                                <View>
-                                    <Text style={styles.productDetailCategory}> COUNTRY  </Text>
-                                    <Text style={styles.addrsErrorText}> {errors.country}</Text>
-                                </View>
-                                <TextInput 
-                                    value={country.trim()}
-                                    onChangeText = {country => {this.setState({country})}}
-                                    onChange ={(event) => this.handleValidation('country',event.nativeEvent.text)}
-                                    onBlur ={() => this.handleValidation('country',this.state.country)}
-                                    style={[styles.addressInput, {width:(WINDOW_WIDTH/2)-30, marginTop:5}]}        
-                                />
-                            </View>
+                        <View style={{width: (WINDOW_WIDTH/2)-30}}>
+                            <Text style={styles.productDetailCategory}> State </Text>
+                            <TextInput 
+                                value={state.trim()}
+                                onChangeText = {state => {this.setState({state})}}
+                                onChange ={(event) => this.handleValidation('state',event.nativeEvent.text)}
+                                onBlur ={() => this.handleValidation('state', this.state.state)}
+                                style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5, marginBottom: 0}]}        
+                            />
+                            <Text style={[styles.addrsErrorText,{paddingBottom:15}]}> {errors.state}</Text>
                         </View>
-                    {/* </View> */}
+                    </View>
 
+                    <View style={styles.rowSpaceBetween}>
+                        <View style={{width: (WINDOW_WIDTH/2)-30}}>
+                            <Text style={styles.productDetailCategory}> ZIP CODE </Text>
+                            <TextInput
+                                value={pincode.trim()}
+                                onChangeText = {pincode => {this.setState({pincode})}}
+                                keyboardType='number-pad'
+                                maxLength={6}
+                                onChange ={(event) => this.handleValidation('pincode', event.nativeEvent.text)}
+                                onBlur ={() => this.handleValidation('pincode',this.state.pincode)}
+                                style={[styles.addressInput, {width: (WINDOW_WIDTH/2)-30, marginTop:5, marginBottom: 0}]}        
+                            />
+                            <Text style={styles.addrsErrorText}> {errors.pincode}</Text>
+                        </View>
+
+                        <View style={{width: (WINDOW_WIDTH/2)-30}}>
+                            <Text style={styles.productDetailCategory}> COUNTRY  </Text>
+                            <TextInput 
+                                value={country.trim()}
+                                onChangeText = {country => {this.setState({country})}}
+                                onChange ={(event) => this.handleValidation('country',event.nativeEvent.text)}
+                                onBlur ={() => this.handleValidation('country',this.state.country)}
+                                style={[styles.addressInput, {width:(WINDOW_WIDTH/2)-30, marginTop:5, marginBottom: 0}]}        
+                            />
+                            <Text style={styles.addrsErrorText}> {errors.country}</Text>
+                        </View>
+                    </View>
                 </ScrollView>
 
                 <View style={{backgroundColor: StyleConstants.COLOR_FFFFFF}}>

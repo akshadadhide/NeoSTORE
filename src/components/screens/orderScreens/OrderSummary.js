@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {View, Text, Image,Alert, ScrollView, FlatList,RefreshControl, TouchableOpacity, TouchableHighlight, BackHandler} from 'react-native';
-// import {Picker} from '@react-native-community/picker';
 import {Picker} from 'native-base';
 import {BASE_URL} from '../../../API/apiConstants';
 import {store} from '../../../redux/store';
@@ -13,6 +12,11 @@ import {PLACE_ORDER_URLTYPE} from '../../../API/apiConstants';
 import {connect} from 'react-redux';
 import { apiCall } from '../../../API/apiCall';
 import Loader from '../../Common/Loader';
+
+/**
+ * This is the order summary screen
+ * This screen shows the details about the product and order
+*/
 
 class OrderSummary extends Component {
     constructor(){
@@ -27,11 +31,6 @@ class OrderSummary extends Component {
         this.handleOrderNow = this.handleOrderNow.bind(this);
     }
     componentDidMount(){
-        // BackHandler.addEventListener(
-        //     'hardwareBackPress',
-        //     this.handleBackButtonPressAndroid
-        // );
-
         this.getAddress();
 
         const {productDetails} = this.props.route.params;
@@ -49,20 +48,6 @@ class OrderSummary extends Component {
         )
         .catch(error => console.log("In compDidM, Addr error:",error))
     }
-
-    // componentWillUnmount() {
-    //     BackHandler.removeEventListener(
-    //       'hardwareBackPress',
-    //       this.handleBackButtonPressAndroid
-    //     );
-    // }
-
-    // handleBackButtonPressAndroid = () => {
-    //     if (this.props.navigation.isFocused()) {
-    //         this.props.navigation.navigate('DrawerNav');
-    //         return false;
-    //     }
-    // };
 
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
@@ -83,22 +68,6 @@ class OrderSummary extends Component {
         }
         return totalCost;
     }
-
-    // goBack = () => {
-    //     const {productDetails} = this.props.route.params;
-    //     this.props.navigation.reset({
-    //         index: 0,
-    //         routes: [
-    //           {
-    //             name: 'ProductDetail',
-    //             params: { productId: productDetails[0].product_id },
-    //           },
-    //         ],
-    //     });
-    //     console.log("productDetails[0].product_id= ",productDetails[0].product_id);
-        
-    //     this.props.navigation.goBack();
-    // }
     
     goBack = () => this.props.navigation.goBack();
 
@@ -127,30 +96,23 @@ class OrderSummary extends Component {
 
     handleOrderNow(){
         this.showLoader();
-        // console.log("loader",this.state.showLoader);
-
         const {productDetails} = this.props.route.params;
 
         const type = PLACE_ORDER_URLTYPE;
 
         productDetails.map( (value,index) => {
-            // console.log("Val: ",value, "index: ",index);
-            
             const data = [{
                 _id: value.product_id,
                 product_id: value.product_id,
                 quantity: this.state.productCount[index],
             },{flag : "checkout"}];
-            // console.log("data-----", data);
 
             if(data !== undefined){
                 this.props.placeOrder(data, type);
                 const {res} = this.props;
-                // console.log("res== ",res);
 
                 setTimeout(()=>{
                     const {res} = this.props;
-                    // console.log("res== ",res);
                     this.hideLoader();
                     if(res !== undefined){
                         if(res.status_code === 200){

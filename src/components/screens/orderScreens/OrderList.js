@@ -6,6 +6,10 @@ import {styles} from '../../styles/Styles';
 import { orderActions } from '../../../redux/actions/orderAction';
 import {connect} from 'react-redux'
 
+/**
+ * This is the orderList screen
+ * This screen shows the list of orders placed by user
+*/
 
 class OrderList extends Component {
     constructor(props) {
@@ -22,7 +26,6 @@ class OrderList extends Component {
         this.props.getOrderDetails('getOrderDetails');
         const {orderDetails} = this.props;
         (orderDetails !== undefined) && this.setState({orderList:orderDetails});
-        // console.log("orderDetails: ", orderDetails);
     }
 
     //to update the state with current redux state
@@ -32,7 +35,10 @@ class OrderList extends Component {
         }
     }
 
-    //============
+    /**
+     * Function to handle the searching functionality
+     * @param {string} searchText this is the text (order) to search in the list
+    */
     searchHandler = (searchText) =>{
         const {orderDetails} = this.props;
         const {orderList} = this.state;
@@ -52,14 +58,10 @@ class OrderList extends Component {
             this.setState({orderList: orderDetails})
         );
     }
-    //=============
 
     render() {
         const {orderDetails,isLoading} = this.props;
-        // console.log("In render orderDetails: ", orderDetails, 'isLoading: ',isLoading);
         const {orderList} = this.state;
-        // console.log('Ol: ',orderList);
-        
         
         return (
             <View style={{flex: 1,}}>

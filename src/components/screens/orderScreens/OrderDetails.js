@@ -5,6 +5,10 @@ import { StyleConstants } from '../../styles/Constants';
 import {styles, WINDOW_WIDTH} from '../../styles/Styles';
 import { BASE_URL } from '../../../API/apiConstants';
 
+/**
+ * This is the orderDetail screen
+ * This screen displays the details about the particular order
+*/
 
 class OrderDetails extends Component {
 
@@ -12,7 +16,6 @@ class OrderDetails extends Component {
 
     render() {
         const {productDetails} = this.props.route.params;
-        // console.log("productDetails: ",productDetails);
         const orderInfo = productDetails.product_details[0];
         const productInfo = orderInfo.product_details[0];
 
