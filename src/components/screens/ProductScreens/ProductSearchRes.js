@@ -8,6 +8,9 @@ import {styles, WINDOW_WIDTH} from '../../styles/Styles';
 import {StyleConstants} from '../../styles/Constants';
 import CustomHeader from '../../Common/Header';
 
+/** 
+ * this screen shows the searched result 
+*/
 
 class ProductSearchRes extends Component {
     constructor(props) {
@@ -20,8 +23,6 @@ class ProductSearchRes extends Component {
     componentDidMount(){
         this.props.getAllProducts('getAllProductsInAscending');
         const {allProducts} = this.props;
-        // console.log("all Product list----",this.props.allProducts);
-
         this.getData(allProducts);
     }
 
@@ -31,6 +32,10 @@ class ProductSearchRes extends Component {
         }
     }
 
+    /** 
+     * function to filter the all products depending on searched text
+     * @param {array} allProducts this is the list of all products
+    */
     getData = (allProducts) => {
         const {searchText} = this.props.route.params;
         const {productListArray} = this.state;
@@ -51,20 +56,13 @@ class ProductSearchRes extends Component {
             this.setState({productListArray: allProducts})
 
         );
-
-        // console.log("filtered array: ",newData);
-        // console.log("productListArray array---: ",productListArray);
     }
 
     goBack = () => this.props.navigation.goBack();
 
-
     render() {
         const {searchText} = this.props.route.params;
-        // console.log("render all Product list----",this.props.allProducts); 
         const {productListArray} = this.state;
-        // console.log("render all Product list array state----",productListArray); 
-
 
         return (
             <View>
@@ -76,7 +74,6 @@ class ProductSearchRes extends Component {
                 (
                     (productListArray.length <= 0) ?
                     (
-                        // <ActivityIndicator size='large' />
                         <Text style={[styles.productListCost,{textAlign:'center'}]}> Product Not Found!! </Text>
                     ) :
                     (<ScrollView style={{marginBottom: 50}}>

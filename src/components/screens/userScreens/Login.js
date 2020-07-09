@@ -32,7 +32,7 @@ class Login extends Component {
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
 
-
+    //function to show and hide the password onPress of icon
     setPasswordVisiblility = () => {
         if(this.state.passIcon === 'eye'){
             this.setState({passIcon: 'eye-slash', })
@@ -43,13 +43,15 @@ class Login extends Component {
         this.setState({passwordHide: !this.state.passwordHide });
     }
 
+    /** 
+     * function to handle the validation
+     * @param {string} field_name this is the input field name
+     * @param {string} value this is the input field value
+    */
     handleValidation = (field_name,value) => {
         const {email, pass} = this.state;
         let {errors} = this.state;
-    
         let errorFlag = false;
-    
-        // console.log("e: ",email, "pass: ",pass);
         
         //email validation
         if(field_name === 'email'){
@@ -80,6 +82,7 @@ class Login extends Component {
           
     }
 
+    //function to handle the onPress login button 
     async handleLogin(){
         this.showLoader();
         let {errors} = this.state;

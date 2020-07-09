@@ -11,6 +11,10 @@ import {StyleConstants} from '../../styles/Constants';
 import AsyncStorage from '@react-native-community/async-storage';
 import Loader from '../../Common/Loader';
 
+/**
+ * This is the cart products screen 
+ * which shows the list of products which are added in the cart
+*/
 
 class CartProducts extends Component {
     constructor(props) {
@@ -41,25 +45,26 @@ class CartProducts extends Component {
         this.getCart();
     }
 
+    // function to get the cart data from API
     getCart = async() =>{
         const type = GET_CART_DATA_URLTYPE;
         await this.props.getCartData(type);
         const {cartData} = await this.props;
-        // console.log("cartData:----",cartData);
         this.setCartData(cartData); 
     }
 
+    /**
+     * function to store the cart data into the state
+     * @param {array} cartData this is the array of objects of cart products
+    */
     setCartData = async(cartData) => {
         
         try {
             const myArray = await AsyncStorage.getItem('cartProducts');
-            // console.log("myArray: ===",myArray);
-            // console.log("f==",myArray !== null && cartData !== '');
-            
+           
             if (myArray !== null && (cartData !== undefined && cartData !== '')) {
                 let cartProducts = cartData.concat(JSON.parse(myArray));
                 this.setState({cartData: cartProducts})
-                // console.log("In cart m: ",JSON.parse(myArray), "cartProducts==",cartProducts);
             } 
             if(myArray !== null && (cartData === undefined || cartData === '')){
                 this.setState({cartData:JSON.parse(myArray)})
@@ -80,11 +85,14 @@ class CartProducts extends Component {
         }
     }
 
+    /**
+     * function to handle the delete product from cart
+     * @param {string} product_id this is the id of the product which you want to delete
+    */
     handleDeleteProduct = async(product_id) => {
         this.showLoader();
         let type = `deleteCustomerCart/${product_id}`;
         this.props.deleteCartProduct(type);
-        // console.log("deleteCartResult: ",deleteCartResult);
         let productArray = await AsyncStorage.getItem('cartProducts');
 
         setTimeout(async()=>{
@@ -114,9 +122,11 @@ class CartProducts extends Component {
         },6000);
     }
 
+    /** 
+     * function to calculate the total cost of all cart products
+     * @param {array} cartData this is the array of cart products
+    */
     calculateTotalCost = (cartData) => {
-        // console.log("cartData: ",cartData);
-        
         let totalCost=0;
         if(cartData !== undefined && cartData !== ''){
             let costArr = cartData.map((value) => {return value.product_cost})
@@ -134,7 +144,6 @@ class CartProducts extends Component {
 
     render() {
         const{cartData} = this.state;
-
         let totalCost;
         totalCost =this.calculateTotalCost(cartData);
        

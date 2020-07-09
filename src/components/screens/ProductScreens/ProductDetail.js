@@ -18,6 +18,10 @@ import {productActions} from '../../../redux/actions/productActions';
 import {store} from '../../../redux/store';
 import Loader from '../../Common/Loader';
 
+/** 
+ * this is the product detail component
+ * this screen shows the details about the product selected from product list
+*/
 class ProductDetail extends PureComponent{
 
 	constructor(props) {
@@ -75,12 +79,9 @@ class ProductDetail extends PureComponent{
 		let productInfo;
 		const {productDetails} = this.props;
 		const {cartProductsArr} = this.state;
-		// console.log('productDetails: ', productDetails, "cartProductsArr: ",cartProductsArr);
-		
 
 		try {
 			const myArray = await AsyncStorage.getItem('cartProducts');
-			// console.log("myArray: ",JSON.parse(myArray));
 			let newProduct, flag=false;
 
 			if(myArray !== null){ 
@@ -98,7 +99,6 @@ class ProductDetail extends PureComponent{
 							if(flag === false){
 							newProduct.push(productDetails[0]);
 							Alert.alert("Added to cart");
-							// console.log("Modified myArray newProduct: ",newProduct);
 							}
 							else{
 							Alert.alert('Already in cart');
@@ -113,7 +113,6 @@ class ProductDetail extends PureComponent{
 			
 		}catch (error) {
 			this.hideLoader();
-			// console.log("Error saving data in asyncstorage cart: ",error);
 			Alert.alert('Something went wrong!!Please try again');
 		}
 
@@ -133,7 +132,6 @@ class ProductDetail extends PureComponent{
 				}
 			}
 		});
-		// console.log("--onstartpress data", this.state.ratingData);
 	}
 	
 	/** @param {boolean} visible this is the visibility(true or false) value to show the rating modal */
@@ -149,7 +147,6 @@ class ProductDetail extends PureComponent{
 		setTimeout(()=>{
 				this.hideLoader();
 				const {productRatingRes} = this.props;
-				// console.log("productRatingRes", productRatingRes);
 				(productRatingRes !== undefined) ?
 				(Alert.alert(productRatingRes.message)) : 
 				(Alert.alert("Something went wrong!!!try again"));
@@ -178,14 +175,12 @@ class ProductDetail extends PureComponent{
 			})
 			.then(async base64Data => {
 				base64Data = `data:${type};base64,` + base64Data;
-				// console.log("base64Data: ", base64Data);
 				this.setState({base64Data:base64Data});
 				await OnShare(base64Data, 'Check this product', msg);
 				await RNFS.unlink(filePath);
 			})
 			.catch( error =>{
-				// console.log("Error----", error);
-				
+				console.log("Error----", error);
 			});
 	}
 

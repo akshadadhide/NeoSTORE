@@ -9,6 +9,10 @@ import {BASE_URL} from '../../../API/apiConstants';
 import {getProductList} from '../../../redux/actions/productActions';
 import { DrawerActions } from '@react-navigation/native';
 
+/** 
+ * this is the product list component 
+ * this screen shows the category wise product list
+*/
 
 class ProductList extends PureComponent {
     
@@ -28,6 +32,10 @@ class ProductList extends PureComponent {
         this.fetchResult(this.page);
     }
 
+    /**
+     * function to get the product list from API
+     * @param {number} page this is the page number to pass to the url of API
+    */
     async fetchResult(page){
         const {category_id} = this.props.route.params;
         let type;
@@ -82,10 +90,10 @@ class ProductList extends PureComponent {
         this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
     }
 
-  render() {
-    const {category} = this.props.route.params;
-    const {productList,isLoading} = this.props;
-    const {productListArray} = this.state;
+    render() {
+        const {category} = this.props.route.params;
+        const {productList,isLoading} = this.props;
+        const {productListArray} = this.state;
     
         return (
             <SafeAreaView>
@@ -143,7 +151,7 @@ class ProductList extends PureComponent {
             </View>
             </SafeAreaView>
         );
-  }
+    }
 }
 
 function mapState(state){

@@ -9,7 +9,6 @@ import {StyleConstants} from '../../styles/Constants';
 import {validation, NAME_REGEX, customErrors, MOBILE_REGEX, PASSWORD_REGEX, EMAIL_REGEX} from '../../../utils/Validation';
 import { userActions } from "../../../redux/actions/userActions";
 import Loader from "../../Common/Loader";
-import TermsAndCond from "../../Common/TermsAndCond";
 import Modal from 'react-native-modal';
 
 
@@ -38,11 +37,15 @@ class Register extends Component {
 
         }
         this.handleRegister = this.handleRegister.bind(this);
-        // this.validatePassword = this.validatePassword.bind(this);
     }
     
     showLoader = () => { this.setState({ showLoader:true }); };
     hideLoader = () => { this.setState({ showLoader:false }); };
+
+    /** 
+     * function to handle the visibility of terms and condotions modal
+     * @param {boolean} visible this is the true or false value to set the modal visibility
+    */
     setModalVisible(visible) {
 		this.setState({modalVisible: visible});
 	}
@@ -56,6 +59,10 @@ class Register extends Component {
 
     }
 
+    /** 
+     * function to show and hide the password onPress of icon
+     * @param {string} name this is the name of the icon to handle the onPress and visibility of password
+    */
     setPasswordVisiblility = (name) => {
 
         if(name === 'passIcon'){
@@ -78,11 +85,15 @@ class Register extends Component {
         }
     }
 
-    /*validation*/
+    /** 
+     * function to handle the validation
+     * @param {string} field_name this is the input field name
+     * @param {string / number} value this is the input field value
+    */
     handleValidation = (field_name, value) => {
         const {first_name, last_name, phone_no, email, pass, confirmPass,gender} = this.state;
         let {errors} = this.state;
-        let errorFlag = true, genderErrorFlag = true;
+        let errorFlag = true;
         
         //first name validation
         if(field_name === 'first_name'){
@@ -185,14 +196,9 @@ class Register extends Component {
                 delete errors.gender;
             }
         }
-
        
       this.setState({errors});
-    //   console.log("Error: ",errors, " errFlag: ", errorFlag, "genderErrorFlag: ",genderErrorFlag);
-    //   let flag = (errorFlag || genderErrorFlag)
       return errorFlag;
-      
-  
     }
     /*validation*/
 
@@ -207,44 +213,40 @@ class Register extends Component {
             gender: this.state.gender,
             phone_no: this.state.phone_no,
         }
-        // console.log("form data", logData);
 
         const errorFlag = (this.handleValidation('first_name',logData.first_name) || this.handleValidation('last_name',logData.last_name) || this.handleValidation('email',logData.email)
                             || this.handleValidation('pass',logData.pass) || this.handleValidation('confirmPass',logData.confirmPass) || this.handleValidation('phone_no',logData.phone_no)
                             || this.handleValidation('gender')
         );
-        // console.log("Err Flag in submit: ", errorFlag);
 
-
-            if(errorFlag === false){
-                if(this.state.isChecked === true){
-                    this.props.register(logData,'register');
-                    const {registrationResult} = this.props;
-                    // console.log("isReg:",isRegistered, "regRes:",registrationResult);
-                    
-                    setTimeout(()=>{
-                        this.hideLoader();
-                        if(registrationResult.status_code === 200 ){
-                            (registrationResult.message !== undefined && registrationResult.message !== '') && Alert.alert(registrationResult.message);
-                            this.props.navigation.navigate('Login');
-                        }
-                        else{
-                            
-                            (registrationResult.message !== undefined && registrationResult.message !== '') ? 
-                            (Alert.alert(registrationResult.message)) :
-                            (Alert.alert("Something went wrong!!Please try again"));
-                        }
-                    },5000);
-                }else{
+        if(errorFlag === false){
+            if(this.state.isChecked === true){
+                this.props.register(logData,'register');
+                const {registrationResult} = this.props;
+                
+                setTimeout(()=>{
                     this.hideLoader();
-                    Alert.alert('Please select the terms and conditions');
-                }
-               
-            }
-            else{
+                    if(registrationResult.status_code === 200 ){
+                        (registrationResult.message !== undefined && registrationResult.message !== '') && Alert.alert(registrationResult.message);
+                        this.props.navigation.navigate('Login');
+                    }
+                    else{
+                        
+                        (registrationResult.message !== undefined && registrationResult.message !== '') ? 
+                        (Alert.alert(registrationResult.message)) :
+                        (Alert.alert("Something went wrong!!Please try again"));
+                    }
+                },5000);
+            }else{
                 this.hideLoader();
-                Alert.alert('Please check all information is properly filled');
-            } 
+                Alert.alert('Please select the terms and conditions');
+            }
+            
+        }
+        else{
+            this.hideLoader();
+            Alert.alert('Please check all information is properly filled');
+        } 
             
     }   
 
@@ -252,7 +254,6 @@ class Register extends Component {
         const {first_name, last_name, email, pass, confirmPass, phone_no, gender} = this.state;
         const {passIcon, passwordHide, confirmPassIcon, confirmPasswordHide} =  this.state;
         const {errors} = this.state;
-
         
         return (
             <ImageBackground source={require('../../../assets/images/background_img.jpg')} style={{width: '100%', height: '100%'}}>
@@ -263,7 +264,6 @@ class Register extends Component {
             >
                 <View style={styles.container}>
                     <Text style={styles.brandName}>NeoSTORE</Text>
-                    {/* <Text style={styles.errorText}>{errors.submitError}</Text> */}
 
                     {/* modal starts  */}
                     <Modal

@@ -8,6 +8,9 @@ import ProductCard from '../Common/productCard';
 import CustomHeader from '../Common/Header';
 import {getCarouselImages} from '../../redux/actions/productActions';
 
+/** 
+ * this is the dashboard or home screen
+*/
 class Home extends Component {
 
     componentDidMount(){
@@ -23,6 +26,10 @@ class Home extends Component {
 
     handleToggleDrawer = () => this.props.navigation.toggleDrawer();
 
+    /**
+     * Function to handle the searching functionality
+     * @param {string} searchText this is the text (product) to search in the list
+    */
     searchHandler = (searchText) =>{
         this.props.navigation.navigate('ProductSearchRes',{searchText:searchText});
     }

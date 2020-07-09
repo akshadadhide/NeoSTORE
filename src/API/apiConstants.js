@@ -1,6 +1,6 @@
 
 //URLS 
-export const BASE_URL = 'https://2e46bac1e3b5.ngrok.io/';
+export const BASE_URL = 'http://180.149.241.208:3022/';
 
 export const PRODUCT_BED_URL = 'commonProducts?category_id=5cfe3c65ea821930af69281f&pageNo=1&perPage=10';
 
