@@ -64,15 +64,7 @@ handleLogout = async() => {
             cartProducts.map((val) => {
                 let cartItem = [{_id:val.product_id,product_id:val.product_id,quantity:1},{ flag: "logout" }];
 
-                apiCall(cartItem,'POST','addProductToCartCheckout')
-                .then(
-                    (response) => {
-                        console.log("logout addProductToCartCheckout response",response);
-                    }
-                )
-                .catch((error) => 
-                        console.log("Error in addProductToCartCheckout on logout",error)
-                )
+                apiCall(cartItem,'POST','addProductToCartCheckout');
             });
             AsyncStorage.removeItem('cartProducts');
         }

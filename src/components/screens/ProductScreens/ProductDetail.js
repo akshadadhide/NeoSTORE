@@ -295,12 +295,12 @@ class ProductDetail extends PureComponent{
 				{/* Product detail section */}
 
 				{/* add cart button */}
-				<TouchableHighlight 
+				<TouchableOpacity 
 					style={[styles.addToCartButton, flag ? {opacity:1} : {opacity:0.6}]} 
 					onPress={(userToken !== null && userToken !== '') ? this.handleAddToCart.bind(this) : () => (alert('Please Login first'))} 
 				>
 					<Icon name="shopping-cart" color={StyleConstants.COLOR_FFFFFF} size={30} />
-				</TouchableHighlight>
+				</TouchableOpacity>
 
 				{/* buy and rate button view starts */}
 				<View style={[styles.rowSpaceBetween, {padding:StyleConstants.PADDING, backgroundColor:StyleConstants.COLOR_FFFFFF}]}>

@@ -14,19 +14,13 @@ function login(logData, type) {
   return async dispatch => {
     dispatch(userLoginRequest());
 
-    await apiCall(logData, 'POST', type)
-      .then((result) => {
-        const userD = JSON.stringify(result);
-        AsyncStorage.setItem('userData', userD);
-        const token = result.token;
-        AsyncStorage.setItem('userToken', token);
-        
-        dispatch(userLoginSuccess(result));
-      })
-      .catch((error) => {
-        dispatch(userLoginFailure(error));
-      })
-
+    const result = await apiCall(logData, 'POST', type)
+    const userD = JSON.stringify(result);
+    AsyncStorage.setItem('userData', userD);
+    const token = result.token;
+    AsyncStorage.setItem('userToken', token);
+    
+    dispatch(userLoginSuccess(result));
   }
 
   function userLoginRequest() {
